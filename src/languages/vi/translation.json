@@ -1,0 +1,32 @@
+{
+    "managementSytem" : "Hệ thống quản lý",
+    
+    "home" : "Trang chủ",
+    "staffManagement" : "Quản lý nhân viên",
+    "staffList" : "Danh sách nhân viên",
+    "courseManagement" : "Quản lý khóa học",
+    
+    
+    "login" : "Đăng nhập",
+    "logout" : "Đăng xuất",
+    "register" : "Đăng ký",
+    "email" : "Email",
+    "password" : "Mật khẩu",
+    "confirm_password" : "Xác nhận mật khẩu",
+    "forgot_password" : "Quên mật khẩu?",
+    "reset_password" : "Đặt lại mật khẩu",
+    "send_reset_link" : "Gửi liên kết đặt lại",
+    "dashboard" : "Bảng điều khiển",
+    "settings" : "Cài đặt",
+    "profile" : "Hồ sơ",
+    "language" : "Ngôn ngữ",
+    "theme" : "Chủ đề",
+    "dark_mode" : "Chế độ tối",
+    "phoneNumber" : "Số điện thoại",
+    "address" : "Địa chỉ",
+    "seeMore" : "Xem thêm",
+
+    "about" : "Giới thiệu",
+    "contact" : "Liên hệ"
+
+}
