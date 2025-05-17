@@ -1,65 +1,478 @@
 import React, { useEffect, useState } from "react";
-// import axios from 'axios';
 import { Dialog } from "@headlessui/react";
 import { Button } from "../components/Button";
-
 import { useTranslation } from "react-i18next";
-
 import StaffInformation from "../components/Dialogs/StaffInformation";
-
-import { fetchStaffs } from "../services/ManagementStaffService";
-
+import { fetchStaffs, createStaff } from "../services/ManagementStaffService";
+import uploadImages from "../services/UploadFile"; // Import uploadImages
 import "bootstrap/dist/css/bootstrap.css";
+import { Search } from "lucide-react";
 
-const StaffPages = (props) => {
-  const [Staffs, setStaffs] = useState([]);
-  const [t, i18n] = useTranslation();
+// Regex từ schema
+const emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+const phoneRegex = /^(?:\+84|0)(?:3|5|7|8|9)\d{8}$/;
+const citizenIDRegex = /^\d{12}$/;
+
+const StaffPages = () => {
+  const [staffs, setStaffs] = useState([]);
+  const [filteredStaffs, setFilteredStaffs] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filter, setFilter] = useState("all");
+  const { t } = useTranslation();
   const [selectedStaff, setSelectedStaff] = useState(null);
   const [isShowDialog, setIsShowDialog] = useState(false);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [newStaff, setNewStaff] = useState({
+    name: "",
+    sex: "male",
+    email: "",
+    citizenID: "",
+    phone: "",
+    address: { street: "", city: "", country: "" },
+    status: "active",
+    role: "academic",
+  });
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState(null);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     const loadData = async () => {
       const staffs = await fetchStaffs();
       setStaffs(staffs);
+      setFilteredStaffs(staffs);
     };
     loadData();
   }, []);
+
+  useEffect(() => {
+    let result = staffs;
+    if (searchTerm) {
+      result = result.filter((staff) =>
+        staff.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    if (filter !== "all") {
+      if (filter === "active" || filter === "inactive") {
+        result = result.filter((staff) => staff.status === filter);
+      } else if (["academic", "consultant", "teacher"].includes(filter)) {
+        result = result.filter((staff) => staff.role === filter);
+      }
+    }
+    setFilteredStaffs(result);
+  }, [searchTerm, filter, staffs]);
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!newStaff.name.trim()) newErrors.name = t("nameRequired");
+    if (!emailRegex.test(newStaff.email)) newErrors.email = t("invalidEmail");
+    if (!citizenIDRegex.test(newStaff.citizenID))
+      newErrors.citizenID = t("invalidCitizenID");
+    if (newStaff.phone && !phoneRegex.test(newStaff.phone))
+      newErrors.phone = t("invalidPhone");
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const openStaffDialog = (staff) => {
     setSelectedStaff(staff);
     setIsShowDialog(true);
   };
 
+  const handleAddStaff = async () => {
+    if (!validateForm()) {
+      return;
+    }
+
+    try {
+      let avatarUrl = "";
+      if (avatarFile) {
+        const images = await uploadImages(avatarFile, false); // File, not base64
+        avatarUrl = images.imageUrls[0] || "";
+      }
+
+      const staffData = {
+        ...newStaff,
+        avatar: avatarUrl,
+      };
+
+      const createdStaff = await createStaff(staffData);
+      setStaffs((prev) => [...prev, createdStaff.user]);
+      setIsAddDialogOpen(false);
+      setNewStaff({
+        name: "",
+        sex: "male",
+        email: "",
+        citizenID: "",
+        phone: "",
+        address: { street: "", city: "", country: "" },
+        status: "active",
+        role: "academic",
+      });
+      setAvatarFile(null);
+      setAvatarPreview(null);
+      setErrors({});
+    } catch (error) {
+      alert(t("failedToCreateStaff"));
+    }
+  };
+
+  const handleNewStaffChange = (e) => {
+    const { name, value } = e.target;
+    if (name.startsWith("address.")) {
+      const addressField = name.split(".")[1];
+      setNewStaff((prev) => ({
+        ...prev,
+        address: { ...prev.address, [addressField]: value },
+      }));
+    } else {
+      setNewStaff((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+    setErrors((prev) => ({ ...prev, [name]: "" }));
+  };
+
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setAvatarFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatarPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setAvatarFile(null);
+      setAvatarPreview(null);
+    }
+  };
+
   return (
-    <div className="row">
-      {Staffs.map((Staff) => (
-        <div key={Staff._id} className="col-12 col-md-6 col-lg-4 mb-4">
-          <div className="border border-gray-300 rounded-xl p-4 shadow">
-            <img
-              src={Staff.avatar || "https://via.placeholder.com/100"}
-              alt={Staff.name}
-              className="w-24 h-24 rounded-full object-cover mb-2"
+    <div className="container mt-4">
+      {/* Thanh tìm kiếm, filter và nút thêm nhân viên */}
+      <div className="row mb-4 align-items-center">
+        <div className="col-12 col-md-6 col-lg-4 mb-2 mb-md-0">
+          <div className="position-relative">
+            <Search
+              className="position-absolute"
+              style={{
+                left: "10px",
+                top: "50%",
+                transform: "translateY(-50%)",
+                color: "#6c757d",
+              }}
+              size={18}
             />
-            <h2 className="text-lg font-semibold">{Staff.name}</h2>
-            <p>
-              {t("email")}: {Staff.email}
-            </p>
-            <p>
-              {t("phoneNumber")}: {Staff.phone}
-            </p>
-            <Button className="mt-2" onClick={() => openStaffDialog(Staff)}>
-              {t("seeMore")}
-            </Button>
+            <input
+              type="text"
+              placeholder={t("searchStaff")}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="form-control ps-5"
+              style={{ height: "38px" }}
+            />
           </div>
         </div>
-      ))}
+        <div className="col-12 col-md-4 col-lg-3 mb-2 mb-md-0">
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="form-select"
+            style={{ height: "38px" }}
+          >
+            <option value="all">{t("allStaff")}</option>
+            <option value="active">{t("active")}</option>
+            <option value="inactive">{t("inactive")}</option>
+            <option value="academic">{t("academic")}</option>
+            <option value="consultant">{t("consultant")}</option>
+            <option value="teacher">{t("teacher")}</option>
+          </select>
+        </div>
+        <div className="col-12 col-md-2 col-lg-2">
+          <Button
+            className="btn btn-primary w-100"
+            onClick={() => setIsAddDialogOpen(true)}
+          >
+            {t("addStaff")}
+          </Button>
+        </div>
+      </div>
 
+      {/* Danh sách nhân viên */}
+      <div className="row">
+        {filteredStaffs.map((staff) => (
+          <div key={staff._id} className="col-12 col-md-6 col-lg-4 mb-4">
+            <div className="border border-gray-300 rounded-xl p-4 shadow">
+              <img
+                src={staff.avatar || "https://via.placeholder.com/100"}
+                alt={staff.name}
+                className="w-24 h-24 rounded-full object-cover mb-2 mx-auto"
+              />
+              <h2 className="text-lg font-semibold text-center">
+                {staff.name}
+              </h2>
+              <p>
+                {t("email")}: {staff.email}
+              </p>
+              <p>
+                {t("phoneNumber")}: {staff.phone || "N/A"}
+              </p>
+              <div className="d-flex justify-content-between align-items-center mt-2">
+                <p className="mb-0">{staff.role ? t(staff.role) : "N/A"}</p>
+                <Button
+                  className="btn btn-outline-primary"
+                  onClick={() => openStaffDialog(staff)}
+                >
+                  {t("seeMore")}
+                </Button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Dialog thông tin nhân viên */}
       {isShowDialog && (
         <StaffInformation
           staff={selectedStaff}
-          onClose={() => setSelectedStaff(null)}
+          onClose={() => {
+            setSelectedStaff(null);
+            setIsShowDialog(false);
+          }}
         />
       )}
+
+      {/* Dialog thêm nhân viên */}
+      <Dialog
+        open={isAddDialogOpen}
+        onClose={() => {
+          setIsAddDialogOpen(false);
+          setNewStaff({
+            name: "",
+            sex: "male",
+            email: "",
+            citizenID: "",
+            phone: "",
+            address: { street: "", city: "", country: "" },
+            status: "active",
+            role: "academic",
+          });
+          setAvatarFile(null);
+          setAvatarPreview(null);
+          setErrors({});
+        }}
+        className="modal show d-block"
+        style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+      >
+        <Dialog.Panel className="modal-dialog modal-lg">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title">{t("addNewStaff")}</h5>
+              <button
+                type="button"
+                className="btn-close"
+                onClick={() => {
+                  setIsAddDialogOpen(false);
+                  setNewStaff({
+                    name: "",
+                    sex: "male",
+                    email: "",
+                    citizenID: "",
+                    phone: "",
+                    address: { street: "", city: "", country: "" },
+                    status: "active",
+                    role: "academic",
+                  });
+                  setAvatarFile(null);
+                  setAvatarPreview(null);
+                  setErrors({});
+                }}
+              ></button>
+            </div>
+            <div className="modal-body">
+              <div className="mb-3">
+                {avatarPreview && (
+                  <div className="mt-2 d-flex justify-content-center align-items-center">
+                    <img
+                      src={avatarPreview}
+                      alt="Avatar Preview"
+                      className="w-24 h-24 rounded-full object-cover"
+                    />
+                  </div>
+                )}
+                <label className="form-label">{t("avatar")}</label>
+                <input
+                  type="file"
+                  name="avatar"
+                  accept="image/*"
+                  onChange={handleAvatarChange}
+                  className="form-control"
+                  style={{ height: "38px" }}
+                />
+              </div>
+              <div className="mb-3">
+                <label className="form-label">{t("staffName")}</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={newStaff.name}
+                  onChange={handleNewStaffChange}
+                  className={`form-control ${errors.name ? "is-invalid" : ""}`}
+                  style={{ height: "38px" }}
+                />
+                {errors.name && (
+                  <div className="invalid-feedback">{errors.name}</div>
+                )}
+              </div>
+              <div className="mb-3">
+                <label className="form-label">{t("sex")}</label>
+                <select
+                  name="sex"
+                  value={newStaff.sex}
+                  onChange={handleNewStaffChange}
+                  className="form-select"
+                  style={{ height: "38px" }}
+                >
+                  <option value="male">{t("male")}</option>
+                  <option value="female">{t("female")}</option>
+                </select>
+              </div>
+              <div className="mb-3">
+                <label className="form-label">{t("email")}</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={newStaff.email}
+                  onChange={handleNewStaffChange}
+                  className={`form-control ${errors.email ? "is-invalid" : ""}`}
+                  style={{ height: "38px" }}
+                />
+                {errors.email && (
+                  <div className="invalid-feedback">{errors.email}</div>
+                )}
+              </div>
+              <div className="mb-3">
+                <label className="form-label">{t("citizenID")}</label>
+                <input
+                  type="text"
+                  name="citizenID"
+                  value={newStaff.citizenID}
+                  onChange={handleNewStaffChange}
+                  className={`form-control ${
+                    errors.citizenID ? "is-invalid" : ""
+                  }`}
+                  style={{ height: "38px" }}
+                />
+                {errors.citizenID && (
+                  <div className="invalid-feedback">{errors.citizenID}</div>
+                )}
+              </div>
+              <div className="mb-3">
+                <label className="form-label">{t("phoneNumber")}</label>
+                <input
+                  type="text"
+                  name="phone"
+                  value={newStaff.phone}
+                  onChange={handleNewStaffChange}
+                  className={`form-control ${errors.phone ? "is-invalid" : ""}`}
+                  style={{ height: "38px" }}
+                />
+                {errors.phone && (
+                  <div className="invalid-feedback">{errors.phone}</div>
+                )}
+              </div>
+              <div className="mb-3">
+                <label className="form-label">{t("street")}</label>
+                <input
+                  type="text"
+                  name="address.street"
+                  value={newStaff.address.street}
+                  onChange={handleNewStaffChange}
+                  className="form-control"
+                  style={{ height: "38px" }}
+                />
+              </div>
+              <div className="mb-3">
+                <label className="form-label">{t("city")}</label>
+                <input
+                  type="text"
+                  name="address.city"
+                  value={newStaff.address.city}
+                  onChange={handleNewStaffChange}
+                  className="form-control"
+                  style={{ height: "38px" }}
+                />
+              </div>
+              <div className="mb-3">
+                <label className="form-label">{t("country")}</label>
+                <input
+                  type="text"
+                  name="address.country"
+                  value={newStaff.address.country}
+                  onChange={handleNewStaffChange}
+                  className="form-control"
+                  style={{ height: "38px" }}
+                />
+              </div>
+              <div className="mb-3">
+                <label className="form-label">{t("status")}</label>
+                <select
+                  name="status"
+                  value={newStaff.status}
+                  onChange={handleNewStaffChange}
+                  className="form-select"
+                  style={{ height: "38px" }}
+                >
+                  <option value="active">{t("active")}</option>
+                  <option value="inactive">{t("inactive")}</option>
+                </select>
+              </div>
+              <div className="mb-3">
+                <label className="form-label">{t("role")}</label>
+                <select
+                  name="role"
+                  value={newStaff.role}
+                  onChange={handleNewStaffChange}
+                  className="form-select"
+                  style={{ height: "38px" }}
+                >
+                  <option value="academic">{t("academic")}</option>
+                  <option value="consultant">{t("consultant")}</option>
+                  <option value="teacher">{t("teacher")}</option>
+                </select>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <Button className="btn btn-primary" onClick={handleAddStaff}>
+                {t("add")}
+              </Button>
+              <Button
+                className="btn btn-secondary"
+                onClick={() => {
+                  setIsAddDialogOpen(false);
+                  setNewStaff({
+                    name: "",
+                    sex: "male",
+                    email: "",
+                    citizenID: "",
+                    phone: "",
+                    address: { street: "", city: "", country: "" },
+                    status: "active",
+                    role: "academic",
+                  });
+                  setAvatarFile(null);
+                  setAvatarPreview(null);
+                  setErrors({});
+                }}
+              >
+                {t("cancel")}
+              </Button>
+            </div>
+          </div>
+        </Dialog.Panel>
+      </Dialog>
     </div>
   );
 };

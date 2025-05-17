@@ -1,18 +1,16 @@
-import React, { useState, useEffect, useContext } from "react";
-
+import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import "bootstrap/dist/css/bootstrap.css";
-
 import { Dialog } from "@headlessui/react";
 import { fetchCertificatesByTeacherId } from "../../services/ManagementStaffService";
+import { Button } from "../Button";
 
-const { Button } = require("../Button");
 export default function StaffInformation(props) {
+  const { t } = useTranslation();
   const [selectedStaff, setSelectedStaff] = useState(null);
   const [certificates, setCertificates] = useState([]);
   const [showCertificates, setShowCertificates] = useState(false);
-
   const [isOpen, setIsOpen] = useState(true);
-
   const [editStaffMode, setEditStaffMode] = useState(false);
   const [editedStaff, setEditedStaff] = useState({});
   const [newCertificate, setNewCertificate] = useState({
@@ -22,16 +20,25 @@ export default function StaffInformation(props) {
   });
 
   useEffect(() => {
-    // fetch certificates from API
-    // setCertificates(fetchCertificatesByTeacherId(selectedStaff._id));
-  }, []);
-
-  useEffect(() => {
     if (props.staff) {
       setSelectedStaff(props.staff);
       setEditedStaff(props.staff);
     }
   }, [props.staff]);
+
+  useEffect(() => {
+    const loadCertificates = async () => {
+      if (selectedStaff?._id) {
+        try {
+          const certs = await fetchCertificatesByTeacherId(selectedStaff._id);
+          setCertificates(certs);
+        } catch (error) {
+          console.error("Error fetching certificates:", error);
+        }
+      }
+    };
+    loadCertificates();
+  }, [selectedStaff]);
 
   const handleStaffFieldChange = (e) => {
     const { name, value } = e.target;
@@ -64,8 +71,7 @@ export default function StaffInformation(props) {
     }
   };
 
-  const handleViewCertificates = (staffId) => {
-    // Optionally fetch certificates from API by staffId
+  const handleViewCertificates = () => {
     setShowCertificates((prev) => !prev);
   };
 
@@ -82,14 +88,14 @@ export default function StaffInformation(props) {
     <div>
       <Dialog
         open={isOpen}
-        onClose={() => onClose()}
+        onClose={onClose}
         className="fixed z-50 inset-0 overflow-y-auto"
       >
         <div className="flex items-center justify-center min-h-screen">
           <Dialog.Panel className="bg-white p-6 rounded-xl shadow-xl max-w-lg w-full">
             {selectedStaff && (
               <div>
-                <h2 className="text-xl font-bold mb-2">Thông tin giảng viên</h2>
+                <h2 className="text-xl font-bold mb-2">{t("staffInfo")}</h2>
                 <img
                   src={
                     selectedStaff.avatar || "https://via.placeholder.com/100"
@@ -104,80 +110,88 @@ export default function StaffInformation(props) {
                       value={editedStaff.name}
                       onChange={handleStaffFieldChange}
                       className="w-full border px-3 py-2 rounded"
+                      placeholder={t("staffName")}
                     />
                     <input
                       name="email"
                       value={editedStaff.email}
                       onChange={handleStaffFieldChange}
                       className="w-full border px-3 py-2 rounded"
+                      placeholder={t("email")}
                     />
                     <input
                       name="phone"
                       value={editedStaff.phone}
                       onChange={handleStaffFieldChange}
                       className="w-full border px-3 py-2 rounded"
+                      placeholder={t("phoneNumber")}
                     />
                     <input
                       name="citizenID"
                       value={editedStaff.citizenID}
                       onChange={handleStaffFieldChange}
                       className="w-full border px-3 py-2 rounded"
+                      placeholder={t("citizenID")}
                     />
                   </div>
                 ) : (
                   <>
                     <p>
-                      <strong>Họ tên:</strong> {selectedStaff.name}
+                      <strong>{t("staffName")}:</strong> {selectedStaff.name}
                     </p>
                     <p>
-                      <strong>Email:</strong> {selectedStaff.email}
+                      <strong>{t("email")}:</strong> {selectedStaff.email}
                     </p>
                     <p>
-                      <strong>SĐT:</strong> {selectedStaff.phone}
+                      <strong>{t("phoneNumber")}:</strong>{" "}
+                      {selectedStaff.phone || "N/A"}
                     </p>
                     <p>
-                      <strong>CMND/CCCD:</strong> {selectedStaff.citizenID}
+                      <strong>{t("citizenID")}:</strong>{" "}
+                      {selectedStaff.citizenID || "N/A"}
                     </p>
                   </>
                 )}
                 <p>
-                  <strong>Địa chỉ:</strong>{" "}
+                  <strong>{t("address")}:</strong>{" "}
                   {`${selectedStaff.address?.street || ""}, ${
                     selectedStaff.address?.city || ""
                   }, ${selectedStaff.address?.country || ""}`}
                 </p>
-                <div className="mt-3 flex gap-2">
-                  <Button
-                    onClick={() => handleViewCertificates(selectedStaff._id)}
-                  >
-                    {showCertificates ? "Ẩn chứng chỉ" : "Xem chứng chỉ"}
+                <div className="mt-3 flex gap-2 text-white">
+                  <Button onClick={handleViewCertificates}>
+                    {showCertificates
+                      ? t("hideCertificates")
+                      : t("viewCertificates")}
                   </Button>
                   <Button
                     variant="outline"
                     onClick={() => setEditStaffMode((prev) => !prev)}
                   >
-                    {editStaffMode ? "Lưu thông tin" : "Chỉnh sửa"}
+                    {editStaffMode ? t("saveInfo") : t("editInfo")}
                   </Button>
                 </div>
 
                 {showCertificates && (
                   <div className="mt-4">
-                    <h3 className="font-semibold mb-2">Danh sách chứng chỉ:</h3>
+                    <h3 className="font-semibold mb-2">
+                      {t("certificateList")}
+                    </h3>
                     <div className="overflow-x-auto">
                       <table className="min-w-full text-sm text-left border">
                         <thead className="bg-gray-100">
                           <tr>
                             <th className="border px-2 py-1 whitespace-nowrap">
-                              Tên chứng chỉ
+                              {t("certificateName")}
                             </th>
                             <th className="border px-2 py-1 whitespace-nowrap">
-                              Ngày nhận
+                              {t("receivedDate")}
                             </th>
                             <th className="border px-2 py-1 whitespace-nowrap">
-                              Hạn
+                              {t("expirationDate")}
                             </th>
                             <th className="border px-2 py-1 whitespace-nowrap">
-                              Hành động
+                              {t("action")}
                             </th>
                           </tr>
                         </thead>
@@ -210,7 +224,7 @@ export default function StaffInformation(props) {
                                   size="sm"
                                   onClick={() => handleEditCertificate(cert)}
                                 >
-                                  Chỉnh sửa
+                                  {t("edit")}
                                 </Button>
                               </td>
                             </tr>
@@ -220,12 +234,12 @@ export default function StaffInformation(props) {
                     </div>
                     <div className="mt-4">
                       <h4 className="font-semibold mb-2">
-                        Thêm chứng chỉ mới:
+                        {t("addNewCertificate")}
                       </h4>
                       <div className="space-y-2">
                         <input
                           name="certificateName"
-                          placeholder="Tên chứng chỉ"
+                          placeholder={t("certificateName")}
                           value={newCertificate.certificateName}
                           onChange={handleNewCertChange}
                           className="w-full border px-3 py-2 rounded"
@@ -245,7 +259,7 @@ export default function StaffInformation(props) {
                           className="w-full border px-3 py-2 rounded"
                         />
                         <Button onClick={handleAddCertificate}>
-                          Thêm chứng chỉ
+                          {t("addCertificate")}
                         </Button>
                       </div>
                     </div>
@@ -253,9 +267,9 @@ export default function StaffInformation(props) {
                 )}
               </div>
             )}
-            <div className="mt-4 text-right">
+            <div className="mt-4 text-right text-white">
               <Button variant="outline" onClick={onClose}>
-                Đóng
+                {t("close")}
               </Button>
             </div>
           </Dialog.Panel>
