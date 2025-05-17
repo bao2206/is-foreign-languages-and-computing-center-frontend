@@ -1,7 +1,8 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import ManagementLayout from '../layouts/ManagementLayout';
-import StaffPages from '../pages/StaffPages';
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import ManagementLayout from "../layouts/ManagementLayout";
+import StaffPages from "../pages/StaffPages";
+import CourseManage from "../pages/CourseManage";
 
 export default function AppRoutes() {
   return (
@@ -10,6 +11,7 @@ export default function AppRoutes() {
 
       <Route path="/management" element={<ManagementLayout />}>
         <Route path="staff" element={<StaffPages />} />
+        <Route path="course" element={<CourseManage />} />
       </Route>
     </Routes>
   );
