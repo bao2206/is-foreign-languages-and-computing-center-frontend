@@ -12,7 +12,7 @@ export default function Header() {
                 <h1 className="header-title">{t("managementSytem")}</h1>
                 <nav>
                 <ul>
-                    <li><Link to="/management">{t("staffManagement")}</Link></li>
+                    <li><Link to="/management/staff">{t("staffManagement")}</Link></li>
                     <li><Link to="/management">{t("courseManagement")}</Link></li>
                 </ul>
                 </nav>

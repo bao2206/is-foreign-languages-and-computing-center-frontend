@@ -1,14 +1,16 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import ManagementRoutes from './ManagementRoutes';
+import ManagementLayout from '../layouts/ManagementLayout';
+import StaffPages from '../pages/StaffPages';
 
 export default function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" />
+      <Route path="/" element={<div>Trang chính</div>} />
 
-      <Route path="/management" element={<ManagementRoutes/>} />
-
+      <Route path="/management" element={<ManagementLayout />}>
+        <Route path="staff" element={<StaffPages />} />
+      </Route>
     </Routes>
   );
 }
