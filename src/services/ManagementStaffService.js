@@ -9,25 +9,38 @@ const getAuthToken = () => {
   return localStorage.getItem("token") || "";
 };
 
-export const fetchStaffs = async () => {
-  console.log("Fetching staff data...", BASE_URL);
+export const fetchStaffs = async ({ role, name, page = 1, limit = 10 }) => {
+  console.log("Fetching staff data...", { BASE_URL, role, name, page, limit });
 
   try {
     const token = getAuthToken();
     if (!token) {
       console.warn("No auth token found");
-      return [];
+      return { users: [], total: 0, currentPage: 1, totalPages: 1 };
     }
 
-    const response = await axios.get(`${BASE_URL}/staff`, {
+    const query = new URLSearchParams({
+      role: role || "academic,consultant,teacher",
+      ...(name && { name }),
+      page,
+      limit,
+    }).toString();
+
+    const response = await axios.get(`${BASE_URL}?${query}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    return response.data.data; // vì response có dạng { data: [...] }
+
+    return {
+      users: response.data.data,
+      total: response.data.total,
+      currentPage: response.data.currentPage,
+      totalPages: response.data.totalPages,
+    };
   } catch (error) {
     console.error("Failed to fetch staff data:", error);
-    return [];
+    return { users: [], total: 0, currentPage: 1, totalPages: 1 };
   }
 };
 
@@ -57,18 +70,9 @@ export const fetchCertificatesByTeacherId = async (teacherId) => {
   }
 };
 
-const isValidBase64Image = async (file) => {
-  const validTypes = ["png", "jpeg", "gif", "webp", "bmp"];
-  const type = file ? file[1].toLowerCase() : "";
-  if (!validTypes.includes(type)) {
-    console.warn(`Unsupported image type: ${type}`);
-    return false;
-  }
-};
-
 export const createStaff = async (newStaff) => {
   try {
-    console.log(newStaff);
+    console.log("Creating staff:", newStaff);
 
     const token = getAuthToken();
     if (!token) {

@@ -4,9 +4,9 @@ import { Button } from "../components/Button";
 import { useTranslation } from "react-i18next";
 import StaffInformation from "../components/Dialogs/StaffInformation";
 import { fetchStaffs, createStaff } from "../services/ManagementStaffService";
-import uploadImages from "../services/UploadFile"; // Import uploadImages
+import uploadImages from "../services/UploadFile";
 import "bootstrap/dist/css/bootstrap.css";
-import { Search } from "lucide-react";
+import { Search, ChevronUp, ChevronDown } from "lucide-react";
 
 // Regex từ schema
 const emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
@@ -18,6 +18,10 @@ const StaffPages = () => {
   const [filteredStaffs, setFilteredStaffs] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
+  const [page, setPage] = useState(1);
+  const [limit] = useState(10); // Đặt limit mặc định
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
   const { t } = useTranslation();
   const [selectedStaff, setSelectedStaff] = useState(null);
   const [isShowDialog, setIsShowDialog] = useState(false);
@@ -36,31 +40,29 @@ const StaffPages = () => {
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [errors, setErrors] = useState({});
 
+  // Load data
   useEffect(() => {
     const loadData = async () => {
-      const staffs = await fetchStaffs();
-      setStaffs(staffs);
-      setFilteredStaffs(staffs);
+      const roleFilter =
+        filter !== "all" &&
+        ["academic", "consultant", "teacher"].includes(filter)
+          ? filter
+          : undefined;
+
+      const { users, total, currentPage, totalPages } = await fetchStaffs({
+        role: roleFilter,
+        name: searchTerm,
+        page,
+        limit,
+      });
+      setStaffs(users);
+      setFilteredStaffs(users);
+      setTotal(total);
+      setTotalPages(totalPages);
+      setPage(currentPage);
     };
     loadData();
-  }, []);
-
-  useEffect(() => {
-    let result = staffs;
-    if (searchTerm) {
-      result = result.filter((staff) =>
-        staff.name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-    if (filter !== "all") {
-      if (filter === "active" || filter === "inactive") {
-        result = result.filter((staff) => staff.status === filter);
-      } else if (["academic", "consultant", "teacher"].includes(filter)) {
-        result = result.filter((staff) => staff.role === filter);
-      }
-    }
-    setFilteredStaffs(result);
-  }, [searchTerm, filter, staffs]);
+  }, [searchTerm, filter, page, limit]);
 
   const validateForm = () => {
     const newErrors = {};
@@ -87,7 +89,7 @@ const StaffPages = () => {
     try {
       let avatarUrl = "";
       if (avatarFile) {
-        const images = await uploadImages(avatarFile, false); // File, not base64
+        const images = await uploadImages(avatarFile, false);
         avatarUrl = images.imageUrls[0] || "";
       }
 
@@ -149,9 +151,22 @@ const StaffPages = () => {
     }
   };
 
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
+  };
+
+  const handlePageInputChange = (e) => {
+    const value = Number(e.target.value);
+    if (value >= 1 && value <= totalPages) {
+      setPage(value);
+    }
+  };
+
   return (
     <div className="container mt-4">
-      {/* Thanh tìm kiếm, filter và nút thêm nhân viên */}
+      {/* Thanh tìm kiếm, filter, page input và nút thêm nhân viên */}
       <div className="row mb-4 align-items-center">
         <div className="col-12 col-md-6 col-lg-4 mb-2 mb-md-0">
           <div className="position-relative">
@@ -189,6 +204,35 @@ const StaffPages = () => {
             <option value="consultant">{t("consultant")}</option>
             <option value="teacher">{t("teacher")}</option>
           </select>
+        </div>
+        <div className="col-12 col-md-2 col-lg-2 mb-2 mb-md-0">
+          <div className="input-group" style={{ height: "38px" }}>
+            <input
+              type="number"
+              value={page}
+              onChange={handlePageInputChange}
+              min="1"
+              max={totalPages}
+              className="form-control"
+              style={{ height: "38px", width: "60px" }}
+            />
+            <button
+              className="btn btn-outline-secondary"
+              disabled={page === 1}
+              onClick={() => handlePageChange(page - 1)}
+              style={{ height: "38px" }}
+            >
+              <ChevronDown size={18} />
+            </button>
+            <button
+              className="btn btn-outline-secondary"
+              disabled={page === totalPages}
+              onClick={() => handlePageChange(page + 1)}
+              style={{ height: "38px" }}
+            >
+              <ChevronUp size={18} />
+            </button>
+          </div>
         </div>
         <div className="col-12 col-md-2 col-lg-2">
           <Button
@@ -232,6 +276,44 @@ const StaffPages = () => {
           </div>
         ))}
       </div>
+
+      {/* Phân trang */}
+      {totalPages > 1 && (
+        <div className="d-flex justify-content-between align-items-center mt-4">
+          <div>
+            {t("showing")} {filteredStaffs.length} {t("of")} {total}{" "}
+            {t("staffs")}
+          </div>
+          <div className="d-flex gap-2">
+            <Button
+              className="btn btn-outline-primary"
+              disabled={page === 1}
+              onClick={() => handlePageChange(page - 1)}
+            >
+              {t("previous")}
+            </Button>
+            <select
+              value={page}
+              onChange={(e) => handlePageChange(Number(e.target.value))}
+              className="form-select"
+              style={{ width: "100px", height: "38px" }}
+            >
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                <option key={p} value={p}>
+                  {t("page")} {p}
+                </option>
+              ))}
+            </select>
+            <Button
+              className="btn btn-outline-primary"
+              disabled={page === totalPages}
+              onClick={() => handlePageChange(page + 1)}
+            >
+              {t("next")}
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Dialog thông tin nhân viên */}
       {isShowDialog && (
