@@ -39,7 +39,6 @@
     "addNewStaff": "Add New Staff",
     "avatar": "Avatar",
     "staffName": "Staff Name",
-    "email": "Email",
     "status": "Status",
     "role": "Role",
     "add": "Add",
@@ -63,8 +62,122 @@
     "hideCertificates": "Hide Certificates",
     "certificateList": "Certificate List",
     "editInfo": "Edit Info",
-    "certificateName": "Certificate Name",
-    "receivedDate": "Received Date",
-    "expirationDate": "Expiration Date",
-    "action": "Action"
+    "header": {
+        "logo": "Training Center",
+        "home": "Home",
+        "courses": "Courses",
+        "about": "About Us",
+        "contact": "Contact",
+        "login": "Login"
+    },
+    "hero": {
+        "headline": "Empowering Your Future with English and IT Skills",
+        "subheadline": "Join our expert-led courses and transform your career today.",
+        "cta": "Explore Courses"
+    },
+    "featuredCourses": {
+        "title": "Featured Courses",
+        "learnMore": "Learn More",
+        "course1": {
+            "title": "Advanced English",
+            "description": "Master advanced English skills with our expert-led course."
+        },
+        "course2": {
+            "title": "Web Development",
+            "description": "Learn modern web development techniques and frameworks."
+        },
+        "course3": {
+            "title": "Data Science",
+            "description": "Explore data science and machine learning fundamentals."
+        }
+    },
+    "whyChooseUs": {
+        "title": "Why Choose Us",
+        "benefit1": {
+            "title": "Expert Instructors",
+            "description": "Learn from industry professionals with years of experience."
+        },
+        "benefit2": {
+            "title": "Flexible Schedules",
+            "description": "Choose learning times that fit your busy lifestyle."
+        },
+        "benefit3": {
+            "title": "Industry-Recognized Certifications",
+            "description": "Earn certifications that are valued by employers worldwide."
+        }
+    },
+    "testimonials": {
+        "title": "Student Testimonials",
+        "testimonial1": {
+            "name": "John Doe",
+            "quote": "The courses here transformed my career. Highly recommended!"
+        },
+        "testimonial2": {
+            "name": "Jane Smith",
+            "quote": "Flexible schedules and expert instructors made learning easy."
+        },
+        "testimonial3": {
+            "name": "Mike Johnson",
+            "quote": "I earned a certification that helped me land my dream job."
+        }
+    },
+    "statistics": {
+        "title": "Statistics and Achievements",
+        "students": "Students Trained",
+        "courses": "Courses Offered",
+        "successRate": "Success Rate"
+    },
+    "latestNews": {
+        "title": "Latest News / Blog",
+        "readMore": "Read More",
+        "news1": {
+            "title": "New Course Launch",
+            "excerpt": "We are excited to announce our new advanced English course starting next month."
+        },
+        "news2": {
+            "title": "Student Success Story",
+            "excerpt": "Meet Jane, who transformed her career after completing our web development course."
+        },
+        "news3": {
+            "title": "Upcoming Events",
+            "excerpt": "Join our free workshop on data science fundamentals next weekend."
+        }
+    },
+    "partners": {
+        "title": "Our Partners",
+        "partner1": {
+            "name": "Partner 1"
+        },
+        "partner2": {
+            "name": "Partner 2"
+        },
+        "partner3": {
+            "name": "Partner 3"
+        },
+        "partner4": {
+            "name": "Partner 4"
+        }
+    },
+    "contactForm": {
+        "title": "Contact Us",
+        "name": "Name",
+        "email": "Email",
+        "subject": "Subject",
+        "message": "Message",
+        "submit": "Submit"
+    },
+    "footer": {
+        "quickLinksTitle": "Quick Links",
+        "quickLinks": {
+            "home": "Home",
+            "courses": "Courses",
+            "about": "About Us",
+            "contact": "Contact"
+        },
+        "socialMediaTitle": "Follow Us",
+        "newsletterTitle": "Subscribe to Our Newsletter",
+        "newsletterPlaceholder": "Enter your email",
+        "newsletterSubmit": "Subscribe",
+        "copyright": "© 2023 Training Center. All rights reserved."
+    }
 }

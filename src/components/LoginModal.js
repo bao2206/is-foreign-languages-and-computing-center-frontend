@@ -13,10 +13,11 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email || !password) return alert("Nhập đầy đủ email và mật khẩu");
-
+    
     try {
+      
       const result = await loginUser(email, password);
-
+      console.log(email, password);
       // Lưu token vào localStorage hoặc cookie
       localStorage.setItem("token", result.token);
       // Cookies.set("token", result.token); // nếu bạn dùng cookie

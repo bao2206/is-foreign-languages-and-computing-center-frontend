@@ -67,5 +67,123 @@
     "certificateName": "Tên chứng chỉ",
     "receivedDate": "Ngày nhận",
     "expirationDate": "Ngày hết hạn",
-    "action": "Hành động"
+    "action": "Hành động",
+    "header": {
+        "logo": "Trung Tâm Đào Tạo",
+        "home": "Trang Chủ",
+        "courses": "Khóa Học",
+        "about": "Về Chúng Tôi",
+        "contact": "Liên Hệ",
+        "login": "Đăng Nhập"
+    },
+    "hero": {
+        "headline": "Nâng Tầm Tương Lai Của Bạn Với Kỹ Năng Tiếng Anh và CNTT",
+        "subheadline": "Tham gia các khóa học do chuyên gia hướng dẫn và chuyển đổi sự nghiệp của bạn ngay hôm nay.",
+        "cta": "Khám Phá Khóa Học"
+    },
+    "featuredCourses": {
+        "title": "Khóa Học Nổi Bật",
+        "learnMore": "Tìm Hiểu Thêm",
+        "course1": {
+            "title": "Tiếng Anh Nâng Cao",
+            "description": "Làm chủ kỹ năng tiếng Anh nâng cao với khóa học do chuyên gia hướng dẫn."
+        },
+        "course2": {
+            "title": "Phát Triển Web",
+            "description": "Học các kỹ thuật và framework phát triển web hiện đại."
+        },
+        "course3": {
+            "title": "Khoa Học Dữ Liệu",
+            "description": "Khám phá kiến thức cơ bản về khoa học dữ liệu và máy học."
+        }
+    },
+    "whyChooseUs": {
+        "title": "Tại Sao Chọn Chúng Tôi",
+        "benefit1": {
+            "title": "Giảng Viên Chuyên Nghiệp",
+            "description": "Học từ các chuyên gia trong ngành với nhiều năm kinh nghiệm."
+        },
+        "benefit2": {
+            "title": "Lịch Học Linh Hoạt",
+            "description": "Chọn thời gian học phù hợp với lịch trình bận rộn của bạn."
+        },
+        "benefit3": {
+            "title": "Chứng Chỉ Được Công Nhận",
+            "description": "Nhận chứng chỉ được đánh giá cao bởi các nhà tuyển dụng trên toàn cầu."
+        }
+    },
+    "testimonials": {
+        "title": "Phản Hồi Từ Học Viên",
+        "testimonial1": {
+            "name": "Nguyễn Văn A",
+            "quote": "Các khóa học ở đây đã thay đổi sự nghiệp của tôi. Rất đáng để tham gia!"
+        },
+        "testimonial2": {
+            "name": "Trần Thị B",
+            "quote": "Lịch học linh hoạt và giảng viên chuyên nghiệp giúp việc học trở nên dễ dàng."
+        },
+        "testimonial3": {
+            "name": "Lê Văn C",
+            "quote": "Tôi đã nhận được chứng chỉ giúp tôi có được công việc mơ ước."
+        }
+    },
+    "statistics": {
+        "title": "Thống Kê và Thành Tựu",
+        "students": "Học Viên Đã Đào Tạo",
+        "courses": "Khóa Học Đã Cung Cấp",
+        "successRate": "Tỷ Lệ Thành Công"
+    },
+    "latestNews": {
+        "title": "Tin Tức / Blog Mới Nhất",
+        "readMore": "Đọc Thêm",
+        "news1": {
+            "title": "Ra Mắt Khóa Học Mới",
+            "excerpt": "Chúng tôi rất vui mừng thông báo khóa học tiếng Anh nâng cao mới sẽ bắt đầu vào tháng tới."
+        },
+        "news2": {
+            "title": "Câu Chuyện Thành Công",
+            "excerpt": "Gặp gỡ Jane, người đã thay đổi sự nghiệp sau khi hoàn thành khóa học phát triển web của chúng tôi."
+        },
+        "news3": {
+            "title": "Sự Kiện Sắp Tới",
+            "excerpt": "Tham gia hội thảo miễn phí về kiến thức cơ bản khoa học dữ liệu vào cuối tuần tới."
+        }
+    },
+    "partners": {
+        "title": "Đối Tác Của Chúng Tôi",
+        "partner1": {
+            "name": "Đối Tác 1"
+        },
+        "partner2": {
+            "name": "Đối Tác 2"
+        },
+        "partner3": {
+            "name": "Đối Tác 3"
+        },
+        "partner4": {
+            "name": "Đối Tác 4"
+        }
+    },
+    "contactForm": {
+        "title": "Liên Hệ Chúng Tôi",
+        "name": "Tên",
+        "email": "Email",
+        "subject": "Chủ Đề",
+        "message": "Tin Nhắn",
+        "submit": "Gửi"
+    },
+    "footer": {
+        "quickLinksTitle": "Liên Kết Nhanh",
+        "quickLinks": {
+            "home": "Trang Chủ",
+            "courses": "Khóa Học",
+            "about": "Về Chúng Tôi",
+            "contact": "Liên Hệ"
+        },
+        "socialMediaTitle": "Theo Dõi Chúng Tôi",
+        "newsletterTitle": "Đăng Ký Nhận Bản Tin",
+        "newsletterPlaceholder": "Nhập email của bạn",
+        "newsletterSubmit": "Đăng Ký",
+        "copyright": "© 2023 Trung Tâm Đào Tạo. Tất cả các quyền được bảo lưu."
+    }
 }
