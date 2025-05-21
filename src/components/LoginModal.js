@@ -15,12 +15,11 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
     if (!email || !password) return alert("Nhập đầy đủ email và mật khẩu");
     
     try {
-      
       const result = await loginUser(email, password);
       console.log(email, password);
-      // Lưu token vào localStorage hoặc cookie
+      // Store token and username in localStorage
       localStorage.setItem("token", result.token);
-      // Cookies.set("token", result.token); // nếu bạn dùng cookie
+      localStorage.setItem("username", result.user.username || email);
 
       console.log("User:", result.user); // Thông tin người dùng
       alert(result.message || "Đăng nhập thành công");
