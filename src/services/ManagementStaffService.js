@@ -2,7 +2,7 @@ import axios from "axios";
 import uploadImages from "./UploadFile";
 
 const BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || "http://localhost:8080/api/users";
+  process.env.REACT_APP_API_BASE_URL || "http://localhost:8080/api/users/";
 
 // Hàm lấy token từ localStorage
 const getAuthToken = () => {
@@ -53,7 +53,7 @@ export const fetchCertificatesByTeacherId = async (teacherId) => {
     }
 
     const response = await axios.get(
-      `${BASE_URL}/teachers/certificate/${teacherId}`,
+      `${BASE_URL}teachers/certificate/${teacherId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
