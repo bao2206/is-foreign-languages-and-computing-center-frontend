@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 import {
   fetchClasses,
   createClass,
-  fetchCourses,
   fetchTeachers,
 } from "../services/ClassManagementService";
 import "bootstrap/dist/css/bootstrap.css";
@@ -13,6 +12,7 @@ import { Search, ChevronUp, ChevronDown } from "lucide-react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ClassItem from "../components/ClassItem";
+import { fetchCourses } from "../services/ManagementCourse";
 
 // Regex cho tên lớp
 const classNameRegex = /^[\w\s&-]+$/;
@@ -44,14 +44,33 @@ const ClassManagementPage = () => {
 
   // Load courses và teachers
   useEffect(() => {
+    console.log("Loading static data for courses and teachers...");
     const loadStaticData = async () => {
       try {
         const coursesData = await fetchCourses();
-        const teachersData = await fetchTeachers();
-        setCourses(coursesData);
-        setTeachers(teachersData);
+        console.log("Courses data loaded:", coursesData);
+
+        setCourses(coursesData || [], () => {
+          console.log("Courses state updated:", coursesData);
+        });
       } catch (error) {
-        console.error("Error loading static data:", error);
+        console.error("Error loading static data:", {
+          message: error.message,
+          response: error.response?.data,
+          status: error.response?.status,
+        });
+      }
+      try {
+        const teachersData = await fetchTeachers();
+        console.log("Teachers data loaded:", teachersData);
+
+        setTeachers(teachersData || []);
+      } catch (error) {
+        console.error("Error loading static data:", {
+          message: error.message,
+          response: error.response?.data,
+          status: error.response?.status,
+        });
       }
     };
     loadStaticData();
@@ -77,7 +96,6 @@ const ClassManagementPage = () => {
         );
         setClasses(classes);
         setFilteredClasses(classes);
-        setCourseFilter("");
         setTotal(total);
         setTotalPages(totalPages);
         setPage(currentPage);
@@ -151,6 +169,13 @@ const ClassManagementPage = () => {
     }
   };
 
+  const handleDateChange = (date) => {
+    setNewClass((prev) => ({
+      ...prev,
+      date: date,
+    }));
+  };
+
   return (
     <div className="container mt-4">
       {/* Thanh tìm kiếm và lọc */}
@@ -180,14 +205,17 @@ const ClassManagementPage = () => {
         <div className="col-12 col-md-6 col-lg-2 mb-2 mb-md-0">
           <select
             value={courseFilter}
-            onChange={(e) => setCourseFilter(e.target.value)}
+            onChange={(e) => {
+              setCourseFilter(e.target.value);
+              console.log("Course filter changed:", e.target.value);
+            }}
             className="form-select"
             style={{ height: "38px" }}
           >
             <option value="all">{t("allCourses")}</option>
             {courses.map((course) => (
               <option key={course._id} value={course._id}>
-                {course.name}
+                {course.coursename}
               </option>
             ))}
           </select>
@@ -216,7 +244,8 @@ const ClassManagementPage = () => {
           >
             <option value="all">{t("allStatuses")}</option>
             <option value="Incomplete">{t("Incomplete")}</option>
-            <option value="Complete">{t("Complete")}</option>
+            <option value="Active">{t("Active")}</option>
+            <option value="Completed">{t("Completed")}</option>
           </select>
         </div>
         <div className="col-12 col-md-6 col-lg-2 mb-2 mb-md-0">
@@ -232,7 +261,24 @@ const ClassManagementPage = () => {
           />
         </div>
         <div className="col-12 col-md-6 col-lg-1 mb-2 mb-md-0">
-          <div className="input-group" style={{ height: "38px" }}>
+          <Button
+            className="btn btn-primary"
+            onClick={() => setIsAddDialogOpen(true)}
+            style={{
+              height: "38px",
+              padding: "0 12px",
+              marginLeft: "5px",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {t("addClass")}
+          </Button>
+        </div>
+        <div className="col-12 col-md-6 col-lg-2 mb-2 mb-md-0">
+          <div
+            className="input-group"
+            style={{ height: "38px", display: "flex", alignItems: "center" }}
+          >
             <input
               type="number"
               value={page}
@@ -240,27 +286,21 @@ const ClassManagementPage = () => {
               min="1"
               max={totalPages}
               className="form-control"
-              style={{ height: "38px", width: "60px" }}
+              style={{ height: "38px", width: "60px", flexShrink: 0 }}
             />
-            <span className="input-group-text">
+            <span
+              className="input-group-text"
+              style={{ height: "38px", padding: "0 8px", whiteSpace: "nowrap" }}
+            >
               {t("of")} {totalPages}
             </span>
           </div>
         </div>
-        <div className="col-12 col-md-6 col-lg-1">
-          <Button
-            className="btn btn-primary w-100"
-            onClick={() => setIsAddDialogOpen(true)}
-          >
-            {t("addClass")}
-          </Button>
-        </div>
       </div>
-
       {/* Danh sách lớp học */}
       <div className="row">
         {filteredClasses.map((classItem) => (
-          <ClassItem class={classItem} />
+          <ClassItem classItem={classItem} />
         ))}
       </div>
 
@@ -312,6 +352,7 @@ const ClassManagementPage = () => {
             courseId: "",
             quantity: 0,
             status: "Incomplete",
+            date: null,
           });
           setErrors({});
         }}
@@ -332,6 +373,7 @@ const ClassManagementPage = () => {
                     courseId: "",
                     quantity: 0,
                     status: "Incomplete",
+                    date: null,
                   });
                   setErrors({});
                 }}
@@ -368,7 +410,7 @@ const ClassManagementPage = () => {
                   <option value="">{t("selectCourse")}</option>
                   {courses.map((course) => (
                     <option key={course._id} value={course._id}>
-                      {course.name}
+                      {course.coursename}
                     </option>
                   ))}
                 </select>
@@ -392,6 +434,21 @@ const ClassManagementPage = () => {
                 {errors.quantity && (
                   <div className="invalid-feedback">{errors.quantity}</div>
                 )}
+              </div>
+              <div className="mb-3">
+                <label className="form-label">{t("dateBegin")}</label>
+                <div>
+                  <DatePicker
+                    selected={newClass.date}
+                    onChange={handleDateChange}
+                    placeholderText={t("selectDate")}
+                    className={`form-control ${
+                      errors.date ? "is-invalid" : ""
+                    }`}
+                    style={{ height: "38px" }}
+                    isClearable
+                  />
+                </div>
               </div>
               <div className="mb-3">
                 <label className="form-label">{t("status")}</label>
@@ -421,6 +478,7 @@ const ClassManagementPage = () => {
                     courseId: "",
                     quantity: 0,
                     status: "Incomplete",
+                    date: null,
                   });
                   setErrors({});
                 }}

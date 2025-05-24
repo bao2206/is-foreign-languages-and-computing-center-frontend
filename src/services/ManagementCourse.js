@@ -9,8 +9,7 @@ export const fetchCourses = async () => {
         action: "getAll",
       },
     });
-
-    console.log(response.data);
+    console.log("Fetch courses response:", response.data);
 
     return response.data; // vì response có dạng { data: [...] }
   } catch (error) {

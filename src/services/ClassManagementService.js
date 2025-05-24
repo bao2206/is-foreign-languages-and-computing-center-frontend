@@ -15,17 +15,6 @@ export const fetchClasses = async ({
   limit,
 }) => {
   try {
-    console.log("Fetching classes with parameters:", {
-      name,
-      courseId,
-      teacherId,
-      status,
-      startDate,
-      endDate,
-      page,
-      limit,
-    });
-
     const payload = {
       query: {
         action: "getAll",
@@ -43,14 +32,12 @@ export const fetchClasses = async ({
         },
       },
     };
-    console.log("Payload for fetching classes:", payload);
+    console.log("Fetching classes with payload:", payload);
+
     const url = `${BASE_URL}classManager`;
-    console.log("Fetch classes payload:", payload);
     const response = await axios.post(url, payload, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });
-
-    console.log("Classes fetched successfully:", response.data);
 
     return {
       classes: response.data.data,
@@ -67,29 +54,16 @@ export const fetchClasses = async ({
   }
 };
 
-export const fetchCourses = async () => {
-  try {
-    const response = await axios.get(`${BASE_URL}courses`, {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-    });
-    console.log("Fetch courses response:", response.data);
-    return response.data.data;
-  } catch (error) {
-    console.error(
-      "Failed to fetch courses:",
-      error.response?.data || error.message
-    );
-    throw new Error("Failed to fetch courses");
-  }
-};
-
 export const fetchTeachers = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}users?role=teacher`, {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-    });
+    const response = await axios.get(
+      `${process.env.REACT_APP_API_BASE_URL}users/teachers`,
+      {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      }
+    );
     console.log("Fetch teachers response:", response.data);
-    return response.data.data;
+    return response.data;
   } catch (error) {
     console.error(
       "Failed to fetch teachers:",
@@ -101,7 +75,9 @@ export const fetchTeachers = async () => {
 
 export const createClass = async (classData) => {
   try {
-    const response = await axios.post(`${BASE_URL}classes`, classData, {
+    console.log("Creating class with data:", classData);
+
+    const response = await axios.post(`${BASE_URL}create`, classData, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });
     console.log("Create class response:", response.data);
@@ -114,3 +90,10 @@ export const createClass = async (classData) => {
     throw new Error("Failed to create class");
   }
 };
+
+export const fetchStudents = async () => {
+  const response = await axios.get(`${BASE_URL}/students`);
+  return response.data;
+};
+
+export const updateClass = async (classId, updatedData) => {};
