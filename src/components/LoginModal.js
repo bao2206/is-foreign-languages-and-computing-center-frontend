@@ -4,7 +4,7 @@ import { loginUser } from "../services/auth"; // hoặc nơi bạn để file lo
 // import Cookies from 'js-cookie'; // nếu bạn muốn lưu token vào cookie
 
 export default function LoginModal({ isOpen, onClose, onLogin }) {
-  const [email, setEmail] = React.useState("");
+  const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
   const { t } = useTranslation();
 
@@ -12,23 +12,24 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email || !password) return alert("Nhập đầy đủ email và mật khẩu");
+    if (!username || !password) return alert("Please enter username and password");
     
     try {
-      const result = await loginUser(email, password);
-      console.log(email, password);
-      // Store token and username in localStorage
+      const result = await loginUser(username, password);
+      
+      // Store token, username, and role ObjectId in localStorage
       localStorage.setItem("token", result.token);
-      localStorage.setItem("username", result.user.username || email);
+      localStorage.setItem("username", result.user.username);
+      localStorage.setItem("userRole", result.user.role);
 
-      console.log("User:", result.user); // Thông tin người dùng
-      alert(result.message || "Đăng nhập thành công");
+      console.log("User:", result.user);
+      alert(result.message || "Login successful");
 
-      onLogin?.(result.user); // Gửi dữ liệu user lên cha nếu cần
+      onLogin?.(result.user);
       onClose();
     } catch (err) {
       console.error("Login failed", err.response?.data || err.message);
-      alert(err.response?.data?.message || "Đăng nhập thất bại");
+      alert(err.response?.data?.message || "Login failed");
     }
   };
 
@@ -41,8 +42,8 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
             type="text"
             placeholder="Tên đăng nhập"
             className="w-full border px-3 py-2 rounded text-sm"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
           <input
             type="password"

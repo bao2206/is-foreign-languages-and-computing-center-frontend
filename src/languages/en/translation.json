@@ -68,7 +68,8 @@
         "courses": "Courses",
         "about": "About Us",
         "contact": "Contact",
-        "login": "Login"
+        "login": "Login",
+        "logout": "Logout"
     },
     "hero": {
         "headline": "Empowering Your Future with English and IT Skills",

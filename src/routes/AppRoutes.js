@@ -13,7 +13,7 @@ export default function AppRoutes() {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
-
+     
       {/* Bọc các route cần bảo vệ */}
       {/* <Route element={<RequireAuth />}>
         <Route path="/management" element={<ManagementLayout />}>

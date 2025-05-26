@@ -10,6 +10,15 @@ const BaseHeader = ({
   variant = 'default' | 'management'
 }) => {
   const { t, i18n } = useTranslation();
+  const [username, setUsername] = React.useState('');
+
+  React.useEffect(() => {
+    // Get username from localStorage when component mounts
+    const storedUsername = localStorage.getItem('username');
+    if (storedUsername) {
+      setUsername(storedUsername);
+    }
+  }, []);
 
   const toggleLanguage = () => {
     const newLang = i18n.language === 'en' ? 'vi' : 'en';
@@ -32,6 +41,14 @@ const BaseHeader = ({
       management: "text-gray-700 hover:text-blue-600"
     };
     return `${baseStyles} ${variantStyles[variant]}`;
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
+    localStorage.removeItem('userRole');
+    setUsername('');
+    window.location.href = '/';
   };
 
   return (
@@ -59,12 +76,24 @@ const BaseHeader = ({
             >
               {i18n.language === 'en' ? 'VI' : 'EN'}
             </button>
-            <Link
-              to="/login"
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors duration-200"
-            >
-              {t('header.login')}
-            </Link>
+            {username ? (
+              <div className="flex items-center space-x-4">
+                <span className="text-gray-700">Welcome, {username}</span>
+                <button
+                  onClick={handleLogout}
+                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors duration-200"
+                >
+                  {t('header.logout')}
+                </button>
+              </div>
+            ) : (
+              <Link
+                to="/login"
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors duration-200"
+              >
+                {t('header.login')}
+              </Link>
+            )}
           </>
         )}
       </div>

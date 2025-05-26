@@ -74,7 +74,8 @@
         "courses": "Khóa Học",
         "about": "Về Chúng Tôi",
         "contact": "Liên Hệ",
-        "login": "Đăng Nhập"
+        "login": "Đăng Nhập",
+        "logout": "Đăng Xuất"
     },
     "hero": {
         "headline": "Nâng Tầm Tương Lai Của Bạn Với Kỹ Năng Tiếng Anh và CNTT",
