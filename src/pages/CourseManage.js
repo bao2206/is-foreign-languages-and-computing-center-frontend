@@ -9,8 +9,10 @@ import {
   createCourse,
 } from "../services/ManagementCourse";
 import uploadImages from "../services/UploadFile";
+import { useTranslation } from "react-i18next";
 
 const CourseCard = ({ course, onUpdate }) => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
@@ -140,7 +142,7 @@ const CourseCard = ({ course, onUpdate }) => {
   );
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="container mt-4">
       {renderCardContent()}
 
       <Dialog open={open} onOpenChange={setOpen}>
@@ -153,7 +155,7 @@ const CourseCard = ({ course, onUpdate }) => {
                 setOpen(false);
                 setImageErrors("");
               }}
-              className="text-gray-500 hover:text-gray-700"
+              className="text-gray-500 hover:text-white-500"
               aria-label="Close dialog"
             >
               ✕
@@ -341,6 +343,7 @@ const CourseCard = ({ course, onUpdate }) => {
 };
 
 const CourseList = () => {
+  const { t } = useTranslation();
   const [courses, setCourses] = useState([]);
   const [filteredCourses, setFilteredCourses] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -458,7 +461,7 @@ const CourseList = () => {
   };
 
   return (
-    <div className="p-4">
+    <div className="container mt-4">
       <div className="flex items-center gap-4 flex-wrap mb-4">
         <div className="flex-1 max-w-md">
           <input
@@ -474,16 +477,18 @@ const CourseList = () => {
           onChange={(e) => setFilter(e.target.value)}
           className="p-2 border rounded focus:ring-2 focus:ring-blue-500"
         >
-          <option value="all">All Courses</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-          <option value="special">Special</option>
-          <option value="non-special">Non-Special</option>
+          <option value="all">{t("allCourses")}</option>
+          <option value="active">{t("Active")}</option>
+          <option value="inactive">{t("Inactive")}</option>
+          <option value="special">{t("Special")}</option>
+          <option value="non-special">{t("Non-Special")}</option>
         </select>
-        <Button onClick={() => setIsAddDialogOpen(true)}>Add Course</Button>
+        <Button onClick={() => setIsAddDialogOpen(true)}>
+          {t("addCourse")}
+        </Button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {filteredCourses.map((course) => (
           <div key={course._id} className="mb-4">
             <CourseCard course={course} onUpdate={handleUpdateCourse} />
@@ -494,7 +499,7 @@ const CourseList = () => {
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
         <DialogContent className="max-w-3xl">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold">Add New Course</h2>
+            <h2 className="text-xl font-bold">{t("Add New Course")}</h2>
             <button
               onClick={() => setIsAddDialogOpen(false)}
               className="text-gray-500 hover:text-gray-700"
@@ -505,7 +510,7 @@ const CourseList = () => {
           </div>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium">Images</label>
+              <label className="block text-sm font-medium">{t("Images")}</label>
               <input
                 type="file"
                 accept="image/*"
@@ -547,7 +552,9 @@ const CourseList = () => {
               </div>
             )}
             <div>
-              <label className="block text-sm font-medium">Course Name</label>
+              <label className="block text-sm font-medium">
+                {t("Course Name")}
+              </label>
               <input
                 type="text"
                 name="coursename"
@@ -560,7 +567,9 @@ const CourseList = () => {
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium">Description</label>
+              <label className="block text-sm font-medium">
+                {t("Description")}
+              </label>
               <textarea
                 name="description"
                 value={newCourse.description}
@@ -572,7 +581,7 @@ const CourseList = () => {
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium">Price</label>
+              <label className="block text-sm font-medium">{t("Price")}</label>
               <input
                 type="number"
                 name="price"
@@ -597,7 +606,9 @@ const CourseList = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium">Ordering</label>
+              <label className="block text-sm font-medium">
+                {t("Ordering")}
+              </label>
               <input
                 type="number"
                 name="ordering"
@@ -607,15 +618,15 @@ const CourseList = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium">Status</label>
+              <label className="block text-sm font-medium">{t("Status")}</label>
               <select
                 name="status"
                 value={newCourse.status}
                 onChange={handleNewCourseChange}
                 className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
               >
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
+                <option value="active">{t("active")}</option>
+                <option value="inactive">{t("inactive")}</option>
               </select>
             </div>
             <div>
@@ -631,7 +642,7 @@ const CourseList = () => {
               </label>
             </div>
             <div className="flex justify-end gap-2">
-              <Button onClick={handleAddCourse}>Add</Button>
+              <Button onClick={handleAddCourse}>{t("add")}</Button>
               <Button
                 onClick={() => {
                   setIsAddDialogOpen(false);

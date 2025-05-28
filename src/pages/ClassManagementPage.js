@@ -179,8 +179,9 @@ const ClassManagementPage = () => {
   return (
     <div className="container mt-4">
       {/* Thanh tìm kiếm và lọc */}
-      <div className="row mb-4 align-items-center">
-        <div className="col-12 col-md-6 col-lg-3 mb-2 mb-md-0">
+      <div className="d-flex flex-wrap gap-2 align-items-center mb-4">
+        {/* Tìm kiếm */}
+        <div style={{ minWidth: 220, flex: 1 }}>
           <div className="position-relative">
             <Search
               className="position-absolute"
@@ -202,13 +203,11 @@ const ClassManagementPage = () => {
             />
           </div>
         </div>
-        <div className="col-12 col-md-6 col-lg-2 mb-2 mb-md-0">
+        {/* Khóa học */}
+        <div style={{ minWidth: 160 }}>
           <select
             value={courseFilter}
-            onChange={(e) => {
-              setCourseFilter(e.target.value);
-              console.log("Course filter changed:", e.target.value);
-            }}
+            onChange={(e) => setCourseFilter(e.target.value)}
             className="form-select"
             style={{ height: "38px" }}
           >
@@ -220,7 +219,8 @@ const ClassManagementPage = () => {
             ))}
           </select>
         </div>
-        <div className="col-12 col-md-6 col-lg-2 mb-2 mb-md-0">
+        {/* Giáo viên */}
+        <div style={{ minWidth: 160 }}>
           <select
             value={teacherFilter}
             onChange={(e) => setTeacherFilter(e.target.value)}
@@ -235,7 +235,8 @@ const ClassManagementPage = () => {
             ))}
           </select>
         </div>
-        <div className="col-12 col-md-6 col-lg-2 mb-2 mb-md-0">
+        {/* Trạng thái */}
+        <div style={{ minWidth: 140 }}>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
@@ -248,7 +249,8 @@ const ClassManagementPage = () => {
             <option value="Completed">{t("Completed")}</option>
           </select>
         </div>
-        <div className="col-12 col-md-6 col-lg-2 mb-2 mb-md-0">
+        {/* Khoảng ngày */}
+        <div style={{ minWidth: 180 }}>
           <DatePicker
             selectsRange
             startDate={startDate}
@@ -260,41 +262,31 @@ const ClassManagementPage = () => {
             isClearable
           />
         </div>
-        <div className="col-12 col-md-6 col-lg-1 mb-2 mb-md-0">
+        {/* Phân trang nhanh */}
+        <div style={{ minWidth: 90 }}>
+          <input
+            type="number"
+            value={page}
+            onChange={handlePageInputChange}
+            min="1"
+            max={totalPages}
+            className="form-control"
+            style={{ height: "38px", width: "70px" }}
+          />
+        </div>
+        {/* Nút thêm lớp */}
+        <div className="ms-auto">
           <Button
             className="btn btn-primary"
             onClick={() => setIsAddDialogOpen(true)}
             style={{
               height: "38px",
-              padding: "0 12px",
-              marginLeft: "5px",
+              padding: "0 16px",
               whiteSpace: "nowrap",
             }}
           >
             {t("addClass")}
           </Button>
-        </div>
-        <div className="col-12 col-md-6 col-lg-2 mb-2 mb-md-0">
-          <div
-            className="input-group"
-            style={{ height: "38px", display: "flex", alignItems: "center" }}
-          >
-            <input
-              type="number"
-              value={page}
-              onChange={handlePageInputChange}
-              min="1"
-              max={totalPages}
-              className="form-control"
-              style={{ height: "38px", width: "60px", flexShrink: 0 }}
-            />
-            <span
-              className="input-group-text"
-              style={{ height: "38px", padding: "0 8px", whiteSpace: "nowrap" }}
-            >
-              {t("of")} {totalPages}
-            </span>
-          </div>
         </div>
       </div>
       {/* Danh sách lớp học */}
