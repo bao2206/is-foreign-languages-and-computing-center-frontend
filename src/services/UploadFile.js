@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:8080/api/upload";
+const BASE_URL = `${process.env.REACT_APP_API_BASE_URL}upload`;
 
 // Hàm chuyển base64 thành File (tương thích trình duyệt)
 const base64ToFile = (base64String, fileName = "image.png") => {

@@ -1,21 +1,21 @@
 import axios from "axios";
 // require("dotenv").config();
-const API = process.env.REACT_APP_API_BASE_URL;
+const API = process.env.REACT_APP_API_BASE_URL || "http://localhost:8080/api";
 
-export const registerUser = async (username, email, password, confirmPassword) => {
-  try {
-    const response = await axios.post(`${API}/users/register`, {
-      username,
-      email,
-      password,
-      confirmPassword,
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Registration error:", error);
-    throw error;
-  }
-};
+// export const registerUser = async (username, email, password, confirmPassword) => {
+//   try {
+//     const response = await axios.post(`${API}/users/register`, {
+//       username,
+//       email,
+//       password,
+//       confirmPassword,
+//     });
+//     return response.data;
+//   } catch (error) {
+//     console.error("Registration error:", error);
+//     throw error;
+//   }
+//};
 
 export const loginUser = async (username, password) => {
   try {

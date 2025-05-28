@@ -7,6 +7,7 @@ import CourseManage from "../pages/CourseManage";
 import LoginPage from "../pages/LoginPage"; // Trang đăng nhập
 import RequireAuth from "../utils/RequireAuth"; // Bảo vệ route
 import HomePage from "../pages/HomePage"; // Trang chính
+import ClassManagementPage from "../pages/ClassManagementPage";
 
 export default function AppRoutes() {
   return (
@@ -21,10 +22,11 @@ export default function AppRoutes() {
           <Route path="course" element={<CourseManage />} />
         </Route>
       </Route> */}
-       <Route >
+      <Route>
         <Route path="/management" element={<ManagementLayout />}>
           <Route path="staff" element={<StaffPages />} />
           <Route path="course" element={<CourseManage />} />
+          <Route path="class" element={<ClassManagementPage />} />
         </Route>
       </Route>
     </Routes>
