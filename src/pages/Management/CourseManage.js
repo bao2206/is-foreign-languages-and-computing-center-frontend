@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Card, CardContent } from "../components/ui/card";
-import { Button } from "../components/Button";
-import { Dialog, DialogContent, DialogHeader } from "../components/ui/dialog";
+import { Card, CardContent } from "../../components/ui/card";
+import { Button } from "../../components/Button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+} from "../../components/ui/dialog";
 import { ArrowLeft, ArrowRight, Search } from "lucide-react";
 import {
   fetchCourses,
   updateCourse,
   createCourse,
-} from "../services/ManagementCourse";
-import uploadImages from "../services/UploadFile";
+} from "../../services/ManagementCourse";
+import uploadImages from "../../services/UploadFile";
 import { useTranslation } from "react-i18next";
 
 const CourseCard = ({ course, onUpdate }) => {

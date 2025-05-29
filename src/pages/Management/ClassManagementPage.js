@@ -1,18 +1,18 @@
 import React, { use, useEffect, useState } from "react";
 import { Dialog } from "@headlessui/react";
-import { Button } from "../components/Button";
+import { Button } from "../../components/Button";
 import { useTranslation } from "react-i18next";
 import {
   fetchClasses,
   createClass,
   fetchTeachers,
-} from "../services/ClassManagementService";
+} from "../../services/ClassManagementService";
 import "bootstrap/dist/css/bootstrap.css";
 import { Search, ChevronUp, ChevronDown } from "lucide-react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import ClassItem from "../components/ClassItem";
-import { fetchCourses } from "../services/ManagementCourse";
+import ClassItem from "../../components/ClassItem";
+import { fetchCourses } from "../../services/ManagementCourse";
 
 // Regex cho tên lớp
 const classNameRegex = /^[\w\s&-]+$/;
