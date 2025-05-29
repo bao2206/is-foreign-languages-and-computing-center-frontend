@@ -17,7 +17,7 @@ import { fetchCourses } from "../../services/ManagementCourse";
 // Regex cho tên lớp
 const classNameRegex = /^[\w\s&-]+$/;
 
-const ClassManagementPage = () => {
+const ClassManagement = () => {
   const [classes, setClasses] = useState([]);
   const [filteredClasses, setFilteredClasses] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -485,4 +485,4 @@ const ClassManagementPage = () => {
   );
 };
 
-export default ClassManagementPage;
+export default ClassManagement;
