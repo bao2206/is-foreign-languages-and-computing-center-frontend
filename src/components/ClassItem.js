@@ -124,7 +124,7 @@ const ClassItem = (props) => {
   };
 
   return (
-    <div key={classItem._id} className="col-12 col-md-6 col-lg-4 mb-4">
+    <div key={classItem._id} className="col-12 col-md-6 col-lg-3 mb-4">
       <div className="border border-gray-300 rounded-xl p-4 shadow">
         <h2 className="text-lg font-semibold text-center">
           {classItem.classname}

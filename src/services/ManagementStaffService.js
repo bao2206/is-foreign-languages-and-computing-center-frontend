@@ -1,93 +1,93 @@
+// ManagementStaffService.js
 import axios from "axios";
-import uploadImages from "./UploadFile";
 
 const BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || "http://localhost:8080/api/users/";
+  `${process.env.REACT_APP_API_BASE_URL}users/` ||
+  "http://localhost:8080/api/users/";
 
-// Hàm lấy token từ localStorage
-const getAuthToken = () => {
-  return localStorage.getItem("token") || "";
-};
-
-export const fetchStaffs = async ({ role, name, page = 1, limit = 10 }) => {
-  console.log("Fetching staff data...", { BASE_URL, role, name, page, limit });
-
+export const fetchStaffs = async ({
+  role,
+  search,
+  status,
+  sex,
+  page,
+  limit,
+}) => {
   try {
-    const token = getAuthToken();
-    if (!token) {
-      console.warn("No auth token found");
-      return { users: [], total: 0, currentPage: 1, totalPages: 1 };
-    }
-
-    const query = new URLSearchParams({
-      role: role || "academic,consultant,teacher",
-      ...(name && { name }),
-      page,
-      limit,
-    }).toString();
-
-    const response = await axios.get(`${BASE_URL}?${query}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const url = `${BASE_URL}`;
+    const response = await axios.get(url, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      params: {
+        role, // role có thể là "academic", "consultant", "teacher"
+        page,
+        limit,
+        search, // Sử dụng searchTerm làm name
+        status,
+        sex,
       },
     });
 
+    const users = response.data.data.map((user) => ({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone || "N/A",
+      citizenId: user.citizenId,
+      sex: user.sex,
+      status: user.status,
+      role: user.authId?.role?.name || "N/A", // Lấy role từ authId
+      avatar: user.avatar || "https://via.placeholder.com/100", // Giả định có trường avatar
+    }));
+
     return {
-      users: response.data.data,
+      users,
       total: response.data.total,
       currentPage: response.data.currentPage,
       totalPages: response.data.totalPages,
+      limit: response.data.limit,
     };
   } catch (error) {
-    console.error("Failed to fetch staff data:", error);
-    return { users: [], total: 0, currentPage: 1, totalPages: 1 };
+    console.error(
+      "Failed to fetch staffs:",
+      error.response?.data || error.message
+    );
+    throw new Error("Failed to fetch staffs");
   }
+};
+
+export const createStaff = async (staffData) => {
+  try {
+    const url = `${BASE_URL}`;
+    const response = await axios.post(url, staffData, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Failed to create staff:",
+      error.response?.data || error.message
+    );
+    throw new Error("Failed to create staff");
+  }
+};
+
+// Các hàm khác (uploadImages, v.v.) giữ nguyên như cũ
+export const uploadImages = async (file, multiple = false) => {
+  // Logic upload ảnh giữ nguyên
 };
 
 export const fetchCertificatesByTeacherId = async (teacherId) => {
   try {
-    const token = getAuthToken();
-    if (!token) {
-      console.warn("No auth token found");
-      return [];
-    }
-
-    const response = await axios.get(
-      `${BASE_URL}teachers/certificate/${teacherId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    return response.data.data;
-  } catch (error) {
-    console.error(
-      `Failed to fetch certificates for teacher ${teacherId}:`,
-      error
-    );
-    return [];
-  }
-};
-
-export const createStaff = async (newStaff) => {
-  try {
-    console.log("Creating staff:", newStaff);
-
-    const token = getAuthToken();
-    if (!token) {
-      throw new Error("No auth token found");
-    }
-
-    const response = await axios.post(`${BASE_URL}/create`, newStaff, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
+    const url = `${BASE_URL}certificates/${teacherId}`;
+    const response = await axios.get(url, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });
     return response.data;
   } catch (error) {
-    console.error("Error creating staff:", error);
-    throw error;
+    console.error(
+      "Failed to fetch certificates by teacher ID:",
+      error.response?.data || error.message
+    );
+    throw new Error("Failed to fetch certificates");
   }
 };

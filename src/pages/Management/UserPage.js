@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { Dialog } from "@headlessui/react";
 import { Button } from "../../components/Button";
 import { useTranslation } from "react-i18next";
@@ -7,6 +7,7 @@ import {
   fetchStaffs,
   createStaff,
 } from "../../services/ManagementStaffService";
+import { fetchRoles } from "../../services/RoleService";
 import uploadImages from "../../services/UploadFile";
 import "bootstrap/dist/css/bootstrap.css";
 import { Search, ChevronUp, ChevronDown } from "lucide-react";
@@ -16,15 +17,20 @@ const emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
 const phoneRegex = /^(?:\+84|0)(?:3|5|7|8|9)\d{8}$/;
 const citizenIDRegex = /^\d{12}$/;
 
-const StaffPages = () => {
+const UserPage = () => {
   const [staffs, setStaffs] = useState([]);
   const [filteredStaffs, setFilteredStaffs] = useState([]);
+
+  // State cho tìm kiếm, filter, phân trang
   const [searchTerm, setSearchTerm] = useState("");
-  const [filter, setFilter] = useState("all");
+  const [roles, setRoles] = useState([]);
+  const [roleFilter, setRoleFilter] = useState(""); // Lọc theo role
+  const [filter, setFilter] = useState("");
   const [page, setPage] = useState(1);
   const [limit] = useState(10); // Đặt limit mặc định
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
+
   const { t } = useTranslation();
   const [selectedStaff, setSelectedStaff] = useState(null);
   const [isShowDialog, setIsShowDialog] = useState(false);
@@ -33,11 +39,11 @@ const StaffPages = () => {
     name: "",
     sex: "male",
     email: "",
-    citizenID: "",
+    citizenId: "", // Thay citizenID thành citizenId để khớp với API
     phone: "",
     address: { street: "", city: "", country: "" },
     status: "active",
-    role: "academic",
+    role: "academic", // Đảm bảo role khớp với API
   });
   const [avatarFile, setAvatarFile] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState(null);
@@ -45,16 +51,30 @@ const StaffPages = () => {
 
   // Load data
   useEffect(() => {
+    const loadRoles = async () => {
+      console.log("Fetching roles...");
+
+      try {
+        const rolesData = await fetchRoles();
+        console.log("Fetched roles:", rolesData);
+
+        setRoles(rolesData);
+      } catch (error) {
+        console.error("Failed to fetch roles:", error);
+      }
+    };
+    loadRoles();
+  }, []);
+
+  useEffect(() => {
     const loadData = async () => {
-      const roleFilter =
-        filter !== "all" &&
-        ["academic", "consultant", "teacher"].includes(filter)
-          ? filter
-          : undefined;
+      const statusFilter = filter !== "" ? filter : undefined;
 
       const { users, total, currentPage, totalPages } = await fetchStaffs({
-        role: roleFilter,
-        name: searchTerm,
+        role: roleFilter, // Lọc theo role
+        search: searchTerm, // Tìm kiếm theo tên
+        status: statusFilter, // Lọc theo trạng thái
+        sex: undefined, // Chưa hỗ trợ lọc theo sex, có thể thêm sau
         page,
         limit,
       });
@@ -65,14 +85,14 @@ const StaffPages = () => {
       setPage(currentPage);
     };
     loadData();
-  }, [searchTerm, filter, page, limit]);
+  }, [searchTerm, roleFilter, filter, page, limit]);
 
   const validateForm = () => {
     const newErrors = {};
     if (!newStaff.name.trim()) newErrors.name = t("nameRequired");
     if (!emailRegex.test(newStaff.email)) newErrors.email = t("invalidEmail");
-    if (!citizenIDRegex.test(newStaff.citizenID))
-      newErrors.citizenID = t("invalidCitizenID");
+    if (!citizenIDRegex.test(newStaff.citizenId))
+      newErrors.citizenId = t("invalidCitizenID"); // Thay citizenID thành citizenId
     if (newStaff.phone && !phoneRegex.test(newStaff.phone))
       newErrors.phone = t("invalidPhone");
     setErrors(newErrors);
@@ -98,6 +118,7 @@ const StaffPages = () => {
 
       const staffData = {
         ...newStaff,
+        citizenId: newStaff.citizenId, // Đảm bảo khớp với API
         avatar: avatarUrl,
       };
 
@@ -108,7 +129,7 @@ const StaffPages = () => {
         name: "",
         sex: "male",
         email: "",
-        citizenID: "",
+        citizenId: "",
         phone: "",
         address: { street: "", city: "", country: "" },
         status: "active",
@@ -168,10 +189,10 @@ const StaffPages = () => {
   };
 
   return (
-    <div className="container mt-4">
+    <div className="container-fluid mt-4 px-3">
       {/* Thanh tìm kiếm, filter, page input và nút thêm nhân viên */}
-      <div className="row mb-4 align-items-center">
-        <div className="col-12 col-md-6 col-lg-4 mb-2 mb-md-0">
+      <div className="row mb-4 g-2 flex-wrap flex-md-nowrap align-items-center">
+        <div className="col-12 col-md-4 col-lg-3">
           <div className="position-relative">
             <Search
               className="position-absolute"
@@ -193,22 +214,34 @@ const StaffPages = () => {
             />
           </div>
         </div>
-        <div className="col-12 col-md-4 col-lg-3 mb-2 mb-md-0">
+        <div className="col-12 col-md-3 col-lg-2">
+          <select
+            value={roleFilter}
+            onChange={(e) => setRoleFilter(e.target.value)}
+            className="form-select"
+            style={{ height: "38px" }}
+          >
+            <option value="">{t("allRoles")}</option>
+            {roles.map((role) => (
+              <option key={role._id} value={role._id}>
+                {t(role.name)}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="col-12 col-md-3 col-lg-2">
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
             className="form-select"
             style={{ height: "38px" }}
           >
-            <option value="all">{t("allStaff")}</option>
+            <option value="">{t("status")}</option>
             <option value="active">{t("active")}</option>
             <option value="inactive">{t("inactive")}</option>
-            <option value="academic">{t("academic")}</option>
-            <option value="consultant">{t("consultant")}</option>
-            <option value="teacher">{t("teacher")}</option>
           </select>
         </div>
-        <div className="col-12 col-md-2 col-lg-2 mb-2 mb-md-0">
+        <div className="col-6 col-md-2 col-lg-2">
           <div className="input-group" style={{ height: "38px" }}>
             <input
               type="number"
@@ -237,7 +270,7 @@ const StaffPages = () => {
             </button>
           </div>
         </div>
-        <div className="col-12 col-md-2 col-lg-2">
+        <div className="col-6 col-md-2 col-lg-3">
           <Button
             className="btn btn-primary w-100"
             onClick={() => setIsAddDialogOpen(true)}
@@ -248,12 +281,12 @@ const StaffPages = () => {
       </div>
 
       {/* Danh sách nhân viên */}
-      <div className="row">
+      <div className="row px-1">
         {filteredStaffs.map((staff) => (
-          <div key={staff._id} className="col-12 col-md-6 col-lg-4 mb-4">
+          <div key={staff._id} className="col-12 col-md-6 col-lg-3 mb-4">
             <div className="border border-gray-300 rounded-xl p-4 shadow">
               <img
-                src={staff.avatar || "https://via.placeholder.com/100"}
+                src={staff.avatar}
                 alt={staff.name}
                 className="w-24 h-24 rounded-full object-cover mb-2 mx-auto"
               />
@@ -264,12 +297,12 @@ const StaffPages = () => {
                 {t("email")}: {staff.email}
               </p>
               <p>
-                {t("phoneNumber")}: {staff.phone || "N/A"}
+                {t("phoneNumber")}: {staff.phone}
               </p>
               <div className="d-flex justify-content-between align-items-center mt-2">
-                <p className="mb-0">{staff.role ? t(staff.role) : "N/A"}</p>
+                <p className="mb-0">{t(staff.role)}</p>
                 <Button
-                  className="btn btn-outline-primary"
+                  className="btn btn-outline-primary text-blue-600"
                   onClick={() => openStaffDialog(staff)}
                 >
                   {t("seeMore")}
@@ -338,7 +371,7 @@ const StaffPages = () => {
             name: "",
             sex: "male",
             email: "",
-            citizenID: "",
+            citizenId: "",
             phone: "",
             address: { street: "", city: "", country: "" },
             status: "active",
@@ -364,7 +397,7 @@ const StaffPages = () => {
                     name: "",
                     sex: "male",
                     email: "",
-                    citizenID: "",
+                    citizenId: "",
                     phone: "",
                     address: { street: "", city: "", country: "" },
                     status: "active",
@@ -442,16 +475,16 @@ const StaffPages = () => {
                 <label className="form-label">{t("citizenID")}</label>
                 <input
                   type="text"
-                  name="citizenID"
-                  value={newStaff.citizenID}
+                  name="citizenId"
+                  value={newStaff.citizenId}
                   onChange={handleNewStaffChange}
                   className={`form-control ${
-                    errors.citizenID ? "is-invalid" : ""
+                    errors.citizenId ? "is-invalid" : ""
                   }`}
                   style={{ height: "38px" }}
                 />
-                {errors.citizenID && (
-                  <div className="invalid-feedback">{errors.citizenID}</div>
+                {errors.citizenId && (
+                  <div className="invalid-feedback">{errors.citizenId}</div>
                 )}
               </div>
               <div className="mb-3">
@@ -541,7 +574,7 @@ const StaffPages = () => {
                     name: "",
                     sex: "male",
                     email: "",
-                    citizenID: "",
+                    citizenId: "",
                     phone: "",
                     address: { street: "", city: "", country: "" },
                     status: "active",
@@ -562,4 +595,4 @@ const StaffPages = () => {
   );
 };
 
-export default StaffPages;
+export default UserPage;

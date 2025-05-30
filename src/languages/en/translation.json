@@ -1,217 +1,213 @@
 {
-    "managementSystem": "Management System",
-    
+  "managementSystem": "Management System",
+  "home": "Home",
+  "staffManagement": "Staff Management",
+  "staffList": "Staff List",
+  "courseManagement": "Course Management",
+  "login": "Login",
+  "logout": "Logout",
+  "register": "Register",
+  "email": "Email",
+  "password": "Password",
+  "confirm_password": "Confirm Password",
+  "forgot_password": "Forgot Password?",
+  "reset_password": "Reset Password",
+  "send_reset_link": "Send Reset Link",
+  "dashboard": "Dashboard",
+  "settings": "Settings",
+  "profile": "Profile",
+  "language": "Language",
+  "theme": "Theme",
+  "dark_mode": "Dark Mode",
+  "phoneNumber": "Phone Number",
+  "address": "Address",
+  "seeMore": "See More",
+  "about": "About",
+  "contact": "Contact",
+  "teacher": "Teacher",
+  "consultant": "Consultant",
+  "academic": "Academic",
+  "active": "Active",
+  "inactive": "Inactive",
+  "searchStaff": "Search Staff",
+  "allStaff": "All Staff",
+  "addStaff": "Add Staff",
+  "addNewStaff": "Add New Staff",
+  "avatar": "Avatar",
+  "staffName": "Staff Name",
+  "status": "Status",
+  "role": "Role",
+  "add": "Add",
+  "cancel": "Cancel",
+  "sex": "Gender",
+  "male": "Male",
+  "female": "Female",
+  "citizenID": "Citizen ID",
+  "street": "Street",
+  "city": "City",
+  "country": "Country",
+  "addNewCertificate": "Add New Certificate",
+  "addCertificate": "Add Certificate",
+  "close": "Close",
+  "staffInfo": "Staff Info",
+  "certificateName": "Certificate Name",
+  "receivedDate": "Received Date",
+  "expirationDate": "Expiration Date",
+  "action": "Action",
+  "viewCertificates": "View Certificates",
+  "hideCertificates": "Hide Certificates",
+  "certificateList": "Certificate List",
+  "editInfo": "Edit Info",
+  "searchClass": "Search class",
+  "addClass": "Add Class",
+  "addNewClass": "Add New Class",
+  "className": "Class Name",
+  "course": "Course",
+  "quantity": "Quantity",
+  "createdAt": "Created At",
+  "allCourses": "All Courses",
+  "allTeachers": "All Teachers",
+  "selectCourse": "Select Course",
+  "selectDateRange": "Select Date Range",
+  "invalidClassName": "Class name is required and can only contain letters, numbers, spaces, &, or -",
+  "courseRequired": "Course is required",
+  "invalidQuantity": "Quantity must be a non-negative number",
+  "failedToCreateClass": "Failed to create class",
+  "showing": "Showing",
+  "of": "of",
+  "classes": "classes",
+  "page": "Page",
+  "previous": "Previous",
+  "next": "Next",
+  "Incomplete": "Incomplete",
+  "Active": "Active",
+  "Completed": "Completed",
+  "N/A": "N/A",
+  "parent": "Parent",
+  "teachers": "Teachers",
+  "dateBegin": "Start Date",
+  "addCourse": "Add Course",
+  "allRoles": "All Roles",
+  "edit": "Edit",
+  "classManagement": "Class Management",
+  "header": {
+    "logo": "Training Center",
     "home": "Home",
-    "staffManagement": "Staff Management",
-    "staffList": "Staff List",
-    "courseManagement": "Course Management",
-    
-    "login": "Login",
-    "logout": "Logout",
-    "register": "Register",
-    "email": "Email",
-    "password": "Password",
-    "confirm_password": "Confirm Password",
-    "forgot_password": "Forgot Password?",
-    "reset_password": "Reset Password",
-    "send_reset_link": "Send Reset Link",
-    "dashboard": "Dashboard",
-    "settings": "Settings",
-    "profile": "Profile",
-    "language": "Language",
-    "theme": "Theme",
-    "dark_mode": "Dark Mode",
-    "phoneNumber": "Phone Number",
-    "address": "Address",
-    "seeMore": "See More",
-
-    "about": "About",
+    "courses": "Courses",
+    "about": "About Us",
     "contact": "Contact",
-
-    "teacher": "Teacher",
-    "consultant": "Consultant",
-    "academic": "Academic",
-    "active": "Active",
-    "inactive": "Inactive",
-    "searchStaff": "Search Staff",
-    "allStaff": "All Staff",
-    "addStaff": "Add Staff",
-    "addNewStaff": "Add New Staff",
-    "avatar": "Avatar",
-    "staffName": "Staff Name",
-    "status": "Status",
-    "role": "Role",
-    "add": "Add",
-    "cancel": "Cancel",
-    "sex": "Gender",
-    "male": "Male",
-    "female": "Female",
-    "citizenID": "Citizen ID",
-    "street": "Street",
-    "city": "City",
-    "country": "Country",
-    "addNewCertificate": "Add New Certificate",
-    "addCertificate": "Add Certificate",
-    "close": "Close",
-    "staffInfo": "Staff Info",
-    "certificateName": "Certificate Name",
-    "receivedDate": "Received Date",
-    "expirationDate": "Expiration Date",
-    "action": "Action",
-    "viewCertificates": "View Certificates",
-    "hideCertificates": "Hide Certificates",
-    "certificateList": "Certificate List",
-    "editInfo": "Edit Info",
-    "searchClass": "Search class",
-    "addClass": "Add Class",
-    "addNewClass": "Add New Class",
-    "className": "Class Name",
-    "course": "Course",
-    "quantity": "Quantity",
-    "status": "Status",
-    "createdAt": "Created At",
-    "allCourses": "All Courses",
-    "allTeachers": "All Teachers",
-    "selectCourse": "Select Course",
-    "selectDateRange": "Select Date Range",
-    "invalidClassName": "Class name is required and can only contain letters, numbers, spaces, &, or -",
-    "courseRequired": "Course is required",
-    "invalidQuantity": "Quantity must be a non-negative number",
-    "failedToCreateClass": "Failed to create class",
-    "showing": "Showing",
-    "of": "of",
-    "classes": "classes",
-    "page": "Page",
-    "previous": "Previous",
-    "next": "Next",
-    "seeMore": "See More",
-    "add": "Add",
-    "cancel": "Cancel",
-    "Incomplete": "Incomplete",
-    "Active": "Active",
-    "Completed": "Completed",
-    "N/A": "N/A",
-    "teacher": "Teacher",
-    "teachers": "Teachers",
-    "dateBegin": "Start Date",
-    "addCourse": "Add Course",
-    "header": {
-        "logo": "Training Center",
-        "home": "Home",
-        "courses": "Courses",
-        "about": "About Us",
-        "contact": "Contact",
-        "login": "Login",
-        "logout": "Logout"
+    "login": "Login",
+    "logout": "Logout"
+  },
+  "hero": {
+    "headline": "Empowering Your Future with English and IT Skills",
+    "subheadline": "Join our expert-led courses and transform your career today.",
+    "cta": "Explore Courses"
+  },
+  "featuredCourses": {
+    "title": "Featured Courses",
+    "learnMore": "Learn More",
+    "course1": {
+      "title": "Advanced English",
+      "description": "Master advanced English skills with our expert-led course."
     },
-    "hero": {
-        "headline": "Empowering Your Future with English and IT Skills",
-        "subheadline": "Join our expert-led courses and transform your career today.",
-        "cta": "Explore Courses"
+    "course2": {
+      "title": "Web Development",
+      "description": "Learn modern web development techniques and frameworks."
     },
-    "featuredCourses": {
-        "title": "Featured Courses",
-        "learnMore": "Learn More",
-        "course1": {
-            "title": "Advanced English",
-            "description": "Master advanced English skills with our expert-led course."
-        },
-        "course2": {
-            "title": "Web Development",
-            "description": "Learn modern web development techniques and frameworks."
-        },
-        "course3": {
-            "title": "Data Science",
-            "description": "Explore data science and machine learning fundamentals."
-        }
-    },
-    "whyChooseUs": {
-        "title": "Why Choose Us",
-        "benefit1": {
-            "title": "Expert Instructors",
-            "description": "Learn from industry professionals with years of experience."
-        },
-        "benefit2": {
-            "title": "Flexible Schedules",
-            "description": "Choose learning times that fit your busy lifestyle."
-        },
-        "benefit3": {
-            "title": "Industry-Recognized Certifications",
-            "description": "Earn certifications that are valued by employers worldwide."
-        }
-    },
-    "testimonials": {
-        "title": "Student Testimonials",
-        "testimonial1": {
-            "name": "John Doe",
-            "quote": "The courses here transformed my career. Highly recommended!"
-        },
-        "testimonial2": {
-            "name": "Jane Smith",
-            "quote": "Flexible schedules and expert instructors made learning easy."
-        },
-        "testimonial3": {
-            "name": "Mike Johnson",
-            "quote": "I earned a certification that helped me land my dream job."
-        }
-    },
-    "statistics": {
-        "title": "Statistics and Achievements",
-        "students": "Students Trained",
-        "courses": "Courses Offered",
-        "successRate": "Success Rate"
-    },
-    "latestNews": {
-        "title": "Latest News / Blog",
-        "readMore": "Read More",
-        "news1": {
-            "title": "New Course Launch",
-            "excerpt": "We are excited to announce our new advanced English course starting next month."
-        },
-        "news2": {
-            "title": "Student Success Story",
-            "excerpt": "Meet Jane, who transformed her career after completing our web development course."
-        },
-        "news3": {
-            "title": "Upcoming Events",
-            "excerpt": "Join our free workshop on data science fundamentals next weekend."
-        }
-    },
-    "partners": {
-        "title": "Our Partners",
-        "partner1": {
-            "name": "Partner 1"
-        },
-        "partner2": {
-            "name": "Partner 2"
-        },
-        "partner3": {
-            "name": "Partner 3"
-        },
-        "partner4": {
-            "name": "Partner 4"
-        }
-    },
-    "contactForm": {
-        "title": "Contact Us",
-        "name": "Name",
-        "email": "Email",
-        "subject": "Subject",
-        "message": "Message",
-        "submit": "Submit"
-    },
-    "footer": {
-        "quickLinksTitle": "Quick Links",
-        "quickLinks": {
-            "home": "Home",
-            "courses": "Courses",
-            "about": "About Us",
-            "contact": "Contact"
-        },
-        "socialMediaTitle": "Follow Us",
-        "newsletterTitle": "Subscribe to Our Newsletter",
-        "newsletterPlaceholder": "Enter your email",
-        "newsletterSubmit": "Subscribe",
-        "copyright": "© 2023 Training Center. All rights reserved."
+    "course3": {
+      "title": "Data Science",
+      "description": "Explore data science and machine learning fundamentals."
     }
+  },
+  "whyChooseUs": {
+    "title": "Why Choose Us",
+    "benefit1": {
+      "title": "Expert Instructors",
+      "description": "Learn from industry professionals with years of experience."
+    },
+    "benefit2": {
+      "title": "Flexible Schedules",
+      "description": "Choose learning times that fit your busy lifestyle."
+    },
+    "benefit3": {
+      "title": "Industry-Recognized Certifications",
+      "description": "Earn certifications that are valued by employers worldwide."
+    }
+  },
+  "testimonials": {
+    "title": "Student Testimonials",
+    "testimonial1": {
+      "name": "John Doe",
+      "quote": "The courses here transformed my career. Highly recommended!"
+    },
+    "testimonial2": {
+      "name": "Jane Smith",
+      "quote": "Flexible schedules and expert instructors made learning easy."
+    },
+    "testimonial3": {
+      "name": "Mike Johnson",
+      "quote": "I earned a certification that helped me land my dream job."
+    }
+  },
+  "statistics": {
+    "title": "Statistics and Achievements",
+    "students": "Students Trained",
+    "courses": "Courses Offered",
+    "successRate": "Success Rate"
+  },
+  "latestNews": {
+    "title": "Latest News / Blog",
+    "readMore": "Read More",
+    "news1": {
+      "title": "New Course Launch",
+      "excerpt": "We are excited to announce our new advanced English course starting next month."
+    },
+    "news2": {
+      "title": "Student Success Story",
+      "excerpt": "Meet Jane, who transformed her career after completing our web development course."
+    },
+    "news3": {
+      "title": "Upcoming Events",
+      "excerpt": "Join our free workshop on data science fundamentals next weekend."
+    }
+  },
+  "partners": {
+    "title": "Our Partners",
+    "partner1": {
+      "name": "Partner 1"
+    },
+    "partner2": {
+      "name": "Partner 2"
+    },
+    "partner3": {
+      "name": "Partner 3"
+    },
+    "partner4": {
+      "name": "Partner 4"
+    }
+  },
+  "contactForm": {
+    "title": "Contact Us",
+    "name": "Name",
+    "email": "Email",
+    "subject": "Subject",
+    "message": "Message",
+    "submit": "Submit"
+  },
+  "footer": {
+    "quickLinksTitle": "Quick Links",
+    "quickLinks": {
+      "home": "Home",
+      "courses": "Courses",
+      "about": "About Us",
+      "contact": "Contact"
+    },
+    "socialMediaTitle": "Follow Us",
+    "newsletterTitle": "Subscribe to Our Newsletter",
+    "newsletterPlaceholder": "Enter your email",
+    "newsletterSubmit": "Subscribe",
+    "copyright": "© 2023 Training Center. All rights reserved."
+  },
+  "userManagemetn": "User Management"
 }

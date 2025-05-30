@@ -177,7 +177,7 @@ const ClassManagement = () => {
   };
 
   return (
-    <div className="container mt-4">
+    <div className="container-fluid mt-4 px-3">
       {/* Thanh tìm kiếm và lọc */}
       <div className="d-flex flex-wrap gap-2 align-items-center mb-4">
         {/* Tìm kiếm */}

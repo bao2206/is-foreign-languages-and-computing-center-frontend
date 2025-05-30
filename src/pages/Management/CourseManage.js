@@ -308,8 +308,14 @@ const CourseCard = ({ course, onUpdate }) => {
                 </label>
               </div>
               <div className="flex justify-end gap-2">
-                <Button onClick={handleSave}>Save</Button>
-                <Button onClick={handleCancel} variant="outline">
+                <Button className="text-white" onClick={handleSave}>
+                  Save
+                </Button>
+                <Button
+                  className="text-white"
+                  onClick={handleCancel}
+                  variant="outline"
+                >
                   Cancel
                 </Button>
               </div>
@@ -333,7 +339,9 @@ const CourseCard = ({ course, onUpdate }) => {
                 <p>
                   <strong>Status:</strong> {course.status}
                 </p>
-                <Button onClick={handleEdit}>Chỉnh sửa</Button>
+                <Button className="text-white" onClick={handleEdit}>
+                  Chỉnh sửa
+                </Button>
               </div>
               {course.is_special && (
                 <p className="text-red-500 font-semibold">Special Course</p>
@@ -465,8 +473,8 @@ const CourseList = () => {
   };
 
   return (
-    <div className="container mt-4">
-      <div className="flex items-center gap-4 flex-wrap mb-4">
+    <div className="container-fluid mt-4 px-3">
+      <div className="flex items-center gap-4 flex-wrap mb-4 flex-md-nowrap align-items-center">
         <div className="flex-1 max-w-md">
           <input
             type="text"
@@ -487,14 +495,15 @@ const CourseList = () => {
           <option value="special">{t("Special")}</option>
           <option value="non-special">{t("Non-Special")}</option>
         </select>
-        <Button onClick={() => setIsAddDialogOpen(true)}>
+        <Button className="text-white" onClick={() => setIsAddDialogOpen(true)}>
           {t("addCourse")}
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+      {/* Grid with 4 columns for CourseCard */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {filteredCourses.map((course) => (
-          <div key={course._id} className="mb-4">
+          <div key={course._id}>
             <CourseCard course={course} onUpdate={handleUpdateCourse} />
           </div>
         ))}
@@ -646,8 +655,11 @@ const CourseList = () => {
               </label>
             </div>
             <div className="flex justify-end gap-2">
-              <Button onClick={handleAddCourse}>{t("add")}</Button>
+              <Button className="text-white" onClick={handleAddCourse}>
+                {t("add")}
+              </Button>
               <Button
+                className="text-white"
                 onClick={() => {
                   setIsAddDialogOpen(false);
                   setNewCourse({

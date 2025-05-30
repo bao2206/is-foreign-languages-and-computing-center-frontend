@@ -1,223 +1,213 @@
 {
-    "managementSytem" : "Hệ thống quản lý",
-    
-    "home" : "Trang chủ",
-    "staffManagement" : "Quản lý nhân viên",
-    "staffList" : "Danh sách nhân viên",
-    "courseManagement" : "Quản lý khóa học",
-    
-    
-    "login" : "Đăng nhập",
-    "logout" : "Đăng xuất",
-    "register" : "Đăng ký",
-    "email" : "Email",
-    "password" : "Mật khẩu",
-    "confirm_password" : "Xác nhận mật khẩu",
-    "forgot_password" : "Quên mật khẩu?",
-    "reset_password" : "Đặt lại mật khẩu",
-    "send_reset_link" : "Gửi liên kết đặt lại",
-    "dashboard" : "Bảng điều khiển",
-    "settings" : "Cài đặt",
-    "profile" : "Hồ sơ",
-    "language" : "Ngôn ngữ",
-    "theme" : "Chủ đề",
-    "dark_mode" : "Chế độ tối",
-    "phoneNumber" : "Số điện thoại",
-    "address" : "Địa chỉ",
-    "seeMore" : "Xem thêm",
-
-    "about" : "Giới thiệu",
-    "contact" : "Liên hệ",
-
-    "teacher": "Giáo viên",
-    "consultant": "Nhân viên tư vấn",
-    "academic": "Học vụ",
-    "active": "Hoạt động",
-    "inactive": "Ngưng hoạt động",
-    "searchStaff": "Tìm kiếm nhân viên",
-    "allStaff": "Tất cả",
-    "addStaff": "Thêm nhân viên",
-    "addNewStaff": "Thêm nhân viên mới",
-    "avatar": "Ảnh đại diện",
-    "staffName": "Tên nhân viên",
-    "Email": "Email",
-    "status": "Trạng thái",
-    "role": "Vai trò",
-    "add": "Thêm",
-    "cancel": "Hủy bỏ",
-    "sex": "Giới tính",
-    "male": "Nam",
-    "female": "Nữ",
-    "citizenID": "Số căn cước",
-    "street": "Đường",
-    "city": "Thành phố",
-    "country": "Quốc gia",
-    "addNewCertificate": "Thêm chứng chỉ",
-    "addCertificate": "Thêm",
-    "close": "Đóng",
-    "staffInfo": "Thông tin",
-    "certificateName": "Tên chứng chỉ",
-    "receivedDate": "Ngày nhận",
-    "expirationDate": "Ngày hết hạn",
-    "action": "Hành động",
-    "viewCertificates": "Xem chứng chỉ",
-    "hideCertificates": "Ẩn chứng chỉ",
-    "certificateList": "Chứng chỉ",
-    "editInfo": "Cập nhân thông tin",
-    "certificateName": "Tên chứng chỉ",
-    "receivedDate": "Ngày nhận",
-    "expirationDate": "Ngày hết hạn",
-    "action": "Hành động",
-    "searchClass": "Tìm kiếm lớp học",
-    "addClass": "Thêm Lớp",
-    "addNewClass": "Thêm Lớp Học Mới",
-    "className": "Tên Lớp",
-    "course": "Khóa Học",
-    "quantity": "Số Lượng",
-    "status": "Trạng Thái",
-    "createdAt": "Ngày Tạo",
-    "allCourses": "Tất Cả Khóa Học",
-    "allTeachers": "Tất Cả Giáo Viên",
-    "selectCourse": "Chọn Khóa Học",
-    "selectDateRange": "Chọn Khoảng Thời Gian",
-    "invalidClassName": "Tên lớp bắt buộc và chỉ chứa chữ, số, dấu cách, &, hoặc -",
-    "courseRequired": "Khóa học là bắt buộc",
-    "invalidQuantity": "Số lượng phải là số không âm",
-    "failedToCreateClass": "Không thể tạo lớp học",
-    "showing": "Hiển thị",
-    "of": "trong",
-    "classes": "lớp học",
-    "page": "Trang",
-    "previous": "Trước",
-    "next": "Tiếp",
-    "seeMore": "Xem Thêm",
-    "add": "Thêm",
-    "cancel": "Hủy",
-    "Incomplete": "Chưa Hoàn Thành",
-    "Active": "Hoạt Động",
-    "Completed": "Hoàn Thành",
-    "N/A": "Không Có",
-    "teacher": "Giáo Viên",
-    "teachers": "Giáo Viên",
-    "dateBegin": "Ngày Bắt Đầu",
-    "addCourse": "Thêm Khóa Học",
-    "header": {
-        "logo": "Trung Tâm Đào Tạo",
-        "home": "Trang Chủ",
-        "courses": "Khóa Học",
-        "about": "Về Chúng Tôi",
-        "contact": "Liên Hệ",
-        "login": "Đăng Nhập",
-        "logout": "Đăng Xuất"
+  "managementSystem": "Hệ thống quản lý",
+  "home": "Trang chủ",
+  "staffManagement": "Quản lý nhân viên",
+  "staffList": "Danh sách nhân viên",
+  "courseManagement": "Quản lý khóa học",
+  "login": "Đăng nhập",
+  "logout": "Đăng xuất",
+  "register": "Đăng ký",
+  "email": "Email",
+  "password": "Mật khẩu",
+  "confirm_password": "Xác nhận mật khẩu",
+  "forgot_password": "Quên mật khẩu?",
+  "reset_password": "Đặt lại mật khẩu",
+  "send_reset_link": "Gửi liên kết đặt lại",
+  "dashboard": "Bảng điều khiển",
+  "settings": "Cài đặt",
+  "profile": "Hồ sơ",
+  "language": "Ngôn ngữ",
+  "theme": "Chủ đề",
+  "dark_mode": "Chế độ tối",
+  "phoneNumber": "Số điện thoại",
+  "address": "Địa chỉ",
+  "seeMore": "Xem thêm",
+  "about": "Giới thiệu",
+  "contact": "Liên hệ",
+  "teacher": "Giáo viên",
+  "consultant": "Nhân viên tư vấn",
+  "academic": "Học vụ",
+  "active": "Hoạt động",
+  "inactive": "Ngưng hoạt động",
+  "searchStaff": "Tìm kiếm nhân viên",
+  "allStaff": "Tất cả",
+  "addStaff": "Thêm nhân viên",
+  "addNewStaff": "Thêm nhân viên mới",
+  "avatar": "Ảnh đại diện",
+  "staffName": "Tên nhân viên",
+  "status": "Trạng thái",
+  "role": "Vai trò",
+  "add": "Thêm",
+  "cancel": "Hủy bỏ",
+  "sex": "Giới tính",
+  "male": "Nam",
+  "female": "Nữ",
+  "citizenID": "Số căn cước",
+  "street": "Đường",
+  "city": "Thành phố",
+  "country": "Quốc gia",
+  "addNewCertificate": "Thêm chứng chỉ",
+  "addCertificate": "Thêm",
+  "close": "Đóng",
+  "staffInfo": "Thông tin",
+  "certificateName": "Tên chứng chỉ",
+  "receivedDate": "Ngày nhận",
+  "expirationDate": "Ngày hết hạn",
+  "action": "Hành động",
+  "viewCertificates": "Xem chứng chỉ",
+  "hideCertificates": "Ẩn chứng chỉ",
+  "certificateList": "Chứng chỉ",
+  "editInfo": "Cập nhật thông tin",
+  "searchClass": "Tìm kiếm lớp học",
+  "addClass": "Thêm Lớp",
+  "addNewClass": "Thêm Lớp Học Mới",
+  "className": "Tên Lớp",
+  "course": "Khóa Học",
+  "quantity": "Số Lượng",
+  "createdAt": "Ngày Tạo",
+  "allCourses": "Tất Cả Khóa Học",
+  "allTeachers": "Tất Cả Giáo Viên",
+  "selectCourse": "Chọn Khóa Học",
+  "selectDateRange": "Chọn Khoảng Thời Gian",
+  "invalidClassName": "Tên lớp bắt buộc và chỉ chứa chữ, số, dấu cách, &, hoặc -",
+  "courseRequired": "Khóa học là bắt buộc",
+  "invalidQuantity": "Số lượng phải là số không âm",
+  "failedToCreateClass": "Không thể tạo lớp học",
+  "showing": "Hiển thị",
+  "of": "trong",
+  "classes": "lớp học",
+  "page": "Trang",
+  "previous": "Trước",
+  "next": "Tiếp",
+  "Incomplete": "Chưa Hoàn Thành",
+  "Active": "Hoạt Động",
+  "Completed": "Hoàn Thành",
+  "N/A": "Không Có",
+  "parent": "Phụ Huynh",
+  "teachers": "Giáo Viên",
+  "dateBegin": "Ngày Bắt Đầu",
+  "addCourse": "Thêm Khóa Học",
+  "allRoles": "Tất Cả Vai Trò",
+  "edit": "Chỉnh Sửa",
+  "classManagement": "Quản Lý Lớp Học",
+  "header": {
+    "logo": "Trung Tâm Đào Tạo",
+    "home": "Trang Chủ",
+    "courses": "Khóa Học",
+    "about": "Về Chúng Tôi",
+    "contact": "Liên Hệ",
+    "login": "Đăng Nhập",
+    "logout": "Đăng Xuất"
+  },
+  "hero": {
+    "headline": "Nâng Tầm Tương Lai Của Bạn Với Kỹ Năng Tiếng Anh và CNTT",
+    "subheadline": "Tham gia các khóa học do chuyên gia hướng dẫn và chuyển đổi sự nghiệp của bạn ngay hôm nay.",
+    "cta": "Khám Phá Khóa Học"
+  },
+  "featuredCourses": {
+    "title": "Khóa Học Nổi Bật",
+    "learnMore": "Tìm Hiểu Thêm",
+    "course1": {
+      "title": "Tiếng Anh Nâng Cao",
+      "description": "Làm chủ kỹ năng tiếng Anh nâng cao với khóa học do chuyên gia hướng dẫn."
     },
-    "hero": {
-        "headline": "Nâng Tầm Tương Lai Của Bạn Với Kỹ Năng Tiếng Anh và CNTT",
-        "subheadline": "Tham gia các khóa học do chuyên gia hướng dẫn và chuyển đổi sự nghiệp của bạn ngay hôm nay.",
-        "cta": "Khám Phá Khóa Học"
+    "course2": {
+      "title": "Phát Triển Web",
+      "description": "Học các kỹ thuật và framework phát triển web hiện đại."
     },
-    "featuredCourses": {
-        "title": "Khóa Học Nổi Bật",
-        "learnMore": "Tìm Hiểu Thêm",
-        "course1": {
-            "title": "Tiếng Anh Nâng Cao",
-            "description": "Làm chủ kỹ năng tiếng Anh nâng cao với khóa học do chuyên gia hướng dẫn."
-        },
-        "course2": {
-            "title": "Phát Triển Web",
-            "description": "Học các kỹ thuật và framework phát triển web hiện đại."
-        },
-        "course3": {
-            "title": "Khoa Học Dữ Liệu",
-            "description": "Khám phá kiến thức cơ bản về khoa học dữ liệu và máy học."
-        }
-    },
-    "whyChooseUs": {
-        "title": "Tại Sao Chọn Chúng Tôi",
-        "benefit1": {
-            "title": "Giảng Viên Chuyên Nghiệp",
-            "description": "Học từ các chuyên gia trong ngành với nhiều năm kinh nghiệm."
-        },
-        "benefit2": {
-            "title": "Lịch Học Linh Hoạt",
-            "description": "Chọn thời gian học phù hợp với lịch trình bận rộn của bạn."
-        },
-        "benefit3": {
-            "title": "Chứng Chỉ Được Công Nhận",
-            "description": "Nhận chứng chỉ được đánh giá cao bởi các nhà tuyển dụng trên toàn cầu."
-        }
-    },
-    "testimonials": {
-        "title": "Phản Hồi Từ Học Viên",
-        "testimonial1": {
-            "name": "Nguyễn Văn A",
-            "quote": "Các khóa học ở đây đã thay đổi sự nghiệp của tôi. Rất đáng để tham gia!"
-        },
-        "testimonial2": {
-            "name": "Trần Thị B",
-            "quote": "Lịch học linh hoạt và giảng viên chuyên nghiệp giúp việc học trở nên dễ dàng."
-        },
-        "testimonial3": {
-            "name": "Lê Văn C",
-            "quote": "Tôi đã nhận được chứng chỉ giúp tôi có được công việc mơ ước."
-        }
-    },
-    "statistics": {
-        "title": "Thống Kê và Thành Tựu",
-        "students": "Học Viên Đã Đào Tạo",
-        "courses": "Khóa Học Đã Cung Cấp",
-        "successRate": "Tỷ Lệ Thành Công"
-    },
-    "latestNews": {
-        "title": "Tin Tức / Blog Mới Nhất",
-        "readMore": "Đọc Thêm",
-        "news1": {
-            "title": "Ra Mắt Khóa Học Mới",
-            "excerpt": "Chúng tôi rất vui mừng thông báo khóa học tiếng Anh nâng cao mới sẽ bắt đầu vào tháng tới."
-        },
-        "news2": {
-            "title": "Câu Chuyện Thành Công",
-            "excerpt": "Gặp gỡ Jane, người đã thay đổi sự nghiệp sau khi hoàn thành khóa học phát triển web của chúng tôi."
-        },
-        "news3": {
-            "title": "Sự Kiện Sắp Tới",
-            "excerpt": "Tham gia hội thảo miễn phí về kiến thức cơ bản khoa học dữ liệu vào cuối tuần tới."
-        }
-    },
-    "partners": {
-        "title": "Đối Tác Của Chúng Tôi",
-        "partner1": {
-            "name": "Đối Tác 1"
-        },
-        "partner2": {
-            "name": "Đối Tác 2"
-        },
-        "partner3": {
-            "name": "Đối Tác 3"
-        },
-        "partner4": {
-            "name": "Đối Tác 4"
-        }
-    },
-    "contactForm": {
-        "title": "Liên Hệ Chúng Tôi",
-        "name": "Tên",
-        "email": "Email",
-        "subject": "Chủ Đề",
-        "message": "Tin Nhắn",
-        "submit": "Gửi"
-    },
-    "footer": {
-        "quickLinksTitle": "Liên Kết Nhanh",
-        "quickLinks": {
-            "home": "Trang Chủ",
-            "courses": "Khóa Học",
-            "about": "Về Chúng Tôi",
-            "contact": "Liên Hệ"
-        },
-        "socialMediaTitle": "Theo Dõi Chúng Tôi",
-        "newsletterTitle": "Đăng Ký Nhận Bản Tin",
-        "newsletterPlaceholder": "Nhập email của bạn",
-        "newsletterSubmit": "Đăng Ký",
-        "copyright": "© 2023 Trung Tâm Đào Tạo. Tất cả các quyền được bảo lưu."
+    "course3": {
+      "title": "Khoa Học Dữ Liệu",
+      "description": "Khám phá kiến thức cơ bản về khoa học dữ liệu và máy học."
     }
+  },
+  "whyChooseUs": {
+    "title": "Tại Sao Chọn Chúng Tôi",
+    "benefit1": {
+      "title": "Giảng Viên Chuyên Nghiệp",
+      "description": "Học từ các chuyên gia trong ngành với nhiều năm kinh nghiệm."
+    },
+    "benefit2": {
+      "title": "Lịch Học Linh Hoạt",
+      "description": "Chọn thời gian học phù hợp với lịch trình bận rộn của bạn."
+    },
+    "benefit3": {
+      "title": "Chứng Chỉ Được Công Nhận",
+      "description": "Nhận chứng chỉ được đánh giá cao bởi các nhà tuyển dụng trên toàn cầu."
+    }
+  },
+  "testimonials": {
+    "title": "Phản Hồi Từ Học Viên",
+    "testimonial1": {
+      "name": "Nguyễn Văn A",
+      "quote": "Các khóa học ở đây đã thay đổi sự nghiệp của tôi. Rất đáng để tham gia!"
+    },
+    "testimonial2": {
+      "name": "Trần Thị B",
+      "quote": "Lịch học linh hoạt và giảng viên chuyên nghiệp giúp việc học trở nên dễ dàng."
+    },
+    "testimonial3": {
+      "name": "Lê Văn C",
+      "quote": "Tôi đã nhận được chứng chỉ giúp tôi có được công việc mơ ước."
+    }
+  },
+  "statistics": {
+    "title": "Thống Kê và Thành Tựu",
+    "students": "Học Viên Đã Đào Tạo",
+    "courses": "Khóa Học Đã Cung Cấp",
+    "successRate": "Tỷ Lệ Thành Công"
+  },
+  "latestNews": {
+    "title": "Tin Tức / Blog Mới Nhất",
+    "readMore": "Đọc Thêm",
+    "news1": {
+      "title": "Ra Mắt Khóa Học Mới",
+      "excerpt": "Chúng tôi rất vui mừng thông báo khóa học tiếng Anh nâng cao mới sẽ bắt đầu vào tháng tới."
+    },
+    "news2": {
+      "title": "Câu Chuyện Thành Công",
+      "excerpt": "Gặp gỡ Jane, người đã thay đổi sự nghiệp sau khi hoàn thành khóa học phát triển web của chúng tôi."
+    },
+    "news3": {
+      "title": "Sự Kiện Sắp Tới",
+      "excerpt": "Tham gia hội thảo miễn phí về kiến thức cơ bản khoa học dữ liệu vào cuối tuần tới."
+    }
+  },
+  "partners": {
+    "title": "Đối Tác Của Chúng Tôi",
+    "partner1": {
+      "name": "Đối Tác 1"
+    },
+    "partner2": {
+      "name": "Đối Tác 2"
+    },
+    "partner3": {
+      "name": "Đối Tác 3"
+    },
+    "partner4": {
+      "name": "Đối Tác 4"
+    }
+  },
+  "contactForm": {
+    "title": "Liên Hệ Chúng Tôi",
+    "name": "Tên",
+    "email": "Email",
+    "subject": "Chủ Đề",
+    "message": "Tin Nhắn",
+    "submit": "Gửi"
+  },
+  "footer": {
+    "quickLinksTitle": "Liên Kết Nhanh",
+    "quickLinks": {
+      "home": "Trang Chủ",
+      "courses": "Khóa Học",
+      "about": "Về Chúng Tôi",
+      "contact": "Liên Hệ"
+    },
+    "socialMediaTitle": "Theo Dõi Chúng Tôi",
+    "newsletterTitle": "Đăng Ký Nhận Bản Tin",
+    "newsletterPlaceholder": "Nhập email của bạn",
+    "newsletterSubmit": "Đăng Ký",
+    "copyright": "© 2023 Trung Tâm Đào Tạo. Tất cả các quyền được bảo lưu."
+  },
+  "userManagemetn": "Quản lý người dùng"
 }

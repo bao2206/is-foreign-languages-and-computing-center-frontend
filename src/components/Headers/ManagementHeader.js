@@ -30,13 +30,13 @@ const ManagementHeader = () => {
 
   const navItems = () => {
     return (
-      <div className="flex items-center space-x-4 whitespace-nowrap">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 whitespace-nowrap">
         <Link
           to="/management/staff"
           className="nav-link inline-flex justify-center gap-x-1.5 rounded-md px-2 py-2 text-sm text-black no-underline"
           style={{ textDecoration: "none" }}
         >
-          <b>{t("staffManagement")}</b>
+          <b>{t("userManagemetn")}</b>
         </Link>
         <Link
           to="/management/course"
@@ -44,6 +44,14 @@ const ManagementHeader = () => {
           style={{ textDecoration: "none" }}
         >
           <b>{t("courseManagement")}</b>
+        </Link>
+        <Link
+          to="/management/class"
+          className="nav-link inline-flex justify-center
+          gap-x-1.5 rounded-md px-2 py-2 text-sm text-black no-underline"
+          style={{ textDecoration: "none" }}
+        >
+          <b>{t("classManagement")}</b>
         </Link>
         <div className="relative inline-block text-left">
           <Menu>
