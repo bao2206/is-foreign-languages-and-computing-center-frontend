@@ -90,6 +90,9 @@
   "allRoles": "All Roles",
   "edit": "Edit",
   "classManagement": "Class Management",
+  "student": "Student",
+  "admin": "Admin",
+  "save": "Save",
   "header": {
     "logo": "Training Center",
     "home": "Home",

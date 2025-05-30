@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Dialog } from "@headlessui/react";
-import { Button } from "../components/Button";
+import { Button } from "../Button";
 import { useTranslation } from "react-i18next";
 import {
   updateClass,
   fetchTeachers,
   fetchStudents,
-} from "../services/ClassManagementService";
+} from "../../services/ClassManagementService";
 
 const ClassItem = (props) => {
   const { t } = useTranslation();

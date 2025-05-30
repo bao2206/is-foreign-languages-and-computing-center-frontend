@@ -90,6 +90,9 @@
   "allRoles": "Tất Cả Vai Trò",
   "edit": "Chỉnh Sửa",
   "classManagement": "Quản Lý Lớp Học",
+  "student": "Học Viên",
+  "admin": "Quản Trị Viên",
+  "save": "Lưu",
   "header": {
     "logo": "Trung Tâm Đào Tạo",
     "home": "Trang Chủ",

@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog } from "@headlessui/react";
 import { Button } from "../../components/Button";
 import { useTranslation } from "react-i18next";
@@ -53,11 +53,9 @@ const UserPage = () => {
   useEffect(() => {
     const loadRoles = async () => {
       console.log("Fetching roles...");
-
       try {
         const rolesData = await fetchRoles();
         console.log("Fetched roles:", rolesData);
-
         setRoles(rolesData);
       } catch (error) {
         console.error("Failed to fetch roles:", error);
@@ -186,6 +184,22 @@ const UserPage = () => {
     if (value >= 1 && value <= totalPages) {
       setPage(value);
     }
+  };
+
+  // Callback để cập nhật danh sách khi có thay đổi từ StaffInformation
+  const handleStaffUpdate = (updatedStaff) => {
+    setStaffs((prev) =>
+      prev.map((staff) =>
+        staff._id === updatedStaff._id ? updatedStaff : staff
+      )
+    );
+    setFilteredStaffs((prev) =>
+      prev.map((staff) =>
+        staff._id === updatedStaff._id ? updatedStaff : staff
+      )
+    );
+    setSelectedStaff(null); // Đóng dialog sau khi cập nhật
+    setIsShowDialog(false);
   };
 
   return (
@@ -359,6 +373,7 @@ const UserPage = () => {
             setSelectedStaff(null);
             setIsShowDialog(false);
           }}
+          onUpdate={handleStaffUpdate} // Truyền callback
         />
       )}
 

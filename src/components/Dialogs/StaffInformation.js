@@ -1,8 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import { useTranslation } from "react-i18next";
 import "bootstrap/dist/css/bootstrap.css";
 import { Dialog } from "@headlessui/react";
-import { fetchCertificatesByTeacherId } from "../../services/ManagementStaffService";
+import {
+  fetchCertificatesById,
+  updateUser,
+  updateRole,
+} from "../../services/ManagementStaffService";
+
+import { fetchRoles } from "../../services/RoleService";
 import { Button } from "../Button";
 
 export default function StaffInformation(props) {
@@ -18,8 +24,23 @@ export default function StaffInformation(props) {
     receivedDate: "",
     expirationDate: "",
   });
+  const [roles, setRoles] = useState([]);
 
   useEffect(() => {
+    const loadRoles = async () => {
+      try {
+        const fetchedRoles = await fetchRoles();
+        setRoles(fetchedRoles);
+      } catch (error) {
+        console.error("Error fetching roles:", error);
+      }
+    };
+    loadRoles();
+  }, []);
+
+  useEffect(() => {
+    console.log("StaffInformation props:", props);
+
     if (props.staff) {
       setSelectedStaff(props.staff);
       setEditedStaff(props.staff);
@@ -30,7 +51,7 @@ export default function StaffInformation(props) {
     const loadCertificates = async () => {
       if (selectedStaff?._id) {
         try {
-          const certs = await fetchCertificatesByTeacherId(selectedStaff._id);
+          const certs = await fetchCertificatesById(selectedStaff._id);
           setCertificates(certs);
         } catch (error) {
           console.error("Error fetching certificates:", error);
@@ -42,10 +63,22 @@ export default function StaffInformation(props) {
 
   const handleStaffFieldChange = (e) => {
     const { name, value } = e.target;
-    setEditedStaff((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (name.startsWith("address.")) {
+      const addressField = name.split(".")[1];
+      setEditedStaff((prev) => ({
+        ...prev,
+        address: { ...prev.address, [addressField]: value },
+      }));
+    } else {
+      setEditedStaff((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  };
+
+  const handleViewCertificates = () => {
+    setShowCertificates((prev) => !prev);
   };
 
   const handleNewCertChange = (e) => {
@@ -71,12 +104,30 @@ export default function StaffInformation(props) {
     }
   };
 
-  const handleViewCertificates = () => {
-    setShowCertificates((prev) => !prev);
-  };
-
   const handleEditCertificate = (cert) => {
     setNewCertificate(cert);
+  };
+
+  const handleSaveEdit = async () => {
+    try {
+      // Cập nhật thông tin người dùng (name, email, phone, citizenID, address)
+      const updatedStaff = await updateUser(selectedStaff._id, editedStaff);
+
+      // Kiểm tra và cập nhật role nếu có thay đổi
+      if (editedStaff.role && editedStaff.role !== selectedStaff.role) {
+        await updateRole(selectedStaff._id, editedStaff.role);
+      }
+
+      setSelectedStaff(updatedStaff);
+      setEditStaffMode(false);
+
+      // Gọi callback để thông báo cập nhật thành công
+      if (props.onUpdate) {
+        props.onUpdate(updatedStaff); // Truyền dữ liệu nhân viên đã cập nhật
+      }
+    } catch (error) {
+      alert(t("failedToUpdateUser"));
+    }
   };
 
   const onClose = () => {
@@ -133,6 +184,40 @@ export default function StaffInformation(props) {
                       className="w-full border px-3 py-2 rounded"
                       placeholder={t("citizenID")}
                     />
+                    <input
+                      name="address.street"
+                      value={editedStaff.address?.street || ""}
+                      onChange={handleStaffFieldChange}
+                      className="w-full border px-3 py-2 rounded"
+                      placeholder={t("street")}
+                    />
+                    <input
+                      name="address.city"
+                      value={editedStaff.address?.city || ""}
+                      onChange={handleStaffFieldChange}
+                      className="w-full border px-3 py-2 rounded"
+                      placeholder={t("city")}
+                    />
+                    <input
+                      name="address.country"
+                      value={editedStaff.address?.country || ""}
+                      onChange={handleStaffFieldChange}
+                      className="w-full border px-3 py-2 rounded"
+                      placeholder={t("country")}
+                    />
+                    <select
+                      name="role"
+                      value={editedStaff.role || ""}
+                      onChange={handleStaffFieldChange}
+                      className="w-full border px-3 py-2 rounded"
+                    >
+                      <option value="">{t("selectRole")}</option>
+                      {roles.map((role) => (
+                        <option key={role._id} value={role.name}>
+                          {t(role.name)}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 ) : (
                   <>
@@ -150,14 +235,18 @@ export default function StaffInformation(props) {
                       <strong>{t("citizenID")}:</strong>{" "}
                       {selectedStaff.citizenID || "N/A"}
                     </p>
+                    <p>
+                      <strong>{t("address")}:</strong>{" "}
+                      {`${selectedStaff.address?.street || ""}, ${
+                        selectedStaff.address?.city || ""
+                      }, ${selectedStaff.address?.country || ""}` || t("N/A")}
+                    </p>
+                    <p>
+                      <strong>{t("role")}:</strong>{" "}
+                      {t(selectedStaff.role) || t("N/A")}
+                    </p>
                   </>
                 )}
-                <p>
-                  <strong>{t("address")}:</strong>{" "}
-                  {`${selectedStaff.address?.street || ""}, ${
-                    selectedStaff.address?.city || ""
-                  }, ${selectedStaff.address?.country || ""}`}
-                </p>
                 <div className="mt-3 flex gap-2 text-white">
                   <Button onClick={handleViewCertificates}>
                     {showCertificates
@@ -166,9 +255,12 @@ export default function StaffInformation(props) {
                   </Button>
                   <Button
                     variant="outline"
-                    onClick={() => setEditStaffMode((prev) => !prev)}
+                    onClick={() => {
+                      if (editStaffMode) handleSaveEdit();
+                      else setEditStaffMode(true);
+                    }}
                   >
-                    {editStaffMode ? t("saveInfo") : t("editInfo")}
+                    {editStaffMode ? t("save") : t("editInfo")}
                   </Button>
                 </div>
 
