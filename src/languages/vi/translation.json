@@ -212,5 +212,11 @@
     "newsletterSubmit": "Đăng Ký",
     "copyright": "© 2023 Trung Tâm Đào Tạo. Tất cả các quyền được bảo lưu."
   },
-  "userManagemetn": "Quản lý người dùng"
+  "userManagemetn": "Quản lý người dùng",
+  "certificateInformation": "Thông tin chứng chỉ",
+  "comfirmAction": "Xác nhận hành động",
+  "confirmMessage": "Thông báo xác nhận",
+  "confirm": "Xác nhận",
+  "delete": "Xóa",
+  "deleteCertificate": "Xóa chứng chỉ"
 }

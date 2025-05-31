@@ -212,5 +212,12 @@
     "newsletterSubmit": "Subscribe",
     "copyright": "© 2023 Training Center. All rights reserved."
   },
-  "userManagemetn": "User Management"
+  "userManagemetn": "User Management",
+  "certificateInformation": "Certificate information",
+  "comfirmAction": "Confirm Action",
+  "confirmMessage": "Comfirm message",
+  "confirm": "Comfirm",
+  "delete": "Detele",
+  "deleteCertificate": "Delete certificate",
+  "confirmDeleteCertificate": "Confirm detele certificate"
 }

@@ -39,8 +39,6 @@ export const fetchStaffs = async ({
       avatar: user.avatar || "https://via.placeholder.com/100", // Giả định có trường avatar
     }));
 
-    console.log("Fetched staffs:", users);
-
     return {
       users,
       total: response.data.total,
@@ -78,27 +76,9 @@ export const uploadImages = async (file, multiple = false) => {
   // Logic upload ảnh giữ nguyên
 };
 
-export const fetchCertificatesById = async (id) => {
-  try {
-    const url = `${BASE_URL}certificates/`;
-    const response = await axios.get(url, {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      params: { id }, // truyền teacherId vào param
-    });
-    return response.data;
-  } catch (error) {
-    console.error(
-      "Failed to fetch certificates by teacher ID:",
-      error.response?.data || error.message
-    );
-    throw new Error("Failed to fetch certificates");
-  }
-};
-
 export const updateUser = async (userId, userData) => {
   // Remove 'role' from userData if it exists
   const { role, ...dataWithoutRole } = userData;
-  console.log("Updating user:", userId, "with data:", dataWithoutRole);
 
   try {
     const url = `${BASE_URL}info/${userId}`;
@@ -117,8 +97,6 @@ export const updateUser = async (userId, userData) => {
 };
 
 export const updateRole = async (userId, roleData) => {
-  console.log("Updating role for user:", userId);
-
   // try {
   //   const url = `${BASE_URL}role/${userId}`;
   //   const response = await axios.put(url, roleData, {
@@ -132,4 +110,73 @@ export const updateRole = async (userId, roleData) => {
   //   );
   //   throw new Error("Failed to update user role");
   // }
+};
+
+export const fetchCertificatesById = async (id) => {
+  try {
+    const url = `${BASE_URL}certificate/`;
+    const response = await axios.get(url, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      params: { id }, // truyền teacherId vào param
+    });
+
+    return response.data.data;
+  } catch (error) {
+    console.error(
+      "Failed to fetch certificates by teacher ID:",
+      error.response?.data || error.message
+    );
+    throw new Error("Failed to fetch certificates");
+  }
+};
+
+export const addCertificate = async (id, certificateData) => {
+  try {
+    const url = `${BASE_URL}certificate/`;
+    const response = await axios.post(url, certificateData, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      params: { id }, // truyền teacherId vào param
+    });
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Failed to add certificate:",
+      error.response?.data || error.message
+    );
+    throw new Error("Failed to add certificate");
+  }
+};
+
+export const updateCertificate = async (certificateData) => {
+  try {
+    const url = `${BASE_URL}certificate/`;
+
+    const response = await axios.put(url, certificateData, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Failed to update certificate:",
+      error.response?.data || error.message
+    );
+    throw new Error("Failed to update certificate");
+  }
+};
+
+export const deleteCertificate = async (id) => {
+  try {
+    const url = `${BASE_URL}certificate/`;
+    const response = await axios.delete(url, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      params: { id }, // truyền certificateId vào param
+    });
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Failed to delete certificate:",
+      error.response?.data || error.message
+    );
+    throw new Error("Failed to delete certificate");
+  }
 };
