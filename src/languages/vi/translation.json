@@ -218,5 +218,10 @@
   "confirmMessage": "Thông báo xác nhận",
   "confirm": "Xác nhận",
   "delete": "Xóa",
-  "deleteCertificate": "Xóa chứng chỉ"
+  "deleteCertificate": "Xóa chứng chỉ",
+  "addTeacher": "Thêm giáo viên",
+  "addStudentAndTeacher": "Thêm học viên và giáo viên",
+  "students": "Học viên",
+  "addStudent": "Thêm học viên",
+  "noAvailableStudents": "Không có học viên "
 }

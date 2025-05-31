@@ -92,8 +92,33 @@ export const createClass = async (classData) => {
 };
 
 export const fetchStudents = async () => {
-  const response = await axios.get(`${BASE_URL}/students`);
-  return response.data;
+  // const response = await axios.get(`${BASE_URL}/students`);
+  return [];
 };
 
-export const updateClass = async (classId, updatedData) => {};
+export const updateClass = async (updatedData) => {
+  try {
+    const query = {
+      action: "updateClass",
+      classId: updatedData._id,
+      data: updatedData,
+    };
+    const response = await axios.put(`${BASE_URL}update/`, query, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    });
+
+    console.log("Update class response:", response.data);
+
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Failed to update class:",
+      error.response?.data || error.message
+    );
+    throw new Error("Failed to update class");
+  }
+};
+
+export const getStudentRegister = async (courseId) => {
+  return {};
+};

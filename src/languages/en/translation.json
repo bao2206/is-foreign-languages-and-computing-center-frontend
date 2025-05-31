@@ -219,5 +219,12 @@
   "confirm": "Comfirm",
   "delete": "Detele",
   "deleteCertificate": "Delete certificate",
-  "confirmDeleteCertificate": "Confirm detele certificate"
+  "confirmDeleteCertificate": "Confirm detele certificate",
+  "addTeacher": "Add Teacher",
+  "noAvailableTeachers": "No available teachers",
+  "alreadyAdded": "Added",
+  "addStudent": "Add student",
+  "noAvailableStudents": "No available students",
+  "addStudentAndTeacher": "Add student and teacher",
+  "students": "Students"
 }

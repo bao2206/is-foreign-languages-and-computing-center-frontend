@@ -3,10 +3,7 @@ import { Dialog } from "@headlessui/react";
 import { Button } from "../../components/Button";
 import { useTranslation } from "react-i18next";
 import StaffInformation from "../../components/Dialogs/StaffInformation";
-import {
-  fetchStaffs,
-  createStaff,
-} from "../../services/ManagementStaffService";
+import { fetchUsers, createStaff } from "../../services/ManagementUserService";
 import { fetchRoles } from "../../services/RoleService";
 import uploadImages from "../../services/UploadFile";
 import "bootstrap/dist/css/bootstrap.css";
@@ -68,7 +65,7 @@ const UserPage = () => {
     const loadData = async () => {
       const statusFilter = filter !== "" ? filter : undefined;
 
-      const { users, total, currentPage, totalPages } = await fetchStaffs({
+      const { users, total, currentPage, totalPages } = await fetchUsers({
         role: roleFilter, // Lọc theo role
         search: searchTerm, // Tìm kiếm theo tên
         status: statusFilter, // Lọc theo trạng thái

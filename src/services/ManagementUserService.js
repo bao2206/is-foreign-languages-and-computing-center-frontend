@@ -5,7 +5,7 @@ const BASE_URL =
   `${process.env.REACT_APP_API_BASE_URL}users/` ||
   "http://localhost:8080/api/users/";
 
-export const fetchStaffs = async ({
+export const fetchUsers = async ({
   role,
   search,
   status,

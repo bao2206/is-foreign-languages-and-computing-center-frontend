@@ -9,7 +9,7 @@ import {
   addCertificate,
   updateCertificate,
   deleteCertificate,
-} from "../../services/ManagementStaffService";
+} from "../../services/ManagementUserService";
 
 import { fetchRoles } from "../../services/RoleService";
 import { Button } from "../Button";
