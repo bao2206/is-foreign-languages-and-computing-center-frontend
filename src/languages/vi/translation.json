@@ -194,9 +194,24 @@
     "title": "Liên Hệ Chúng Tôi",
     "name": "Tên",
     "email": "Email",
-    "subject": "Chủ Đề",
-    "message": "Tin Nhắn",
-    "submit": "Gửi"
+    "phone": "Số Điện Thoại",
+    "consultationContent": "Nội Dung Tư Vấn",
+    "status": "Trạng thái",
+    "submit": "Gửi",
+    "submitting": "Đang Gửi...",
+    
+    "successMessage": "Cảm ơn bạn đã gửi thông tin! Chúng tôi sẽ liên hệ với bạn sớm.",
+    "errorMessage": "Đã xảy ra lỗi khi gửi biểu mẫu. Vui lòng thử lại.",
+    "errors": {
+      "nameRequired": "Vui lòng nhập tên của bạn",
+      "nameLength": "Tên phải từ 2 đến 50 ký tự",
+      "phoneRequired": "Vui lòng nhập số điện thoại của bạn",
+      "phoneInvalid": "Vui lòng nhập số điện thoại Việt Nam hợp lệ",
+      "emailRequired": "Vui lòng nhập email của bạn",
+      "emailInvalid": "Vui lòng nhập địa chỉ email hợp lệ",
+      "contentRequired": "Vui lòng nhập nội dung tư vấn",
+      "contentLength": "Nội dung tư vấn phải có ít nhất 10 ký tự"
+    }
   },
   "footer": {
     "quickLinksTitle": "Liên Kết Nhanh",
@@ -212,5 +227,13 @@
     "newsletterSubmit": "Đăng Ký",
     "copyright": "© 2023 Trung Tâm Đào Tạo. Tất cả các quyền được bảo lưu."
   },
-  "userManagemetn": "Quản lý người dùng"
+  "userManagemetn": "Quản lý người dùng",
+  "contactManagement" : "Quản lý tư vấn",
+  "addNewContact" : "Học viên mới",
+  "allStatus" : "Tất cả",
+  "pending" : "Chưa giải quyết",
+  "processed" : "Đang tiến hành",
+  "cancelled" : "Đã huỷ",
+  "class_assigned" : "Đã xếp lớp",
+    "failedToDeleteContact" : "Xoá"
 }

@@ -15,6 +15,7 @@ export const fetchStaffs = async ({
 }) => {
   try {
     const url = `${BASE_URL}`;
+    // console.log("URL:", url);
     const response = await axios.get(url, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       params: {

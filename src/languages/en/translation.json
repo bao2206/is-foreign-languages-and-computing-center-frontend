@@ -194,9 +194,23 @@
     "title": "Contact Us",
     "name": "Name",
     "email": "Email",
-    "subject": "Subject",
-    "message": "Message",
-    "submit": "Submit"
+    "phone": "Phone Number",
+    "consultationContent": "Consultation Content",
+    "status" : "Status",
+    "submit": "Submit",
+    "submitting": "Submitting...",
+    "successMessage": "Thank you for your submission! We will contact you soon.",
+    "errorMessage": "An error occurred while submitting the form. Please try again.",
+    "errors": {
+      "nameRequired": "Please provide your name",
+      "nameLength": "Name must be between 2 and 50 characters",
+      "phoneRequired": "Please provide your phone number",
+      "phoneInvalid": "Please provide a valid Vietnamese phone number",
+      "emailRequired": "Please provide your email",
+      "emailInvalid": "Please provide a valid email address",
+      "contentRequired": "Please provide your consultation content",
+      "contentLength": "Consultation content must be at least 10 characters long"
+    }
   },
   "footer": {
     "quickLinksTitle": "Quick Links",
@@ -212,5 +226,12 @@
     "newsletterSubmit": "Subscribe",
     "copyright": "© 2023 Training Center. All rights reserved."
   },
-  "userManagemetn": "User Management"
+  "userManagemetn": "User Management",
+  "contactManagement" : "Consulting Management",
+  "addNewContact" : "New student",
+  "allStatus" : "All status",
+  "pending" : "Pending",
+  "processed" : "In progress",
+  "cancelled" : "Cancelled",
+  "class_assigned" : "Class assigned"
 }

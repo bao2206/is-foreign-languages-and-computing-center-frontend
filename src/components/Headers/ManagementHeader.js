@@ -53,6 +53,13 @@ const ManagementHeader = () => {
         >
           <b>{t("classManagement")}</b>
         </Link>
+        <Link
+          to="/management/contact"
+          className="nav-link inline-flex justify-center gap-x-1.5 rounded-md px-2 py-2 text-sm text-black no-underline"
+          style={{ textDecoration: "none" }}
+        >
+          <b>{t("contactManagement")}</b>
+        </Link>
         <div className="relative inline-block text-left">
           <Menu>
             <div className="flex items-center">
