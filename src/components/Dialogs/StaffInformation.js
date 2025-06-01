@@ -6,7 +6,10 @@ import {
   fetchCertificatesById,
   updateUser,
   updateRole,
-} from "../../services/ManagementStaffService";
+  addCertificate,
+  updateCertificate,
+  deleteCertificate,
+} from "../../services/ManagementUserService";
 
 import { fetchRoles } from "../../services/RoleService";
 import { Button } from "../Button";
@@ -21,10 +24,21 @@ export default function StaffInformation(props) {
   const [editedStaff, setEditedStaff] = useState({});
   const [newCertificate, setNewCertificate] = useState({
     certificateName: "",
+    information: "",
     receivedDate: "",
     expirationDate: "",
   });
   const [roles, setRoles] = useState([]);
+
+  // State for editing certificate dialog
+  const [editCertDialogOpen, setEditCertDialogOpen] = useState(false);
+  const [editingCertificate, setEditingCertificate] = useState(null);
+  const [editingCertData, setEditingCertData] = useState({
+    certificateName: "",
+    information: "",
+    receivedDate: "",
+    expirationDate: "",
+  });
 
   useEffect(() => {
     const loadRoles = async () => {
@@ -39,8 +53,6 @@ export default function StaffInformation(props) {
   }, []);
 
   useEffect(() => {
-    console.log("StaffInformation props:", props);
-
     if (props.staff) {
       setSelectedStaff(props.staff);
       setEditedStaff(props.staff);
@@ -92,20 +104,74 @@ export default function StaffInformation(props) {
   const handleAddCertificate = () => {
     if (
       newCertificate.certificateName &&
+      newCertificate.information &&
       newCertificate.receivedDate &&
       newCertificate.expirationDate
     ) {
-      setCertificates((prev) => [...prev, newCertificate]);
-      setNewCertificate({
-        certificateName: "",
-        receivedDate: "",
-        expirationDate: "",
-      });
+      addCertificate(selectedStaff._id, newCertificate)
+        .then((addedCertificate) => {
+          setCertificates((prev) => [...prev, newCertificate]);
+          setNewCertificate({
+            certificateName: "",
+            information: "",
+            receivedDate: "",
+            expirationDate: "",
+          });
+        })
+        .catch((error) => {
+          console.error("Error adding certificate:", error);
+          alert(t("failedToAddCertificate"));
+        });
     }
   };
 
+  // Open edit certificate dialog
   const handleEditCertificate = (cert) => {
-    setNewCertificate(cert);
+    setEditingCertificate(cert);
+    setEditingCertData({
+      certificateName: cert.certificateName || "",
+      information: cert.information || "",
+      receivedDate: cert.receivedDate ? cert.receivedDate.slice(0, 10) : "",
+      expirationDate: cert.expirationDate
+        ? cert.expirationDate.slice(0, 10)
+        : "",
+    });
+    setEditCertDialogOpen(true);
+  };
+
+  // Handle change in edit certificate dialog
+  const handleEditingCertChange = (e) => {
+    const { name, value } = e.target;
+    setEditingCertData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Save edited certificate
+  const handleSaveEditCertificate = async () => {
+    try {
+      // You should have an updateCertificate API in your service
+      if (!editingCertificate || !editingCertificate._id) return;
+      const updatedCert = {
+        ...editingCertificate,
+        ...editingCertData,
+      };
+      // Call your updateCertificate API here
+
+      await updateCertificate(updatedCert);
+      // Update local state
+      setCertificates((prev) =>
+        prev.map((c) =>
+          c._id === editingCertificate._id ? { ...c, ...editingCertData } : c
+        )
+      );
+      setEditCertDialogOpen(false);
+      setEditingCertificate(null);
+      console.log("Certificate updated successfully");
+    } catch (error) {
+      alert(t("failedToUpdateCertificate"));
+    }
   };
 
   const handleSaveEdit = async () => {
@@ -135,6 +201,31 @@ export default function StaffInformation(props) {
     props.onClose();
   };
 
+  // State for delete certificate dialog
+  const [deleteCertDialogOpen, setDeleteCertDialogOpen] = useState(false);
+  const [deletingCertificate, setDeletingCertificate] = useState(null);
+
+  // Open delete certificate dialog
+  const handleDeleteCertificate = (cert) => {
+    setDeletingCertificate(cert);
+    setDeleteCertDialogOpen(true);
+  };
+
+  // Confirm delete certificate
+  const handleConfirmDeleteCertificate = async () => {
+    if (!deletingCertificate || !deletingCertificate._id) return;
+    try {
+      await deleteCertificate(deletingCertificate._id);
+      setCertificates((prev) =>
+        prev.filter((c) => c._id !== deletingCertificate._id)
+      );
+      setDeleteCertDialogOpen(false);
+      setDeletingCertificate(null);
+    } catch (error) {
+      alert(t("failedToDeleteCertificate"));
+    }
+  };
+
   return (
     <div>
       <Dialog
@@ -143,7 +234,7 @@ export default function StaffInformation(props) {
         className="fixed z-50 inset-0 overflow-y-auto"
       >
         <div className="flex items-center justify-center min-h-screen">
-          <Dialog.Panel className="bg-white p-6 rounded-xl shadow-xl max-w-lg w-full">
+          <Dialog.Panel className="bg-white p-6 rounded-xl shadow-xl w-full max-w-4xl">
             {selectedStaff && (
               <div>
                 <h2 className="text-xl font-bold mb-2">{t("staffInfo")}</h2>
@@ -264,17 +355,21 @@ export default function StaffInformation(props) {
                   </Button>
                 </div>
 
+                {/* {NOTE: Show Certificates} */}
                 {showCertificates && (
                   <div className="mt-4">
                     <h3 className="font-semibold mb-2">
                       {t("certificateList")}
                     </h3>
                     <div className="overflow-x-auto">
-                      <table className="min-w-full text-sm text-left border">
+                      <table className="min-w-[900px] w-full text-sm text-left border">
                         <thead className="bg-gray-100">
                           <tr>
                             <th className="border px-2 py-1 whitespace-nowrap">
                               {t("certificateName")}
+                            </th>
+                            <th className="border px-2 py-1 whitespace-nowrap">
+                              {t("certificateInformation")}
                             </th>
                             <th className="border px-2 py-1 whitespace-nowrap">
                               {t("receivedDate")}
@@ -290,7 +385,7 @@ export default function StaffInformation(props) {
                         <tbody>
                           {certificates.map((cert, idx) => (
                             <tr
-                              key={idx}
+                              key={cert._id || idx}
                               className={
                                 new Date(cert.expirationDate) < new Date()
                                   ? "bg-red-100"
@@ -299,6 +394,9 @@ export default function StaffInformation(props) {
                             >
                               <td className="border px-2 py-1 whitespace-nowrap">
                                 {cert.certificateName}
+                              </td>
+                              <td className="border px-2 py-1 whitespace-nowrap">
+                                {cert.information}
                               </td>
                               <td className="border px-2 py-1 whitespace-nowrap">
                                 {new Date(
@@ -310,13 +408,20 @@ export default function StaffInformation(props) {
                                   cert.expirationDate
                                 ).toLocaleDateString()}
                               </td>
-                              <td className="border px-2 py-1 whitespace-nowrap">
+                              <td className="border px-2 py-1 whitespace-nowrap text-white flex gap-2">
                                 <Button
                                   variant="outline"
                                   size="sm"
                                   onClick={() => handleEditCertificate(cert)}
                                 >
                                   {t("edit")}
+                                </Button>
+                                <Button
+                                  variant="danger"
+                                  size="sm"
+                                  onClick={() => handleDeleteCertificate(cert)}
+                                >
+                                  {t("delete")}
                                 </Button>
                               </td>
                             </tr>
@@ -337,6 +442,13 @@ export default function StaffInformation(props) {
                           className="w-full border px-3 py-2 rounded"
                         />
                         <input
+                          name="information"
+                          placeholder={t("certificateInformation")}
+                          value={newCertificate.information}
+                          onChange={handleNewCertChange}
+                          className="w-full border px-3 py-2 rounded"
+                        />
+                        <input
                           name="receivedDate"
                           type="date"
                           value={newCertificate.receivedDate}
@@ -350,7 +462,10 @@ export default function StaffInformation(props) {
                           onChange={handleNewCertChange}
                           className="w-full border px-3 py-2 rounded"
                         />
-                        <Button onClick={handleAddCertificate}>
+                        <Button
+                          className="text-white"
+                          onClick={handleAddCertificate}
+                        >
                           {t("addCertificate")}
                         </Button>
                       </div>
@@ -362,6 +477,122 @@ export default function StaffInformation(props) {
             <div className="mt-4 text-right text-white">
               <Button variant="outline" onClick={onClose}>
                 {t("close")}
+              </Button>
+            </div>
+          </Dialog.Panel>
+        </div>
+      </Dialog>
+
+      {/* Edit Certificate Dialog */}
+      <Dialog
+        open={editCertDialogOpen}
+        onClose={() => setEditCertDialogOpen(false)}
+        className="fixed z-50 inset-0 overflow-y-auto"
+      >
+        <div className="flex items-center justify-center min-h-screen">
+          <Dialog.Panel className="bg-white p-6 rounded-xl shadow-xl w-full max-w-md">
+            <Dialog.Title className="text-lg font-bold mb-4">
+              {t("editCertificate")}
+            </Dialog.Title>
+            <div className="space-y-2">
+              <input
+                name="certificateName"
+                placeholder={t("certificateName")}
+                value={editingCertData.certificateName}
+                onChange={handleEditingCertChange}
+                className="w-full border px-3 py-2 rounded"
+              />
+              <input
+                name="information"
+                placeholder={t("certificateInformation")}
+                value={editingCertData.information}
+                onChange={handleEditingCertChange}
+                className="w-full border px-3 py-2 rounded"
+              />
+              <input
+                name="receivedDate"
+                type="date"
+                value={editingCertData.receivedDate}
+                onChange={handleEditingCertChange}
+                className="w-full border px-3 py-2 rounded"
+              />
+              <input
+                name="expirationDate"
+                type="date"
+                value={editingCertData.expirationDate}
+                onChange={handleEditingCertChange}
+                className="w-full border px-3 py-2 rounded"
+              />
+            </div>
+            <div className="mt-4 flex gap-2 justify-end">
+              <Button
+                className="text-white"
+                variant="outline"
+                onClick={() => setEditCertDialogOpen(false)}
+              >
+                {t("cancel")}
+              </Button>
+              <Button
+                className="text-white"
+                onClick={handleSaveEditCertificate}
+              >
+                {t("save")}
+              </Button>
+            </div>
+          </Dialog.Panel>
+        </div>
+      </Dialog>
+
+      {/* Delete Certificate Confirmation Dialog */}
+      <Dialog
+        open={deleteCertDialogOpen}
+        onClose={() => setDeleteCertDialogOpen(false)}
+        className="fixed z-50 inset-0 overflow-y-auto"
+      >
+        <div className="flex items-center justify-center min-h-screen">
+          <Dialog.Panel className="bg-white p-6 rounded-xl shadow-xl w-full max-w-md">
+            <Dialog.Title className="text-lg font-bold mb-4">
+              {t("deleteCertificate")}
+            </Dialog.Title>
+            <div className="mb-4">{t("confirmDeleteCertificate")}</div>
+            {deletingCertificate && (
+              <div className="mb-4 text-sm text-gray-700">
+                <div>
+                  <strong>{t("certificateName")}:</strong>{" "}
+                  {deletingCertificate.certificateName}
+                </div>
+                <div>
+                  <strong>{t("certificateInformation")}:</strong>{" "}
+                  {deletingCertificate.information}
+                </div>
+                <div>
+                  <strong>{t("receivedDate")}:</strong>{" "}
+                  {new Date(
+                    deletingCertificate.receivedDate
+                  ).toLocaleDateString()}
+                </div>
+                <div>
+                  <strong>{t("expirationDate")}:</strong>{" "}
+                  {new Date(
+                    deletingCertificate.expirationDate
+                  ).toLocaleDateString()}
+                </div>
+              </div>
+            )}
+            <div className="flex gap-2 justify-end">
+              <Button
+                className="text-white"
+                variant="outline"
+                onClick={() => setDeleteCertDialogOpen(false)}
+              >
+                {t("cancel")}
+              </Button>
+              <Button
+                variant="danger"
+                className="text-white"
+                onClick={handleConfirmDeleteCertificate}
+              >
+                {t("delete")}
               </Button>
             </div>
           </Dialog.Panel>

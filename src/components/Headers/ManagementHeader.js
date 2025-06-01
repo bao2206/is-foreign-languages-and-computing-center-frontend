@@ -21,6 +21,9 @@ const ManagementHeader = () => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("username");
+    setUsername("");
+    window.location.href = "/login"; // Redirect to login page
+    window.location.reload(); // Reload the page to reflect the changes
   };
 
   const toggleLanguage = () => {
