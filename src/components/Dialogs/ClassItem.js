@@ -8,6 +8,10 @@ import {
   fetchStudents,
   getStudentRegister,
 } from "../../services/ClassManagementService";
+import {
+  fetchScheduleByClass,
+  createSchedule,
+} from "../../services/ScheduleService";
 
 const ClassItem = (props) => {
   const { t } = useTranslation();
@@ -34,6 +38,25 @@ const ClassItem = (props) => {
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [addType, setAddType] = useState(""); // "student" hoặc "teacher"
 
+  // Dialog lịch học
+  const [isScheduleDialogOpen, setIsScheduleDialogOpen] = useState(false);
+  const [schedules, setSchedules] = useState([]);
+  const [isAddScheduleDialogOpen, setIsAddScheduleDialogOpen] = useState(false);
+  const [scheduleType, setScheduleType] = useState("create"); // "create" | "auto"
+  const [scheduleForm, setScheduleForm] = useState({
+    teacher: "",
+    room: "",
+    date: "",
+    startTime: "",
+    endTime: "",
+    status: "Scheduled",
+    numberOfShift: "",
+    startDate: "",
+    scheduleDays: "",
+  });
+  const [scheduleErrors, setScheduleErrors] = useState({});
+  const [selectedDays, setSelectedDays] = useState([]); // Các ngày được chọn (VD: ["2", "4"])
+
   // Regex cho tên lớp
   const classNameRegex = /^[\w\s&-]+$/;
 
@@ -50,6 +73,15 @@ const ClassItem = (props) => {
       if (addType === "student") fetchStudents().then(setAllStudents);
     }
   }, [isAddDialogOpen, addType]);
+
+  // Fetch schedules khi mở dialog xem lịch học
+  useEffect(() => {
+    if (isScheduleDialogOpen && classItem._id) {
+      console.log("Fetching schedules for class:", classItem);
+
+      fetchScheduleByClass(classItem._id).then(setSchedules);
+    }
+  }, [isScheduleDialogOpen, classItem._id]);
 
   const handleEditClassChange = (e) => {
     const { name, value } = e.target;
@@ -164,6 +196,113 @@ const ClassItem = (props) => {
   const teacherCount = classItem.teachers?.length || 0;
   const studentCount = classItem.students?.length || 0;
 
+  // Lịch học
+  const handleOpenScheduleDialog = () => {
+    setIsScheduleDialogOpen(true);
+  };
+
+  const handleCloseScheduleDialog = () => {
+    setIsScheduleDialogOpen(false);
+    setSchedules([]);
+  };
+
+  // Thêm lịch học
+  const handleOpenAddScheduleDialog = () => {
+    setScheduleType("create");
+    setScheduleForm({
+      teacher: "",
+      room: "",
+      date: "",
+      startTime: "",
+      endTime: "",
+      status: "Scheduled",
+      numberOfShift: classItem.courseId?.numberOfShift || "",
+      startDate: "",
+      scheduleDays: "",
+    });
+    setScheduleErrors({});
+    setSelectedDays([]); // Reset ngày chọn
+    setIsAddScheduleDialogOpen(true);
+  };
+
+  const handleCloseAddScheduleDialog = () => {
+    setIsAddScheduleDialogOpen(false);
+    setScheduleErrors({});
+  };
+
+  const handleScheduleFormChange = (e) => {
+    const { name, value } = e.target;
+    setScheduleForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    setScheduleErrors((prev) => ({ ...prev, [name]: "" }));
+  };
+
+  const handleDayCheckbox = (day) => {
+    setSelectedDays((prev) =>
+      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day].sort()
+    );
+  };
+
+  const validateScheduleForm = () => {
+    const errs = {};
+    if (scheduleType === "create") {
+      if (!scheduleForm.date) errs.date = t("required");
+      if (!scheduleForm.startTime) errs.startTime = t("required");
+      if (!scheduleForm.endTime) errs.endTime = t("required");
+      if (!scheduleForm.status) errs.status = t("required");
+    } else {
+      if (!scheduleForm.numberOfShift || isNaN(scheduleForm.numberOfShift))
+        errs.numberOfShift = t("required");
+      if (!scheduleForm.startDate) errs.startDate = t("required");
+      if (!scheduleForm.startTime) errs.startTime = t("required");
+      if (!scheduleForm.endTime) errs.endTime = t("required");
+      if (selectedDays.length === 0)
+        errs.scheduleDays = t("selectAtLeastOneDay");
+    }
+    setScheduleErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
+  const handleSubmitSchedule = async () => {
+    if (!validateScheduleForm()) return;
+    try {
+      if (scheduleType === "create") {
+        const action = await createSchedule({
+          action: "createSchedule",
+          scheduleData: {
+            classId: classItem._id,
+            teacher: scheduleForm.teacher || undefined,
+            room: scheduleForm.room || undefined,
+            date: scheduleForm.date,
+            startTime: scheduleForm.startTime,
+            endTime: scheduleForm.endTime,
+            status: scheduleForm.status,
+          },
+        });
+      } else {
+        await createSchedule({
+          action: "autoCreateSchedule",
+          scheduleData: {
+            classId: classItem._id,
+            teacher: scheduleForm.teacher || undefined,
+            room: scheduleForm.room || undefined,
+            numberOfShift: scheduleForm.numberOfShift,
+            startDate: scheduleForm.startDate,
+            startTime: scheduleForm.startTime,
+            endTime: scheduleForm.endTime,
+            scheduleDays: selectedDays.map((day) => parseInt(day, 10)), // Chuyển thành mảng số [2, 4]
+          },
+        });
+      }
+      fetchScheduleByClass(classItem._id).then(setSchedules);
+      setIsAddScheduleDialogOpen(false);
+    } catch (e) {
+      alert(t("failedToCreateSchedule"));
+    }
+  };
+
   return (
     <div key={classItem._id} className="col-12 col-md-6 col-lg-3 mb-4">
       <div className="border border-gray-300 rounded-xl p-4 shadow">
@@ -274,10 +413,391 @@ const ClassItem = (props) => {
             </div>
             <div className="modal-footer">
               <Button
+                className="btn btn-outline-info"
+                onClick={handleOpenScheduleDialog}
+              >
+                {t("viewSchedule")}
+              </Button>
+              <Button
                 className="btn btn-secondary"
                 onClick={() => setIsViewDialogOpen(false)}
               >
                 {t("close")}
+              </Button>
+            </div>
+          </div>
+        </Dialog.Panel>
+      </Dialog>
+
+      {/* Dialog Lịch học */}
+      <Dialog
+        open={isScheduleDialogOpen}
+        onClose={handleCloseScheduleDialog}
+        className="modal show d-block"
+        style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+      >
+        <Dialog.Panel className="modal-dialog modal-lg">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title">{t("scheduleList")}</h5>
+              <button
+                type="button"
+                className="btn-close"
+                onClick={handleCloseScheduleDialog}
+              ></button>
+            </div>
+            <div className="modal-body">
+              {schedules.length === 0 ? (
+                <div className="text-muted">
+                  {t("noSchedule") || "Chưa có lịch học"}
+                </div>
+              ) : (
+                <table className="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>{t("dateBegin")}</th>
+                      <th>{t("startTime")}</th>
+                      <th>{t("endTime")}</th>
+                      <th>{t("teacher")}</th>
+                      <th>{t("room")}</th>
+                      <th>{t("status")}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {schedules.map((sch) => (
+                      <tr key={sch._id}>
+                        <td>
+                          {sch.date
+                            ? new Date(sch.date).toLocaleDateString()
+                            : ""}
+                        </td>
+                        <td>{sch.startTime}</td>
+                        <td>{sch.endTime}</td>
+                        <td>{sch.teacher?.name || ""}</td>
+                        <td>{sch.room || ""}</td>
+                        <td>{t(sch.status) || sch.status}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+            <div className="modal-footer">
+              <Button
+                className="btn btn-outline-success"
+                onClick={handleOpenAddScheduleDialog}
+              >
+                {t("addSchedule")}
+              </Button>
+              <Button
+                className="btn btn-secondary"
+                onClick={handleCloseScheduleDialog}
+              >
+                {t("close")}
+              </Button>
+            </div>
+          </div>
+        </Dialog.Panel>
+      </Dialog>
+
+      {/* Dialog Thêm lịch học */}
+      <Dialog
+        open={isAddScheduleDialogOpen}
+        onClose={handleCloseAddScheduleDialog}
+        className="modal show d-block"
+        style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+      >
+        <Dialog.Panel className="modal-dialog modal-md">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title">{t("addSchedule")}</h5>
+              <button
+                type="button"
+                className="btn-close"
+                onClick={handleCloseAddScheduleDialog}
+              ></button>
+            </div>
+            <div className="modal-body">
+              <div className="mb-3">
+                <label className="form-label">{t("scheduleType")}</label>
+                <select
+                  className="form-select"
+                  value={scheduleType}
+                  onChange={(e) => setScheduleType(e.target.value)}
+                >
+                  <option value="create">{t("manualCreate")}</option>
+                  <option value="auto">{t("autoCreate")}</option>
+                </select>
+              </div>
+              {scheduleType === "create" ? (
+                <>
+                  <div className="mb-3">
+                    <label className="form-label">{t("teacher")}</label>
+                    <select
+                      className="form-select"
+                      name="teacher"
+                      value={scheduleForm.teacher}
+                      onChange={handleScheduleFormChange}
+                    >
+                      <option value=""></option>
+                      {classItem.teachers.map((t) => (
+                        <option key={t._id} value={t._id}>
+                          {t.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">{t("room") || "Phòng"}</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="room"
+                      value={scheduleForm.room}
+                      onChange={handleScheduleFormChange}
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">{t("date") || "Ngày"}</label>
+                    <input
+                      type="date"
+                      className={`form-control ${
+                        scheduleErrors.date ? "is-invalid" : ""
+                      }`}
+                      name="date"
+                      value={scheduleForm.date}
+                      onChange={handleScheduleFormChange}
+                    />
+                    {scheduleErrors.date && (
+                      <div className="invalid-feedback">
+                        {scheduleErrors.date}
+                      </div>
+                    )}
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">
+                      {t("startTime") || "Giờ bắt đầu"}
+                    </label>
+                    <input
+                      type="time"
+                      className={`form-control ${
+                        scheduleErrors.startTime ? "is-invalid" : ""
+                      }`}
+                      name="startTime"
+                      value={scheduleForm.startTime}
+                      onChange={handleScheduleFormChange}
+                    />
+                    {scheduleErrors.startTime && (
+                      <div className="invalid-feedback">
+                        {scheduleErrors.startTime}
+                      </div>
+                    )}
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">
+                      {t("endTime") || "Giờ kết thúc"}
+                    </label>
+                    <input
+                      type="time"
+                      className={`form-control ${
+                        scheduleErrors.endTime ? "is-invalid" : ""
+                      }`}
+                      name="endTime"
+                      value={scheduleForm.endTime}
+                      onChange={handleScheduleFormChange}
+                    />
+                    {scheduleErrors.endTime && (
+                      <div className="invalid-feedback">
+                        {scheduleErrors.endTime}
+                      </div>
+                    )}
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">
+                      {t("status") || "Trạng thái"}
+                    </label>
+                    <select
+                      className={`form-select ${
+                        scheduleErrors.status ? "is-invalid" : ""
+                      }`}
+                      name="status"
+                      value={scheduleForm.status}
+                      onChange={handleScheduleFormChange}
+                    >
+                      <option value="Scheduled">
+                        {t("Scheduled") || "Đã lên lịch"}
+                      </option>
+                      <option value="Cancel">{t("Cancel") || "Hủy"}</option>
+                      <option value="make up lesson">
+                        {t("makeUpLesson") || "Bù"}
+                      </option>
+                    </select>
+                    {scheduleErrors.status && (
+                      <div className="invalid-feedback">
+                        {scheduleErrors.status}
+                      </div>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="mb-3">
+                    <label className="form-label">
+                      {t("teacher") || "Giáo viên"}
+                    </label>
+                    <select
+                      className="form-select"
+                      name="teacher"
+                      value={scheduleForm.teacher}
+                      onChange={handleScheduleFormChange}
+                    >
+                      <option value="">{t("optional") || "Không chọn"}</option>
+                      {classItem.teachers.map((t) => (
+                        <option key={t._id} value={t._id}>
+                          {t.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">{t("room") || "Phòng"}</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="room"
+                      value={scheduleForm.room}
+                      onChange={handleScheduleFormChange}
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">
+                      {t("numberOfShifts") || "Số buổi"}
+                    </label>
+                    <input
+                      type="number"
+                      className={`form-control ${
+                        scheduleErrors.numberOfShift ? "is-invalid" : ""
+                      }`}
+                      name="numberOfShift"
+                      value={scheduleForm.numberOfShift}
+                      onChange={handleScheduleFormChange}
+                      min="1"
+                    />
+                    {scheduleErrors.numberOfShift && (
+                      <div className="invalid-feedback">
+                        {scheduleErrors.numberOfShift}
+                      </div>
+                    )}
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">
+                      {t("startDate") || "Ngày bắt đầu"}
+                    </label>
+                    <input
+                      type="date"
+                      className={`form-control ${
+                        scheduleErrors.startDate ? "is-invalid" : ""
+                      }`}
+                      name="startDate"
+                      value={scheduleForm.startDate}
+                      onChange={handleScheduleFormChange}
+                    />
+                    {scheduleErrors.startDate && (
+                      <div className="invalid-feedback">
+                        {scheduleErrors.startDate}
+                      </div>
+                    )}
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">
+                      {t("startTime") || "Giờ bắt đầu"}
+                    </label>
+                    <input
+                      type="time"
+                      className={`form-control ${
+                        scheduleErrors.startTime ? "is-invalid" : ""
+                      }`}
+                      name="startTime"
+                      value={scheduleForm.startTime}
+                      onChange={handleScheduleFormChange}
+                    />
+                    {scheduleErrors.startTime && (
+                      <div className="invalid-feedback">
+                        {scheduleErrors.startTime}
+                      </div>
+                    )}
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">
+                      {t("endTime") || "Giờ kết thúc"}
+                    </label>
+                    <input
+                      type="time"
+                      className={`form-control ${
+                        scheduleErrors.endTime ? "is-invalid" : ""
+                      }`}
+                      name="endTime"
+                      value={scheduleForm.endTime}
+                      onChange={handleScheduleFormChange}
+                    />
+                    {scheduleErrors.endTime && (
+                      <div className="invalid-feedback">
+                        {scheduleErrors.endTime}
+                      </div>
+                    )}
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">
+                      {t("scheduleDays") || "Chọn ngày trong tuần"}
+                    </label>
+                    <div
+                      style={{
+                        maxHeight: "120px",
+                        overflowY: "auto",
+                        border: "1px solid #eee",
+                        borderRadius: "4px",
+                        padding: "8px",
+                      }}
+                    >
+                      {["1", "2", "3", "4", "5", "6", "7"].map((day) => (
+                        <div key={day} className="form-check">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id={`day-${day}`}
+                            checked={selectedDays.includes(day)}
+                            onChange={() => handleDayCheckbox(day)}
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor={`day-${day}`}
+                          >
+                            {t(`day${day}`) || `Thứ ${parseInt(day) - 1}`}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                    {scheduleErrors.scheduleDays && (
+                      <div className="invalid-feedback">
+                        {scheduleErrors.scheduleDays}
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+            <div className="modal-footer">
+              <Button
+                className="btn btn-primary"
+                onClick={handleSubmitSchedule}
+              >
+                {t("save") || "Lưu"}
+              </Button>
+              <Button
+                className="btn btn-secondary"
+                onClick={handleCloseAddScheduleDialog}
+              >
+                {t("cancel") || "Hủy"}
               </Button>
             </div>
           </div>
