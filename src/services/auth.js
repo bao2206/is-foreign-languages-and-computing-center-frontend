@@ -19,11 +19,11 @@ const API = process.env.REACT_APP_API_BASE_URL || "http://localhost:8080/api";
 
 export const loginUser = async (username, password) => {
   try {
-    const response = await axios.post(`${API}/users/login`, {
+    const response = await axios.post(`${API}users/login`, {
       username,
       password,
     });
-    
+
     // Ensure the response includes the role ObjectId
     if (!response.data.user || !response.data.user.role) {
       throw new Error("Invalid user data received from server");

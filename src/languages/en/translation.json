@@ -227,7 +227,6 @@
     "copyright": "© 2023 Training Center. All rights reserved."
   },
   "userManagemetn": "User Management",
-<<<<<<< HEAD
   "contactManagement" : "Consulting Management",
   "addNewContact" : "New student",
   "allStatus" : "All status",
@@ -235,20 +234,4 @@
   "processed" : "In progress",
   "cancelled" : "Cancelled",
   "class_assigned" : "Class assigned"
-=======
-  "certificateInformation": "Certificate information",
-  "comfirmAction": "Confirm Action",
-  "confirmMessage": "Comfirm message",
-  "confirm": "Comfirm",
-  "delete": "Detele",
-  "deleteCertificate": "Delete certificate",
-  "confirmDeleteCertificate": "Confirm detele certificate",
-  "addTeacher": "Add Teacher",
-  "noAvailableTeachers": "No available teachers",
-  "alreadyAdded": "Added",
-  "addStudent": "Add student",
-  "noAvailableStudents": "No available students",
-  "addStudentAndTeacher": "Add student and teacher",
-  "students": "Students"
->>>>>>> 47733b89962e47507e5ab1c8d2a845d12e6f018a
 }

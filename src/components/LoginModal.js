@@ -12,11 +12,12 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!username || !password) return alert("Please enter username and password");
-    
+    if (!username || !password)
+      return alert("Please enter username and password");
+
     try {
       const result = await loginUser(username, password);
-      
+
       // Store token, username, and role ObjectId in localStorage
       localStorage.setItem("token", result.token);
       localStorage.setItem("username", result.user.username);
