@@ -347,24 +347,6 @@ const ClassItem = (props) => {
           >
             {t("edit")}
           </Button>
-          <Button
-            className="btn btn-outline-success"
-            onClick={() => {
-              setAddType("student");
-              setIsAddDialogOpen(true);
-            }}
-          >
-            {t("addStudent")}
-          </Button>
-          <Button
-            className="btn btn-outline-info"
-            onClick={() => {
-              setAddType("teacher");
-              setIsAddDialogOpen(true);
-            }}
-          >
-            {t("addTeacher")}
-          </Button>
         </div>
       </div>
 
@@ -877,10 +859,30 @@ const ClassItem = (props) => {
                       <option value="Completed">{t("Completed")}</option>
                     </select>
                   </div>
+                  {/* Add Student and Add Teacher buttons moved here */}
+                  <div className="d-flex gap-2 mb-3"></div>
                 </>
               )}
             </div>
             <div className="modal-footer">
+              <Button
+                className="btn btn-outline-success"
+                onClick={() => {
+                  setAddType("student");
+                  setIsAddDialogOpen(true);
+                }}
+              >
+                {t("addStudent")}
+              </Button>
+              <Button
+                className="btn btn-outline-info"
+                onClick={() => {
+                  setAddType("teacher");
+                  setIsAddDialogOpen(true);
+                }}
+              >
+                {t("addTeacher")}
+              </Button>
               <Button
                 className="btn btn-primary"
                 onClick={handleSaveEdit}
