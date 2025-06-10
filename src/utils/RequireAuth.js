@@ -3,6 +3,8 @@ import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
 
 export default function RequireAuth() {
+  console.log("Checking authentication...");
+
   const token = localStorage.getItem("token");
 
   // Kiểm tra token còn hạn không (giả sử token là JWT)
