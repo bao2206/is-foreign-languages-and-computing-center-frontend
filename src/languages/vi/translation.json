@@ -19,6 +19,7 @@
   "language": "Ngôn ngữ",
   "theme": "Chủ đề",
   "dark_mode": "Chế độ tối",
+  "light_mode": "Chế độ sáng",
   "phoneNumber": "Số điện thoại",
   "address": "Địa chỉ",
   "seeMore": "Xem thêm",
@@ -268,5 +269,6 @@
   "addSchedule": "Thêm lịch học",
   "noSchedule": "Chưa có lịch học",
   "scheduleList": "Danh sách lịch học",
-  "viewSchedule": "Xem lịch học"
+  "viewSchedule": "Xem lịch học",
+  "Toggle Dark Mode": "Chuyển chế độ tối"
 }

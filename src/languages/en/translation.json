@@ -19,6 +19,7 @@
   "language": "Language",
   "theme": "Theme",
   "dark_mode": "Dark Mode",
+  "light_mode": "Light Mode",
   "phoneNumber": "Phone Number",
   "address": "Address",
   "seeMore": "See More",
@@ -269,5 +270,6 @@
   },
   "addSchedule": "Add Schedule",
   "noSchedule": "No schedule yet",
-  "scheduleList": "Schedule List"
+  "scheduleList": "Schedule List",
+  "Toggle Dark Mode": "Toggle Dark Mode"
 }
