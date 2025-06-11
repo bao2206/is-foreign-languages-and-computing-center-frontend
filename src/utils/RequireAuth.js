@@ -9,11 +9,19 @@ export default function RequireAuth() {
 
   // Kiểm tra token còn hạn không (giả sử token là JWT)
   function isTokenValid(token) {
-    if (!token) return false;
+    if (!token){
+      // localStorage.clear();
+      return false;
+    }
     try {
       const payload = JSON.parse(atob(token.split(".")[1]));
       // exp là thời gian hết hạn tính bằng giây kể từ epoch
-      return payload.exp * 1000 > Date.now();
+      const isValid = payload.exp * 1000 > Date.now();
+      console.log(isValid);
+      if(!isValid){
+        localStorage.clear();
+      }
+      return isValid;
     } catch (e) {
       return false;
     }

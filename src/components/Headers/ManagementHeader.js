@@ -29,9 +29,94 @@ const ManagementHeader = () => {
     i18n.changeLanguage(newLang);
   };
 
+<<<<<<< HEAD
   const toggleDarkMode = () => {
     document.documentElement.classList.toggle("dark");
     setIsDark(document.documentElement.classList.contains("dark"));
+=======
+  const navItems = () => {
+    return (
+      <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 whitespace-nowrap">
+        <Link
+          to="/management/staff"
+          className="nav-link inline-flex justify-center gap-x-1.5 rounded-md px-2 py-2 text-sm text-black no-underline"
+          style={{ textDecoration: "none" }}
+        >
+          <b>{t("userManagemetn")}</b>
+        </Link>
+        <Link
+          to="/management/course"
+          className="nav-link inline-flex justify-center gap-x-1.5 rounded-md px-2 py-2 text-sm text-black no-underline"
+          style={{ textDecoration: "none" }}
+        >
+          <b>{t("courseManagement")}</b>
+        </Link>
+        <Link
+          to="/management/class"
+          className="nav-link inline-flex justify-center
+          gap-x-1.5 rounded-md px-2 py-2 text-sm text-black no-underline"
+          style={{ textDecoration: "none" }}
+        >
+          <b>{t("classManagement")}</b>
+        </Link>
+        <Link
+          to="/management/contact"
+          className="nav-link inline-flex justify-center gap-x-1.5 rounded-md px-2 py-2 text-sm text-black no-underline"
+          style={{ textDecoration: "none" }}
+        >
+          <b>{t("contactManagement")}</b>
+        </Link>
+        <Link
+          to="/management/finance"
+          className="nav-link inline-flex justify-center gap-x-1.5 rounded-md px-2 py-2 text-sm text-black no-underline"
+          style={{ textDecoration: "none" }}
+        >
+          <b>{t("financeManagement")}</b>
+        </Link>
+        <div className="relative inline-block text-left">
+          <Menu>
+            <div className="flex items-center">
+              <MenuButton className="inline-flex w-full justify-center px-3 py-2 text-sm text-black">
+                <b>Action</b>
+              </MenuButton>
+            </div>
+
+            <MenuItems className="absolute left-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+              <div className="py-1">
+                <MenuItem>
+                  <a
+                    href="#"
+                    className="bg-gray-100 text-gray-900 block px-4 py-2 text-sm no-underline"
+                    style={{ textDecoration: "none" }}
+                  >
+                    <b>Action</b>
+                  </a>
+                </MenuItem>
+                <MenuItem>
+                  <a
+                    href="#"
+                    className="bg-gray-100 text-gray-900 block px-4 py-2 text-sm no-underline"
+                    style={{ textDecoration: "none" }}
+                  >
+                    <b>Action</b>
+                  </a>
+                </MenuItem>
+                <MenuItem>
+                  <a
+                    href="#"
+                    className="bg-gray-100 text-gray-900 block px-4 py-2 text-sm no-underline"
+                    style={{ textDecoration: "none" }}
+                  >
+                    <b>Action</b>
+                  </a>
+                </MenuItem>
+              </div>
+            </MenuItems>
+          </Menu>
+        </div>
+      </div>
+    );
+>>>>>>> 8ddda3b (Add)
   };
 
   useEffect(() => {

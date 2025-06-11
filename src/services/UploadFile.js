@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = `${process.env.REACT_APP_API_BASE_URL}upload`;
+const BASE_URL = `${process.env.REACT_APP_API_BASE_URL}/upload`;
 
 // Hàm chuyển base64 thành File (tương thích trình duyệt)
 const base64ToFile = (base64String, fileName = "image.png") => {
@@ -33,12 +33,13 @@ const uploadImages = async (input, isBase64 = false) => {
     // Chuẩn hóa input thành mảng files
     let files = [];
     if (isBase64) {
-      console.log("Base64 images received:", input);
+      // console.log("Base64 images received:", input);
       files = Array.isArray(input)
         ? input.map((base64, index) =>
             base64ToFile(base64, `image_${index}.png`)
           )
         : [base64ToFile(input)];
+        console.log(files);
     } else {
       console.log("Files received:", input);
       files = Array.isArray(input) ? input : [input];

@@ -1,10 +1,10 @@
 import axios from "axios";
 
-const BASE_URL = `${process.env.REACT_APP_API_BASE_URL}courses`;
+const BASE_URL = `${process.env.REACT_APP_API_BASE_URL}/courses/` || "http://localhost:8080/api/courses/";
 
 export const fetchCourses = async () => {
   try {
-    const response = await axios.post("http://localhost:8080/api/courses/get", {
+    const response = await axios.post(`${BASE_URL}get`, {
       config: {
         action: "getAll",
       },
@@ -43,7 +43,7 @@ export const updateCourse = async (courseId, updatedCourse) => {
       data: updatedData,
     };
 
-    const response = await fetch(`http://localhost:8080/api/courses/update/`, {
+    const response = await fetch(`${BASE_URL}update/`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

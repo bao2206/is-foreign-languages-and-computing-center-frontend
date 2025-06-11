@@ -6,6 +6,7 @@ import UserPage from "../pages/Management/UserPage";
 import CoursePages from "../pages/Management/CourseManage";
 import ClassManage from "../pages/Management/ClassManage";
 import ContactPage from "../pages/Management/ContactPage";
+<<<<<<< HEAD
 import ProtectedRoute from "../utils/ProtectedRoute"; // Bảo vệ route
 
 const ManagementRoutes = () => {
@@ -65,6 +66,23 @@ const ManagementRoutes = () => {
         {/* Thêm các route khác nếu cần */}
       </Route>
     </Routes>
+=======
+import FinancePage from "../pages/Management/FinancePage";
+
+const ManagementRoutes = () => {
+  return (
+    <>
+      <ManagementHeader />
+      <Routes>
+        <Route path="/staff" element={<UserPage />} />
+        <Route path="/course" element={<CoursePages />} />
+        <Route path="/class" element={<ClassManage />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/finance" element={<FinancePage />} />
+        {/* Có thể thêm các route khác nếu cần */}
+      </Routes>
+    </>
+>>>>>>> 8ddda3b (Add)
   );
 };
 
