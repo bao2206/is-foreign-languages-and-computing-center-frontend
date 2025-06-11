@@ -179,10 +179,10 @@ export default function StaffInformation(props) {
       // Cập nhật thông tin người dùng (name, email, phone, citizenID, address)
       const updatedStaff = await updateUser(selectedStaff._id, editedStaff);
 
-      // Kiểm tra và cập nhật role nếu có thay đổi
-      if (editedStaff.role && editedStaff.role !== selectedStaff.role) {
-        await updateRole(selectedStaff._id, editedStaff.role);
-      }
+      // Không cho phép cập nhật role ở đây
+      // if (editedStaff.role && editedStaff.role !== selectedStaff.role) {
+      //   await updateRole(selectedStaff._id, editedStaff.role);
+      // }
 
       setSelectedStaff(updatedStaff);
       setEditStaffMode(false);
@@ -296,11 +296,12 @@ export default function StaffInformation(props) {
                       className="w-full border px-3 py-2 rounded"
                       placeholder={t("country")}
                     />
+                    {/* Không cho phép chỉnh sửa role */}
                     <select
                       name="role"
                       value={editedStaff.role || ""}
-                      onChange={handleStaffFieldChange}
                       className="w-full border px-3 py-2 rounded"
+                      disabled
                     >
                       <option value="">{t("selectRole")}</option>
                       {roles.map((role) => (
@@ -338,14 +339,21 @@ export default function StaffInformation(props) {
                     </p>
                   </>
                 )}
-                <div className="mt-3 flex gap-2 text-white">
-                  <Button onClick={handleViewCertificates}>
+                <div className="mt-3 flex gap-2">
+                  <Button
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                    onClick={handleViewCertificates}
+                  >
                     {showCertificates
                       ? t("hideCertificates")
                       : t("viewCertificates")}
                   </Button>
                   <Button
-                    variant="outline"
+                    className={
+                      editStaffMode
+                        ? "bg-green-600 hover:bg-green-700 text-white"
+                        : "bg-yellow-500 hover:bg-yellow-600 text-white"
+                    }
                     onClick={() => {
                       if (editStaffMode) handleSaveEdit();
                       else setEditStaffMode(true);
@@ -408,16 +416,16 @@ export default function StaffInformation(props) {
                                   cert.expirationDate
                                 ).toLocaleDateString()}
                               </td>
-                              <td className="border px-2 py-1 whitespace-nowrap text-white flex gap-2">
+                              <td className="border px-2 py-1 whitespace-nowrap flex gap-2">
                                 <Button
-                                  variant="outline"
+                                  className="bg-yellow-500 hover:bg-yellow-600 text-white"
                                   size="sm"
                                   onClick={() => handleEditCertificate(cert)}
                                 >
                                   {t("edit")}
                                 </Button>
                                 <Button
-                                  variant="danger"
+                                  className="bg-red-600 hover:bg-red-700 text-white"
                                   size="sm"
                                   onClick={() => handleDeleteCertificate(cert)}
                                 >
@@ -463,7 +471,7 @@ export default function StaffInformation(props) {
                           className="w-full border px-3 py-2 rounded"
                         />
                         <Button
-                          className="text-white"
+                          className="bg-green-600 hover:bg-green-700 text-white"
                           onClick={handleAddCertificate}
                         >
                           {t("addCertificate")}
@@ -474,8 +482,11 @@ export default function StaffInformation(props) {
                 )}
               </div>
             )}
-            <div className="mt-4 text-right text-white">
-              <Button variant="outline" onClick={onClose}>
+            <div className="mt-4 text-right">
+              <Button
+                className="bg-gray-500 hover:bg-gray-600 text-white"
+                onClick={onClose}
+              >
                 {t("close")}
               </Button>
             </div>
@@ -526,14 +537,13 @@ export default function StaffInformation(props) {
             </div>
             <div className="mt-4 flex gap-2 justify-end">
               <Button
-                className="text-white"
-                variant="outline"
+                className="bg-gray-500 hover:bg-gray-600 text-white"
                 onClick={() => setEditCertDialogOpen(false)}
               >
                 {t("cancel")}
               </Button>
               <Button
-                className="text-white"
+                className="bg-green-600 hover:bg-green-700 text-white"
                 onClick={handleSaveEditCertificate}
               >
                 {t("save")}
@@ -581,15 +591,13 @@ export default function StaffInformation(props) {
             )}
             <div className="flex gap-2 justify-end">
               <Button
-                className="text-white"
-                variant="outline"
+                className="bg-gray-500 hover:bg-gray-600 text-white"
                 onClick={() => setDeleteCertDialogOpen(false)}
               >
                 {t("cancel")}
               </Button>
               <Button
-                variant="danger"
-                className="text-white"
+                className="bg-red-600 hover:bg-red-700 text-white"
                 onClick={handleConfirmDeleteCertificate}
               >
                 {t("delete")}

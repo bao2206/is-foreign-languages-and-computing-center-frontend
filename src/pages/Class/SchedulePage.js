@@ -4,8 +4,17 @@ import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import { format, parse, startOfWeek, getDay } from "date-fns";
 import { Dialog, Transition } from "@headlessui/react";
 import { Button } from "../../components/Button";
-import { fetchClasses, fetchSchedule } from "../../services/ScheduleService";
+import {
+  getScheduleByTeacherId,
+  getScheduleByStudentId,
+} from "../../services/ScheduleService";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import {
+  getClassForTeacher,
+  getClassForStudent,
+} from "../../services/ClassService";
+
+import ScheduleHeader from "../../components/Headers/ScheduleHeader";
 
 // Thiết lập localizer cho react-big-calendar
 const locales = {
@@ -20,23 +29,43 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
+const fetchSchedule = async () => {
+  const role = localStorage.getItem("userRole");
+  if (role === "6800d06932b289b2fe5b0409") {
+    return await getScheduleByTeacherId();
+  } else if (role === "6800d06932b289b2fe5b0403") {
+    return await getScheduleByStudentId();
+  }
+  return [];
+};
+
+const fetchClasses = async () => {
+  const role = localStorage.getItem("userRole");
+  if (role === "6800d06932b289b2fe5b0409") {
+    return await getClassForTeacher();
+  } else if (role === "6800d06932b289b2fe5b0403") {
+    return await getClassForStudent();
+  }
+  return [];
+};
+
 const SchedulePage = () => {
   const { t } = useTranslation();
   const [schedule, setSchedule] = useState([]);
   const [classes, setClasses] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [loading, setLoading] = useState(true); // Thêm trạng thái loading
+  const [loading, setLoading] = useState(true);
+  const [view, setView] = useState("month");
+  const [date, setDate] = useState(new Date());
   const userId = localStorage.getItem("userId");
   const userRole = localStorage.getItem("userRole");
 
-  // Load lịch học/dạy và danh sách lớp
   useEffect(() => {
     const loadData = async () => {
-      setLoading(true); // Bắt đầu loading
+      setLoading(true);
       try {
-        // Lấy lịch học/dạy
-        const scheduleData = await fetchSchedule(userId, userRole);
+        const scheduleData = await fetchSchedule();
         const formattedSchedule = scheduleData.map((event) => {
           const startDateTime = new Date(event.date);
           const endDateTime = new Date(event.date);
@@ -44,7 +73,6 @@ const SchedulePage = () => {
           const [endHours, endMinutes] = event.endTime.split(":");
           startDateTime.setHours(parseInt(startHours), parseInt(startMinutes));
           endDateTime.setHours(parseInt(endHours), parseInt(endMinutes));
-
           return {
             ...event,
             start: startDateTime,
@@ -56,27 +84,25 @@ const SchedulePage = () => {
         });
         setSchedule(formattedSchedule);
 
-        // Lấy danh sách lớp
-        const classesData = await fetchClasses(userId, userRole);
+        const classesData = await fetchClasses();
+
         setClasses(classesData);
       } catch (error) {
         console.error("Error loading data:", error);
-        setSchedule([]); // Đặt lại lịch trống khi có lỗi
-        setClasses([]); // Đặt lại danh sách lớp trống khi có lỗi
+        setSchedule([]);
+        setClasses([]);
       } finally {
-        setLoading(false); // Kết thúc loading
+        setLoading(false);
       }
     };
     loadData();
   }, [userId, userRole]);
 
-  // Xử lý khi click vào sự kiện trên lịch
   const handleSelectEvent = (event) => {
     setSelectedEvent(event);
     setIsDialogOpen(true);
   };
 
-  // Định dạng sự kiện trên lịch
   const eventStyleGetter = (event) => {
     const style = {
       backgroundColor:
@@ -84,7 +110,7 @@ const SchedulePage = () => {
           ? "#4CAF50"
           : event.status === "Cancel"
           ? "#EF4444"
-          : "#F59E0B", // make up lesson
+          : "#F59E0B",
       borderRadius: "5px",
       opacity: 0.8,
       color: "white",
@@ -94,14 +120,76 @@ const SchedulePage = () => {
     return { style };
   };
 
+  // Custom toolbar for navigation and view switching
+  const CustomToolbar = (toolbar) => (
+    <div className="flex items-center justify-between mb-4">
+      <div>
+        <button
+          className="px-2 py-1 mr-2 bg-gray-200 rounded hover:bg-gray-300"
+          onClick={() => toolbar.onNavigate("PREV")}
+        >
+          {t("previous")}
+        </button>
+        <button
+          className="px-2 py-1 mr-2 bg-gray-200 rounded hover:bg-gray-300"
+          onClick={() => toolbar.onNavigate("TODAY")}
+        >
+          {t("today")}
+        </button>
+        <button
+          className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
+          onClick={() => toolbar.onNavigate("NEXT")}
+        >
+          {t("next")}
+        </button>
+      </div>
+      <span className="font-semibold text-lg">{toolbar.label}</span>
+      <div>
+        <button
+          className={`px-2 py-1 mr-2 rounded ${
+            toolbar.view === "month"
+              ? "bg-blue-500 text-white"
+              : "bg-gray-200 hover:bg-gray-300"
+          }`}
+          onClick={() => toolbar.onView("month")}
+        >
+          {t("month")}
+        </button>
+        <button
+          className={`px-2 py-1 mr-2 rounded ${
+            toolbar.view === "week"
+              ? "bg-blue-500 text-white"
+              : "bg-gray-200 hover:bg-gray-300"
+          }`}
+          onClick={() => toolbar.onView("week")}
+        >
+          {t("week")}
+        </button>
+        <button
+          className={`px-2 py-1 rounded ${
+            toolbar.view === "day"
+              ? "bg-blue-500 text-white"
+              : "bg-gray-200 hover:bg-gray-300"
+          }`}
+          onClick={() => toolbar.onView("day")}
+        >
+          {t("day")}
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <div className="container mx-auto p-4 max-w-7xl">
-      {/* Tiêu đề */}
-      <h1 className="text-2xl font-bold mb-6 text-center">
-        {userRole === "student" ? t("studySchedule") : t("teachingSchedule")}
-      </h1>
-
-      {/* Lịch học/dạy */}
+      <ScheduleHeader
+        userRole={userRole}
+        t={t}
+        view={view}
+        setView={setView}
+        date={date}
+        setDate={setDate}
+        CustomToolbar={CustomToolbar}
+      />
       <div className="mb-8 rounded-lg shadow-md p-4 bg-white">
         {loading ? (
           <div className="flex items-center justify-center h-500">
@@ -117,6 +205,13 @@ const SchedulePage = () => {
             className="w-full"
             onSelectEvent={handleSelectEvent}
             eventPropGetter={eventStyleGetter}
+            view={view}
+            date={date}
+            onView={setView}
+            onNavigate={setDate}
+            components={{
+              toolbar: CustomToolbar,
+            }}
             messages={{
               allDay: t("allDay"),
               previous: t("previous"),
@@ -134,8 +229,6 @@ const SchedulePage = () => {
           />
         )}
       </div>
-
-      {/* Danh sách lớp tham gia */}
       <h2 className="text-xl font-semibold mb-4 text-center">
         {t("classesParticipating")}
       </h2>
@@ -190,8 +283,6 @@ const SchedulePage = () => {
           </p>
         )}
       </div>
-
-      {/* Dialog chi tiết sự kiện */}
       {selectedEvent && (
         <Transition appear show={isDialogOpen} as={React.Fragment}>
           <Dialog
@@ -210,7 +301,6 @@ const SchedulePage = () => {
             >
               <div className="fixed inset-0 bg-black/50" />
             </Transition.Child>
-
             <div className="fixed inset-0 overflow-y-auto">
               <div className="flex min-h-full items-center justify-center p-4 text-center">
                 <Transition.Child

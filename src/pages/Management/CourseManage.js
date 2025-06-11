@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "../../components/ui/card";
 import { Button } from "../../components/Button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-} from "../../components/ui/dialog";
-import { ArrowLeft, ArrowRight, Search } from "lucide-react";
+import { Dialog, DialogContent } from "../../components/ui/dialog";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import {
   fetchCourses,
   updateCourse,
@@ -291,8 +287,8 @@ const CourseCard = ({ course, onUpdate }) => {
                   onChange={handleInputChange}
                   className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
+                  <option value="active">{t("Active")}</option>
+                  <option value="inactive">{t("Inactive")}</option>
                 </select>
               </div>
               <div>
@@ -304,47 +300,47 @@ const CourseCard = ({ course, onUpdate }) => {
                     onChange={handleInputChange}
                     className="mr-2"
                   />
-                  Special Course
+                  {t("Special")}
                 </label>
               </div>
               <div className="flex justify-end gap-2">
                 <Button className="text-white" onClick={handleSave}>
-                  Save
+                  {t("save")}
                 </Button>
                 <Button
                   className="text-white"
                   onClick={handleCancel}
                   variant="outline"
                 >
-                  Cancel
+                  {t("cancel")}
                 </Button>
               </div>
             </div>
           ) : (
             <div className="space-y-2">
               <p>
-                <strong>Description:</strong> {course.description}
+                <strong>{t("description")}:</strong> {course.description}
               </p>
               <p>
-                <strong>Price:</strong> ${course.price}
+                <strong>{t("price")}:</strong> ${course.price}
               </p>
               <p>
-                <strong>Number of Allocated Periods:</strong>{" "}
+                <strong>{t("number_of_allocated_periods")}:</strong>{" "}
                 {course.numAllocatedPeriod}
               </p>
               <p>
-                <strong>Ordering:</strong> {course.ordering}
+                <strong>{t("ordering")}:</strong> {course.ordering}
               </p>
               <div className="flex justify-between items-center">
                 <p>
-                  <strong>Status:</strong> {course.status}
+                  <strong>{t("status")}:</strong> {course.status}
                 </p>
                 <Button className="text-white" onClick={handleEdit}>
-                  Chỉnh sửa
+                  {t("edit")}
                 </Button>
               </div>
               {course.is_special && (
-                <p className="text-red-500 font-semibold">Special Course</p>
+                <p className="text-red-500 font-semibold">{t("Special")}</p>
               )}
             </div>
           )}
@@ -514,7 +510,7 @@ const CourseList = () => {
       </div>
 
       {/* Grid with 4 columns for CourseCard */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
         {filteredCourses.map((course) => (
           <div key={course._id}>
             <CourseCard course={course} onUpdate={handleUpdateCourse} />
@@ -621,7 +617,7 @@ const CourseList = () => {
             </div>
             <div>
               <label className="block text-sm font-medium">
-                Allocated Periods
+                {t("Number of Allocated Periods")}
               </label>
               <input
                 type="number"
@@ -689,7 +685,7 @@ const CourseList = () => {
                 }}
                 variant="outline"
               >
-                Cancel
+                {t("cancel")}
               </Button>
             </div>
           </div>

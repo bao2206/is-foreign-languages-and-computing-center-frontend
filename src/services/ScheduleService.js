@@ -7,11 +7,6 @@ export const fetchClasses = async (userId, role) => {
   return response.data;
 };
 
-export const fetchSchedule = async (userId, role) => {
-  const response = await axios.get(`${API_URL}/${role}/${userId}`);
-  return response.data;
-};
-
 export const fetchScheduleByClass = async (classId) => {
   try {
     const data = {
@@ -21,7 +16,6 @@ export const fetchScheduleByClass = async (classId) => {
     const response = await axios.post(`${API_URL}/get`, data, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });
-    console.log("Fetch schedule by class response:", response.data);
 
     return response.data;
   } catch (error) {
@@ -32,6 +26,44 @@ export const fetchScheduleByClass = async (classId) => {
   }
 
   return [];
+};
+
+export const getScheduleByTeacherId = async () => {
+  try {
+    const payload = {
+      action: "getByTeacherId",
+      authId: localStorage.getItem("userId"),
+    };
+
+    const response = await axios.post(`${API_URL}/get`, payload, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching schedule by teacher ID:", error);
+    if (error.response && error.response.status === 404) {
+      return [];
+    }
+  }
+};
+
+export const getScheduleByStudentId = async () => {
+  try {
+    const payload = {
+      action: "getByStudentId",
+      authId: localStorage.getItem("userId"),
+    };
+    const response = await axios.post(`${API_URL}/get`, payload, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching schedule by student ID:", error);
+    if (error.response && error.response.status === 404) {
+      return [];
+    }
+  }
 };
 
 export const createSchedule = async (query) => {

@@ -3,12 +3,12 @@ import { Dialog } from "@headlessui/react";
 import { Button } from "../../components/Button";
 import { useTranslation } from "react-i18next";
 import { Search, ChevronUp, ChevronDown } from "lucide-react";
-import { 
-  getAllConsultations as fetchContacts, 
-  createAdminConsultation as createContact, 
-  updateConsultation, 
-  deleteConsultation, 
-  getConsultation 
+import {
+  getAllConsultations as fetchContacts,
+  createAdminConsultation as createContact,
+  updateConsultation,
+  deleteConsultation,
+  getConsultation,
 } from "../../services/ContactService";
 import "bootstrap/dist/css/bootstrap.css";
 
@@ -29,7 +29,7 @@ const ContactPage = () => {
     courseInterest: "",
     consultationContent: "",
     status: "pending",
-    notes: ""
+    notes: "",
   });
   const [errors, setErrors] = useState({});
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
@@ -41,7 +41,7 @@ const ContactPage = () => {
     phone: "",
     consultationContent: "",
     status: "",
-    notes: ""
+    notes: "",
   });
 
   const { t } = useTranslation();
@@ -59,8 +59,8 @@ const ContactPage = () => {
           page,
           limit,
         });
-        console.log('API Response:', response);
-        
+        console.log("API Response:", response);
+
         if (response.success) {
           setContacts(response.data || []);
           setFilteredContacts(response.data || []);
@@ -68,7 +68,7 @@ const ContactPage = () => {
           setTotalPages(response.pagination?.pages || 1);
           setPage(response.pagination?.page || 1);
         } else {
-          console.error('API returned unsuccessful response:', response);
+          console.error("API returned unsuccessful response:", response);
           setContacts([]);
           setFilteredContacts([]);
           setTotal(0);
@@ -91,8 +91,10 @@ const ContactPage = () => {
     const newErrors = {};
     if (!newContact.name.trim()) newErrors.name = t("nameRequired");
     if (!emailRegex.test(newContact.email)) newErrors.email = t("invalidEmail");
-    if (newContact.phone && !phoneRegex.test(newContact.phone)) newErrors.phone = t("invalidPhone");
-    if (!newContact.consultationContent.trim()) newErrors.consultationContent = t("messageRequired");
+    if (newContact.phone && !phoneRegex.test(newContact.phone))
+      newErrors.phone = t("invalidPhone");
+    if (!newContact.consultationContent.trim())
+      newErrors.consultationContent = t("messageRequired");
     if (!newContact.status) newErrors.status = t("statusRequired");
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -115,14 +117,14 @@ const ContactPage = () => {
         courseInterest: "",
         consultationContent: "",
         status: "pending",
-        notes: ""
+        notes: "",
       });
       setErrors({});
     } catch (error) {
       console.error("Error creating contact:", error);
       // Display the error message from the backend
       setErrors({
-        submit: error.message || t("failedToCreateContact")
+        submit: error.message || t("failedToCreateContact"),
       });
       // You might want to add a toast notification here
       alert(error.message || t("failedToCreateContact"));
@@ -154,7 +156,7 @@ const ContactPage = () => {
         phone: response.data.phone,
         consultationContent: response.data.consultationContent,
         status: response.data.status,
-        notes: response.data.notes || ""
+        notes: response.data.notes || "",
       });
       setIsViewDialogOpen(true);
     } catch (error) {
@@ -167,13 +169,13 @@ const ContactPage = () => {
     try {
       const response = await updateConsultation(selectedContact._id, editForm);
       // Update the contact in the list
-      setContacts(prev => 
-        prev.map(contact => 
+      setContacts((prev) =>
+        prev.map((contact) =>
           contact._id === selectedContact._id ? response.data : contact
         )
       );
-      setFilteredContacts(prev => 
-        prev.map(contact => 
+      setFilteredContacts((prev) =>
+        prev.map((contact) =>
           contact._id === selectedContact._id ? response.data : contact
         )
       );
@@ -187,9 +189,9 @@ const ContactPage = () => {
 
   const handleEditFormChange = (e) => {
     const { name, value } = e.target;
-    setEditForm(prev => ({
+    setEditForm((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -198,8 +200,12 @@ const ContactPage = () => {
       try {
         await deleteConsultation(selectedContact._id);
         // Remove the contact from the lists
-        setContacts(prev => prev.filter(contact => contact._id !== selectedContact._id));
-        setFilteredContacts(prev => prev.filter(contact => contact._id !== selectedContact._id));
+        setContacts((prev) =>
+          prev.filter((contact) => contact._id !== selectedContact._id)
+        );
+        setFilteredContacts((prev) =>
+          prev.filter((contact) => contact._id !== selectedContact._id)
+        );
         setIsViewDialogOpen(false);
       } catch (error) {
         console.error("Error deleting contact:", error);
@@ -246,7 +252,7 @@ const ContactPage = () => {
           </select>
         </div>
         <div className="col-md-3 text-end">
-          <Button 
+          <Button
             onClick={() => setIsAddDialogOpen(true)}
             className="btn btn-outline-primary"
           >
@@ -278,9 +284,17 @@ const ContactPage = () => {
                     <td>{contact.phone}</td>
                     {/* <td>{contact.subject}</td> */}
                     <td>
-                      <span className={`badge ${contact.status === 'processed' ? 'bg-success' : 
-                        contact.status === 'cancelled' ? 'bg-danger' : 
-                        contact.status === 'class_assigned' ? 'bg-info' : 'bg-secondary'}`}>
+                      <span
+                        className={`badge ${
+                          contact.status === "processed"
+                            ? "bg-success"
+                            : contact.status === "cancelled"
+                            ? "bg-danger"
+                            : contact.status === "class_assigned"
+                            ? "bg-info"
+                            : "bg-secondary"
+                        }`}
+                      >
                         {t(contact.status)}
                       </span>
                     </td>
@@ -305,7 +319,7 @@ const ContactPage = () => {
         <div className="col">
           <nav>
             <ul className="pagination justify-content-center">
-              <li className={`page-item ${page === 1 ? 'disabled' : ''}`}>
+              <li className={`page-item ${page === 1 ? "disabled" : ""}`}>
                 <button
                   className="page-link btn-outline-primary"
                   onClick={() => handlePageChange(page - 1)}
@@ -316,7 +330,7 @@ const ContactPage = () => {
               {[...Array(totalPages)].map((_, index) => (
                 <li
                   key={index + 1}
-                  className={`page-item ${page === index + 1 ? 'active' : ''}`}
+                  className={`page-item ${page === index + 1 ? "active" : ""}`}
                 >
                   <button
                     className="page-link btn-outline-primary"
@@ -326,7 +340,9 @@ const ContactPage = () => {
                   </button>
                 </li>
               ))}
-              <li className={`page-item ${page === totalPages ? 'disabled' : ''}`}>
+              <li
+                className={`page-item ${page === totalPages ? "disabled" : ""}`}
+              >
                 <button
                   className="page-link btn-outline-primary"
                   onClick={() => handlePageChange(page + 1)}
@@ -344,7 +360,7 @@ const ContactPage = () => {
         open={isAddDialogOpen}
         onClose={() => setIsAddDialogOpen(false)}
         className="modal fade show"
-        style={{ display: isAddDialogOpen ? 'block' : 'none' }}
+        style={{ display: isAddDialogOpen ? "block" : "none" }}
       >
         <div className="modal-dialog">
           <div className="modal-content">
@@ -362,7 +378,9 @@ const ContactPage = () => {
                   <label className="form-label">{t("name")}</label>
                   <input
                     type="text"
-                    className={`form-control ${errors.name ? 'is-invalid' : ''}`}
+                    className={`form-control ${
+                      errors.name ? "is-invalid" : ""
+                    }`}
                     name="name"
                     value={newContact.name}
                     onChange={handleNewContactChange}
@@ -375,7 +393,9 @@ const ContactPage = () => {
                   <label className="form-label">{t("email")}</label>
                   <input
                     type="email"
-                    className={`form-control ${errors.email ? 'is-invalid' : ''}`}
+                    className={`form-control ${
+                      errors.email ? "is-invalid" : ""
+                    }`}
                     name="email"
                     value={newContact.email}
                     onChange={handleNewContactChange}
@@ -388,7 +408,9 @@ const ContactPage = () => {
                   <label className="form-label">{t("phone")}</label>
                   <input
                     type="tel"
-                    className={`form-control ${errors.phone ? 'is-invalid' : ''}`}
+                    className={`form-control ${
+                      errors.phone ? "is-invalid" : ""
+                    }`}
                     name="phone"
                     value={newContact.phone}
                     onChange={handleNewContactChange}
@@ -400,14 +422,18 @@ const ContactPage = () => {
                 <div className="mb-3">
                   <label className="form-label">{t("message")}</label>
                   <textarea
-                    className={`form-control ${errors.consultationContent ? 'is-invalid' : ''}`}
+                    className={`form-control ${
+                      errors.consultationContent ? "is-invalid" : ""
+                    }`}
                     name="consultationContent"
                     value={newContact.consultationContent}
                     onChange={handleNewContactChange}
                     rows="4"
                   ></textarea>
                   {errors.consultationContent && (
-                    <div className="invalid-feedback">{errors.consultationContent}</div>
+                    <div className="invalid-feedback">
+                      {errors.consultationContent}
+                    </div>
                   )}
                 </div>
                 <div className="mb-3">
@@ -421,7 +447,9 @@ const ContactPage = () => {
                     <option value="pending">{t("pending")}</option>
                     <option value="processed">{t("processed")}</option>
                     <option value="cancelled">{t("cancelled")}</option>
-                    <option value="class_assigned">{t("class_assigned")}</option>
+                    <option value="class_assigned">
+                      {t("class_assigned")}
+                    </option>
                   </select>
                 </div>
                 <div className="mb-3">
@@ -443,7 +471,7 @@ const ContactPage = () => {
               >
                 {t("cancel")}
               </Button>
-              <Button 
+              <Button
                 className="btn btn-outline-primary"
                 onClick={handleAddContact}
               >
@@ -462,7 +490,7 @@ const ContactPage = () => {
           setIsEditing(false);
         }}
         className="modal fade show"
-        style={{ display: isViewDialogOpen ? 'block' : 'none' }}
+        style={{ display: isViewDialogOpen ? "block" : "none" }}
       >
         <div className="modal-dialog modal-lg">
           <div className="modal-content">
@@ -493,7 +521,9 @@ const ContactPage = () => {
                         onChange={handleEditFormChange}
                       />
                     ) : (
-                      <p className="form-control-plaintext">{selectedContact.name}</p>
+                      <p className="form-control-plaintext">
+                        {selectedContact.name}
+                      </p>
                     )}
                   </div>
                   <div className="col-md-6 mb-3">
@@ -507,7 +537,9 @@ const ContactPage = () => {
                         onChange={handleEditFormChange}
                       />
                     ) : (
-                      <p className="form-control-plaintext">{selectedContact.email}</p>
+                      <p className="form-control-plaintext">
+                        {selectedContact.email}
+                      </p>
                     )}
                   </div>
                   <div className="col-md-6 mb-3">
@@ -521,7 +553,9 @@ const ContactPage = () => {
                         onChange={handleEditFormChange}
                       />
                     ) : (
-                      <p className="form-control-plaintext">{selectedContact.phone}</p>
+                      <p className="form-control-plaintext">
+                        {selectedContact.phone}
+                      </p>
                     )}
                   </div>
                   <div className="col-md-6 mb-3">
@@ -536,13 +570,23 @@ const ContactPage = () => {
                         <option value="pending">{t("pending")}</option>
                         <option value="processed">{t("processed")}</option>
                         <option value="cancelled">{t("cancelled")}</option>
-                        <option value="class_assigned">{t("class_assigned")}</option>
+                        <option value="class_assigned">
+                          {t("class_assigned")}
+                        </option>
                       </select>
                     ) : (
                       <p className="form-control-plaintext">
-                        <span className={`badge ${selectedContact.status === 'processed' ? 'bg-success' : 
-                          selectedContact.status === 'cancelled' ? 'bg-danger' : 
-                          selectedContact.status === 'class_assigned' ? 'bg-info' : 'bg-secondary'}`}>
+                        <span
+                          className={`badge ${
+                            selectedContact.status === "processed"
+                              ? "bg-success"
+                              : selectedContact.status === "cancelled"
+                              ? "bg-danger"
+                              : selectedContact.status === "class_assigned"
+                              ? "bg-info"
+                              : "bg-secondary"
+                          }`}
+                        >
                           {t(selectedContact.status)}
                         </span>
                       </p>
@@ -559,7 +603,9 @@ const ContactPage = () => {
                         rows="4"
                       ></textarea>
                     ) : (
-                      <p className="form-control-plaintext">{selectedContact.consultationContent}</p>
+                      <p className="form-control-plaintext">
+                        {selectedContact.consultationContent}
+                      </p>
                     )}
                   </div>
                   <div className="col-12 mb-3">
@@ -573,7 +619,9 @@ const ContactPage = () => {
                         rows="2"
                       ></textarea>
                     ) : (
-                      <p className="form-control-plaintext">{selectedContact.notes || "-"}</p>
+                      <p className="form-control-plaintext">
+                        {selectedContact.notes || "-"}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -618,4 +666,4 @@ const ContactPage = () => {
   );
 };
 
-export default ContactPage; 
+export default ContactPage;
