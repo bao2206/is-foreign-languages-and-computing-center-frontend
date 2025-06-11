@@ -238,7 +238,7 @@
     "email": "Email",
     "phone": "Phone Number",
     "consultationContent": "Consultation Content",
-    "status" : "Status",
+    "status": "Status",
     "submit": "Submit",
     "submitting": "Submitting...",
     "successMessage": "Thank you for your submission! We will contact you soon.",
@@ -271,5 +271,12 @@
   "addSchedule": "Add Schedule",
   "noSchedule": "No schedule yet",
   "scheduleList": "Schedule List",
-  "Toggle Dark Mode": "Toggle Dark Mode"
+  "Toggle Dark Mode": "Toggle Dark Mode",
+  "allStatuses": "All status",
+  "Inactive": "Inactive",
+  "Special": "Special",
+  "Non-Special": "Non-special",
+  "alreadyAdded": "Already Added",
+  "no_permission": "No permission",
+  "no_permission_desc": "You do not have permission to access this page."
 }

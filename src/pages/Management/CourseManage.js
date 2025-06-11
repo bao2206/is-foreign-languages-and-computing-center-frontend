@@ -481,21 +481,34 @@ const CourseList = () => {
             placeholder="Search courses..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
+            className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 dark:text-black"
           />
         </div>
         <select
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          className="p-2 border rounded focus:ring-2 focus:ring-blue-500"
+          className="p-2 border rounded focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-black dark:text-white"
         >
-          <option value="all">{t("allCourses")}</option>
-          <option value="active">{t("Active")}</option>
-          <option value="inactive">{t("Inactive")}</option>
-          <option value="special">{t("Special")}</option>
-          <option value="non-special">{t("Non-Special")}</option>
+          <option className="dark:text-black" value="all">
+            {t("allCourses")}
+          </option>
+          <option className="dark:text-black" value="active">
+            {t("Active")}
+          </option>
+          <option className="dark:text-black" value="inactive">
+            {t("Inactive")}
+          </option>
+          <option className="dark:text-black" value="special">
+            {t("Special")}
+          </option>
+          <option className="dark:text-black" value="non-special">
+            {t("Non-Special")}
+          </option>
         </select>
-        <Button className="text-white" onClick={() => setIsAddDialogOpen(true)}>
+        <Button
+          className="btn btn-primary"
+          onClick={() => setIsAddDialogOpen(true)}
+        >
           {t("addCourse")}
         </Button>
       </div>
@@ -515,7 +528,7 @@ const CourseList = () => {
             <h2 className="text-xl font-bold">{t("Add New Course")}</h2>
             <button
               onClick={() => setIsAddDialogOpen(false)}
-              className="text-gray-500 hover:text-gray-700"
+              className="text-gray-500 hover:text-gray-700 border border-gray-300 rounded px-2 py-1"
               aria-label="Close dialog"
             >
               ✕
@@ -655,11 +668,11 @@ const CourseList = () => {
               </label>
             </div>
             <div className="flex justify-end gap-2">
-              <Button className="text-white" onClick={handleAddCourse}>
+              <Button className="btn btn-primary" onClick={handleAddCourse}>
                 {t("add")}
               </Button>
               <Button
-                className="text-white"
+                className="text-white border border-gray-300"
                 onClick={() => {
                   setIsAddDialogOpen(false);
                   setNewCourse({

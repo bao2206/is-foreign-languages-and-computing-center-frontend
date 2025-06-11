@@ -22,6 +22,7 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
       localStorage.setItem("token", result.token);
       localStorage.setItem("username", result.user.username);
       localStorage.setItem("userRole", result.user.role);
+      localStorage.setItem("userId", result.user._id);
 
       console.log("User:", result.user);
       alert(result.message || "Login successful");

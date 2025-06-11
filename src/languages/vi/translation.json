@@ -270,5 +270,12 @@
   "noSchedule": "Chưa có lịch học",
   "scheduleList": "Danh sách lịch học",
   "viewSchedule": "Xem lịch học",
-  "Toggle Dark Mode": "Chuyển chế độ tối"
+  "Toggle Dark Mode": "Chuyển chế độ tối",
+  "allStatuses": "Tất cả trạng thái",
+  "Inactive": "Không hoạt động",
+  "Special": "Đặc biệt",
+  "Non-Special": "Không đặc biệt",
+  "alreadyAdded": "Đã thêm vào lớp",
+  "no_permission": "Không có quyền truy cập",
+  "no_permission_desc": "Bạn không có quyền truy cập vào trang này."
 }
