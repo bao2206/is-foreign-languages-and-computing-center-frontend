@@ -268,7 +268,6 @@
     "newsletterSubmit": "Subscribe",
     "copyright": "© 2023 Training Center. All rights reserved."
   },
-<<<<<<< HEAD
   "addSchedule": "Add Schedule",
   "noSchedule": "No schedule yet",
   "scheduleList": "Schedule List",
@@ -297,8 +296,7 @@
   "event": "Event",
   "noEventsInRange": "No events in this range",
   "classesParticipating": "Classes Participating",
-  "noClassesFound": "No classes found"
-=======
+  "noClassesFound": "No classes found",
   "userManagemetn": "User Management",
   "contactManagement" : "Consulting Management",
   "addNewContact" : "New student",
@@ -373,5 +371,4 @@
   "paymentMethodRequired": "Payment method is required",
   "saving": "Saving...",
   "errorDeletingPayment": "Error deleting payment. Please try again."
->>>>>>> 8ddda3b (Add)
 }
