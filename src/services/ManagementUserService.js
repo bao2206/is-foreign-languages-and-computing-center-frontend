@@ -48,27 +48,76 @@ export const fetchUsers = async ({
       limit: response.data.limit,
     };
   } catch (error) {
-    console.error(
-      "Failed to fetch staffs:",
-      error.response?.data || error.message
-    );
-    throw new Error("Failed to fetch staffs");
+    if (error.response) {
+      throw {
+        message: error.response.data.message || 'Failed to fetch users',
+        status: error.response.status
+      };
+    } else if (error.request) {
+      throw {
+        message: 'No response from server',
+        status: 500
+      };
+    } else {
+      throw {
+        message: error.message || 'Error fetching users',
+        status: 500
+      };
+    }
   }
 };
 
 export const createStaff = async (staffData) => {
   try {
-    const url = `${BASE_URL}`;
+    const url = `${BASE_URL}create`;
     const response = await axios.post(url, staffData, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });
     return response.data;
   } catch (error) {
-    console.error(
-      "Failed to create staff:",
-      error.response?.data || error.message
-    );
-    throw new Error("Failed to create staff");
+    if (error.response) {
+      // Handle specific validation errors
+      if (error.response.status === 400) {
+        const errorMessage = error.response.data.message;
+        if (errorMessage === "Email already exists") {
+          throw {
+            message: "Email already exists",
+            status: 400
+          };
+        } else if (errorMessage === "Phone already exists") {
+          throw {
+            message: "Phone number already exists",
+            status: 400
+          };
+        } else if (errorMessage === "Citizen ID already exists") {
+          throw {
+            message: "Citizen ID already exists",
+            status: 400
+          };
+        } else if (error.response.data.errors) {
+          // Handle field validation errors
+          throw {
+            message: Object.values(error.response.data.errors).join(", "),
+            status: 400
+          };
+        }
+      }
+      // Handle other server errors
+      throw {
+        message: error.response.data.message || 'Failed to create staff',
+        status: error.response.status
+      };
+    } else if (error.request) {
+      throw {
+        message: 'No response from server',
+        status: 500
+      };
+    } else {
+      throw {
+        message: error.message || 'Error creating staff',
+        status: 500
+      };
+    }
   }
 };
 
@@ -89,11 +138,22 @@ export const updateUser = async (userId, userData) => {
 
     return response.data.data;
   } catch (error) {
-    console.error(
-      "Failed to update user:",
-      error.response?.data || error.message
-    );
-    throw new Error("Failed to update user");
+    if (error.response) {
+      throw {
+        message: error.response.data.message || 'Failed to update user',
+        status: error.response.status
+      };
+    } else if (error.request) {
+      throw {
+        message: 'No response from server',
+        status: 500
+      };
+    } else {
+      throw {
+        message: error.message || 'Error updating user',
+        status: 500
+      };
+    }
   }
 };
 
@@ -123,11 +183,22 @@ export const fetchCertificatesById = async (id) => {
 
     return response.data.data;
   } catch (error) {
-    console.error(
-      "Failed to fetch certificates by teacher ID:",
-      error.response?.data || error.message
-    );
-    throw new Error("Failed to fetch certificates");
+    if (error.response) {
+      throw {
+        message: error.response.data.message || 'Failed to fetch certificates',
+        status: error.response.status
+      };
+    } else if (error.request) {
+      throw {
+        message: 'No response from server',
+        status: 500
+      };
+    } else {
+      throw {
+        message: error.message || 'Error fetching certificates',
+        status: 500
+      };
+    }
   }
 };
 
@@ -140,11 +211,22 @@ export const addCertificate = async (id, certificateData) => {
     });
     return response.data;
   } catch (error) {
-    console.error(
-      "Failed to add certificate:",
-      error.response?.data || error.message
-    );
-    throw new Error("Failed to add certificate");
+    if (error.response) {
+      throw {
+        message: error.response.data.message || 'Failed to add certificate',
+        status: error.response.status
+      };
+    } else if (error.request) {
+      throw {
+        message: 'No response from server',
+        status: 500
+      };
+    } else {
+      throw {
+        message: error.message || 'Error adding certificate',
+        status: 500
+      };
+    }
   }
 };
 
@@ -157,11 +239,22 @@ export const updateCertificate = async (certificateData) => {
     });
     return response.data;
   } catch (error) {
-    console.error(
-      "Failed to update certificate:",
-      error.response?.data || error.message
-    );
-    throw new Error("Failed to update certificate");
+    if (error.response) {
+      throw {
+        message: error.response.data.message || 'Failed to update certificate',
+        status: error.response.status
+      };
+    } else if (error.request) {
+      throw {
+        message: 'No response from server',
+        status: 500
+      };
+    } else {
+      throw {
+        message: error.message || 'Error updating certificate',
+        status: 500
+      };
+    }
   }
 };
 
@@ -174,10 +267,21 @@ export const deleteCertificate = async (id) => {
     });
     return response.data;
   } catch (error) {
-    console.error(
-      "Failed to delete certificate:",
-      error.response?.data || error.message
-    );
-    throw new Error("Failed to delete certificate");
+    if (error.response) {
+      throw {
+        message: error.response.data.message || 'Failed to delete certificate',
+        status: error.response.status
+      };
+    } else if (error.request) {
+      throw {
+        message: 'No response from server',
+        status: 500
+      };
+    } else {
+      throw {
+        message: error.message || 'Error deleting certificate',
+        status: 500
+      };
+    }
   }
 };

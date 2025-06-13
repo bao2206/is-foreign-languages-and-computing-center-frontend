@@ -36,7 +36,7 @@ const UserPage = () => {
     name: "",
     sex: "male",
     email: "",
-    citizenId: "", // Thay citizenID thành citizenId để khớp với API
+    citizenID: "", // Thay citizenID thành citizenId để khớp với API
     phone: "",
     address: { street: "", city: "", country: "" },
     status: "active",
@@ -86,8 +86,8 @@ const UserPage = () => {
     const newErrors = {};
     if (!newStaff.name.trim()) newErrors.name = t("nameRequired");
     if (!emailRegex.test(newStaff.email)) newErrors.email = t("invalidEmail");
-    if (!citizenIDRegex.test(newStaff.citizenId))
-      newErrors.citizenId = t("invalidCitizenID"); // Thay citizenID thành citizenId
+    if (!citizenIDRegex.test(newStaff.citizenID))
+      newErrors.citizenID = t("invalidCitizenID"); // Thay citizenID thành citizenId
     if (newStaff.phone && !phoneRegex.test(newStaff.phone))
       newErrors.phone = t("invalidPhone");
     setErrors(newErrors);
@@ -108,12 +108,12 @@ const UserPage = () => {
       let avatarUrl = "";
       if (avatarFile) {
         const images = await uploadImages(avatarFile, false);
-        avatarUrl = images.imageUrls[0] || "";
+        avatarUrl = images.imageUrls[0] || "https://res.cloudinary.com/dgbwqfajn/image/upload/s--SomnqZh4--/v1747513244/Uploads/avatar.png";
       }
 
       const staffData = {
         ...newStaff,
-        citizenId: newStaff.citizenId, // Đảm bảo khớp với API
+        citizenID: newStaff.citizenID, // Đảm bảo khớp với API
         avatar: avatarUrl,
       };
 
@@ -124,7 +124,7 @@ const UserPage = () => {
         name: "",
         sex: "male",
         email: "",
-        citizenId: "",
+        citizenID: "",
         phone: "",
         address: { street: "", city: "", country: "" },
         status: "active",
@@ -134,7 +134,7 @@ const UserPage = () => {
       setAvatarPreview(null);
       setErrors({});
     } catch (error) {
-      alert(t("failedToCreateStaff"));
+      alert(error.message || t("failedToCreateStaff"));
     }
   };
 
@@ -383,7 +383,7 @@ const UserPage = () => {
             name: "",
             sex: "male",
             email: "",
-            citizenId: "",
+            citizenID: "",
             phone: "",
             address: { street: "", city: "", country: "" },
             status: "active",
@@ -409,7 +409,7 @@ const UserPage = () => {
                     name: "",
                     sex: "male",
                     email: "",
-                    citizenId: "",
+                    citizenID: "",
                     phone: "",
                     address: { street: "", city: "", country: "" },
                     status: "active",
@@ -487,16 +487,16 @@ const UserPage = () => {
                 <label className="form-label">{t("citizenID")}</label>
                 <input
                   type="text"
-                  name="citizenId"
-                  value={newStaff.citizenId}
+                  name="citizenID"
+                  value={newStaff.citizenID}
                   onChange={handleNewStaffChange}
                   className={`form-control ${
-                    errors.citizenId ? "is-invalid" : ""
+                    errors.citizenID ? "is-invalid" : ""
                   }`}
                   style={{ height: "38px" }}
                 />
-                {errors.citizenId && (
-                  <div className="invalid-feedback">{errors.citizenId}</div>
+                {errors.citizenID && (
+                  <div className="invalid-feedback">{errors.citizenID}</div>
                 )}
               </div>
               <div className="mb-3">
@@ -586,7 +586,7 @@ const UserPage = () => {
                     name: "",
                     sex: "male",
                     email: "",
-                    citizenId: "",
+                    citizenID: "",
                     phone: "",
                     address: { street: "", city: "", country: "" },
                     status: "active",

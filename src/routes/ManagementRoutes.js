@@ -6,8 +6,9 @@ import UserPage from "../pages/Management/UserPage";
 import CoursePages from "../pages/Management/CourseManage";
 import ClassManage from "../pages/Management/ClassManage";
 import ContactPage from "../pages/Management/ContactPage";
-<<<<<<< HEAD
+import FinancePage from "../pages/Management/FinancePage";
 import ProtectedRoute from "../utils/ProtectedRoute"; // Bảo vệ route
+
 
 const ManagementRoutes = () => {
   return (
@@ -65,24 +66,23 @@ const ManagementRoutes = () => {
         />
         {/* Thêm các route khác nếu cần */}
       </Route>
+      <Route
+          path="/finance"
+          element={
+            <ProtectedRoute
+              allowedRoles={[
+                "6800d06a32b289b2fe5b040c",
+                "683d70ba5b2fc9ee627b92cc",
+              ]}
+            >
+              <FinancePage />
+            </ProtectedRoute>
+          }
+        />
+     
+      
+    
     </Routes>
-=======
-import FinancePage from "../pages/Management/FinancePage";
-
-const ManagementRoutes = () => {
-  return (
-    <>
-      <ManagementHeader />
-      <Routes>
-        <Route path="/staff" element={<UserPage />} />
-        <Route path="/course" element={<CoursePages />} />
-        <Route path="/class" element={<ClassManage />} />
-        <Route path="/contact" element={<ContactPage />} />
-        <Route path="/finance" element={<FinancePage />} />
-        {/* Có thể thêm các route khác nếu cần */}
-      </Routes>
-    </>
->>>>>>> 8ddda3b (Add)
   );
 };
 

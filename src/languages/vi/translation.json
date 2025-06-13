@@ -264,7 +264,6 @@
   "students": "Học viên",
   "addStudent": "Thêm học viên",
   "noAvailableStudents": "Không có học viên ",
-<<<<<<< HEAD
   "manualCreate": "Tạo từng buổi",
   "autoCreate": "Tạo tự động",
   "addSchedule": "Thêm lịch học",
@@ -296,8 +295,7 @@
   "event": "Sự kiện",
   "noEventsInRange": "Không có sự kiện nào trong khoảng thời gian này",
   "classesParticipating": "Các lớp đang tham gia",
-  "noClassesFound": "Không tìm thấy lớp nào"
-=======
+  "noClassesFound": "Không tìm thấy lớp nào",
   "financeManagement": "Quản lý tài chính",
   "totalRevenue": "Tổng Doanh Thu",
   "pendingPayments": "Thanh Toán Đang Chờ",
@@ -350,5 +348,5 @@
   "paymentMethodRequired": "Vui lòng chọn phương thức thanh toán",
   "saving": "Đang lưu...",
   "errorDeletingPayment": "Lỗi khi xóa thanh toán. Vui lòng thử lại."
->>>>>>> 8ddda3b (Add)
+
 }

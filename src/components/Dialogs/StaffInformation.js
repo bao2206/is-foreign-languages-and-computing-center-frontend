@@ -240,7 +240,7 @@ export default function StaffInformation(props) {
                 <h2 className="text-xl font-bold mb-2">{t("staffInfo")}</h2>
                 <img
                   src={
-                    selectedStaff.avatar || "https://via.placeholder.com/100"
+                    selectedStaff.avatar || "https://res.cloudinary.com/dgbwqfajn/image/upload/s--SomnqZh4--/v1747513244/Uploads/avatar.png"
                   }
                   className="w-24 h-24 rounded-full mb-2"
                   alt="avatar"
