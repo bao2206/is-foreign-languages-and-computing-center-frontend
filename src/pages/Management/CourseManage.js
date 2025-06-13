@@ -33,7 +33,6 @@ const CourseCard = ({ course, onUpdate }) => {
   };
 
   const handleCardClick = () => {
-    console.log(`Clicked card: ${course.coursename}`);
     setOpen(true);
   };
 
@@ -155,7 +154,7 @@ const CourseCard = ({ course, onUpdate }) => {
                 setOpen(false);
                 setImageErrors("");
               }}
-              className="text-gray-500 hover:text-white-500"
+              className="text-gray-500 hover:text-gray-700 border border-gray-300 rounded px-2 py-1"
               aria-label="Close dialog"
             >
               ✕
@@ -171,7 +170,7 @@ const CourseCard = ({ course, onUpdate }) => {
             <div className="flex items-center gap-4 justify-center relative mb-6">
               <button
                 onClick={handlePrevImage}
-                className="absolute left-0 bg-white p-2 rounded-full shadow-md"
+                className="absolute left-0 bg-white p-2 rounded-full shadow-md border border-gray-300 hover:bg-blue-100"
                 aria-label="Previous image"
               >
                 <ArrowLeft size={24} />
@@ -183,7 +182,7 @@ const CourseCard = ({ course, onUpdate }) => {
               />
               <button
                 onClick={handleNextImage}
-                className="absolute right-0 bg-white p-2 rounded-full shadow-md"
+                className="absolute right-0 bg-white p-2 rounded-full shadow-md border border-gray-300 hover:bg-blue-100"
                 aria-label="Next image"
               >
                 <ArrowRight size={24} />
@@ -304,11 +303,14 @@ const CourseCard = ({ course, onUpdate }) => {
                 </label>
               </div>
               <div className="flex justify-end gap-2">
-                <Button className="text-white" onClick={handleSave}>
+                <Button
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                  onClick={handleSave}
+                >
                   {t("save")}
                 </Button>
                 <Button
-                  className="text-white"
+                  className="bg-gray-200 hover:bg-gray-300 text-gray-800 border border-gray-300"
                   onClick={handleCancel}
                   variant="outline"
                 >
@@ -335,7 +337,10 @@ const CourseCard = ({ course, onUpdate }) => {
                 <p>
                   <strong>{t("status")}:</strong> {course.status}
                 </p>
-                <Button className="text-white" onClick={handleEdit}>
+                <Button
+                  className="bg-yellow-500 hover:bg-yellow-600 text-white"
+                  onClick={handleEdit}
+                >
                   {t("edit")}
                 </Button>
               </div>

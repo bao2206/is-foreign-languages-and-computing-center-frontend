@@ -193,9 +193,10 @@ const ManagementHeader = () => {
             <li>
               <Link
                 to="/management/finance"
-                className="flex items-center p-2 text-gray-900 dark:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 group transition-colors no-underline"
+                className="nav-link inline-flex justify-center gap-x-1.5 rounded-md px-2 py-2 text-sm text-black no-underline"
+                style={{ textDecoration: "none" }}
               >
-                <span className="ms-3">{t("financeManagement")}</span>
+                <b>{t("financeManagement")}</b>
               </Link>
             </li>
           </ul>
