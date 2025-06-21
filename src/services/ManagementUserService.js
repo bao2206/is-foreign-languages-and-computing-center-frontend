@@ -37,7 +37,10 @@ export const fetchUsers = async ({
       sex: user.sex,
       status: user.status,
       role: user.authId?.role?.name || "N/A", // Lấy role từ authId
-      avatar: user.avatar || "https://via.placeholder.com/100", // Giả định có trường avatar
+      avatar:
+        user.avatar ||
+        "https://res.cloudinary.com/dgbwqfajn/image/upload/s--SomnqZh4--/v1747513244/Uploads/avatar.png", // Giả định có trường avatar
+      address: user.address,
     }));
 
     return {
@@ -50,18 +53,18 @@ export const fetchUsers = async ({
   } catch (error) {
     if (error.response) {
       throw {
-        message: error.response.data.message || 'Failed to fetch users',
-        status: error.response.status
+        message: error.response.data.message || "Failed to fetch users",
+        status: error.response.status,
       };
     } else if (error.request) {
       throw {
-        message: 'No response from server',
-        status: 500
+        message: "No response from server",
+        status: 500,
       };
     } else {
       throw {
-        message: error.message || 'Error fetching users',
-        status: 500
+        message: error.message || "Error fetching users",
+        status: 500,
       };
     }
   }
@@ -82,40 +85,40 @@ export const createStaff = async (staffData) => {
         if (errorMessage === "Email already exists") {
           throw {
             message: "Email already exists",
-            status: 400
+            status: 400,
           };
         } else if (errorMessage === "Phone already exists") {
           throw {
             message: "Phone number already exists",
-            status: 400
+            status: 400,
           };
         } else if (errorMessage === "Citizen ID already exists") {
           throw {
             message: "Citizen ID already exists",
-            status: 400
+            status: 400,
           };
         } else if (error.response.data.errors) {
           // Handle field validation errors
           throw {
             message: Object.values(error.response.data.errors).join(", "),
-            status: 400
+            status: 400,
           };
         }
       }
       // Handle other server errors
       throw {
-        message: error.response.data.message || 'Failed to create staff',
-        status: error.response.status
+        message: error.response.data.message || "Failed to create staff",
+        status: error.response.status,
       };
     } else if (error.request) {
       throw {
-        message: 'No response from server',
-        status: 500
+        message: "No response from server",
+        status: 500,
       };
     } else {
       throw {
-        message: error.message || 'Error creating staff',
-        status: 500
+        message: error.message || "Error creating staff",
+        status: 500,
       };
     }
   }
@@ -140,18 +143,18 @@ export const updateUser = async (userId, userData) => {
   } catch (error) {
     if (error.response) {
       throw {
-        message: error.response.data.message || 'Failed to update user',
-        status: error.response.status
+        message: error.response.data.message || "Failed to update user",
+        status: error.response.status,
       };
     } else if (error.request) {
       throw {
-        message: 'No response from server',
-        status: 500
+        message: "No response from server",
+        status: 500,
       };
     } else {
       throw {
-        message: error.message || 'Error updating user',
-        status: 500
+        message: error.message || "Error updating user",
+        status: 500,
       };
     }
   }
@@ -185,18 +188,18 @@ export const fetchCertificatesById = async (id) => {
   } catch (error) {
     if (error.response) {
       throw {
-        message: error.response.data.message || 'Failed to fetch certificates',
-        status: error.response.status
+        message: error.response.data.message || "Failed to fetch certificates",
+        status: error.response.status,
       };
     } else if (error.request) {
       throw {
-        message: 'No response from server',
-        status: 500
+        message: "No response from server",
+        status: 500,
       };
     } else {
       throw {
-        message: error.message || 'Error fetching certificates',
-        status: 500
+        message: error.message || "Error fetching certificates",
+        status: 500,
       };
     }
   }
@@ -213,18 +216,18 @@ export const addCertificate = async (id, certificateData) => {
   } catch (error) {
     if (error.response) {
       throw {
-        message: error.response.data.message || 'Failed to add certificate',
-        status: error.response.status
+        message: error.response.data.message || "Failed to add certificate",
+        status: error.response.status,
       };
     } else if (error.request) {
       throw {
-        message: 'No response from server',
-        status: 500
+        message: "No response from server",
+        status: 500,
       };
     } else {
       throw {
-        message: error.message || 'Error adding certificate',
-        status: 500
+        message: error.message || "Error adding certificate",
+        status: 500,
       };
     }
   }
@@ -241,18 +244,18 @@ export const updateCertificate = async (certificateData) => {
   } catch (error) {
     if (error.response) {
       throw {
-        message: error.response.data.message || 'Failed to update certificate',
-        status: error.response.status
+        message: error.response.data.message || "Failed to update certificate",
+        status: error.response.status,
       };
     } else if (error.request) {
       throw {
-        message: 'No response from server',
-        status: 500
+        message: "No response from server",
+        status: 500,
       };
     } else {
       throw {
-        message: error.message || 'Error updating certificate',
-        status: 500
+        message: error.message || "Error updating certificate",
+        status: 500,
       };
     }
   }
@@ -269,18 +272,18 @@ export const deleteCertificate = async (id) => {
   } catch (error) {
     if (error.response) {
       throw {
-        message: error.response.data.message || 'Failed to delete certificate',
-        status: error.response.status
+        message: error.response.data.message || "Failed to delete certificate",
+        status: error.response.status,
       };
     } else if (error.request) {
       throw {
-        message: 'No response from server',
-        status: 500
+        message: "No response from server",
+        status: 500,
       };
     } else {
       throw {
-        message: error.message || 'Error deleting certificate',
-        status: 500
+        message: error.message || "Error deleting certificate",
+        status: 500,
       };
     }
   }
