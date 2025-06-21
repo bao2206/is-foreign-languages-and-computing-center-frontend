@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = `${process.env.REACT_APP_API_BASE_URL}finance/` || 'http://localhost:8080/api/finance/';
+const BASE_URL = `${process.env.REACT_APP_API_BASE_URL}payment/` || 'http://localhost:8080/api/payment/';
 
 // Get token from localStorage
 const getAuthToken = () => {

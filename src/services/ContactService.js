@@ -137,3 +137,19 @@ export const submitContactForm = async (formData) => {
     throw error;
   }
 };
+
+export const getConsultationProcessed = async ({ page = 1, limit = 10, search = '' }) => {
+  try {
+    const response = await axiosInstance.get('processed', {
+      params: {
+        page,
+        limit,
+        search
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching processed consultations:', error);
+    throw error;
+  }
+};

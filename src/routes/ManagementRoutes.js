@@ -6,15 +6,8 @@ import UserPage from "../pages/Management/UserPage";
 import CoursePages from "../pages/Management/CourseManage";
 import ClassManage from "../pages/Management/ClassManage";
 import ContactPage from "../pages/Management/ContactPage";
-<<<<<<< HEAD
-import FinancePage from "../pages/Management/FinancePage";
-import ProtectedRoute from "../utils/ProtectedRoute"; // Bảo vệ route
-
-
-=======
 import ProtectedRoute from "../utils/ProtectedRoute"; // Bảo vệ route
 import FinancePage from "../pages/Management/FinancePage";
->>>>>>> ec7e69a61d391eca6c0658e47954b23c51271c97
 const ManagementRoutes = () => {
   return (
     <Routes>

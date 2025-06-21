@@ -4,7 +4,7 @@ import { Button } from "../../components/Button";
 import { useTranslation } from "react-i18next";
 import { Search, Download, Filter, Plus } from "lucide-react";
 import {
-  getFinancialSummary,
+  // getFinancialSummary,
   getFinancialRecords,
   getFinancialRecord,
   createPayment,
@@ -12,6 +12,8 @@ import {
   deletePayment,
   downloadInvoice
 } from "../../services/FinanceService";
+import { fetchCourses, fetchCourseById } from '../../services/ManagementCourse';
+import { completeCashPayment } from '../../services/ClassManagementService';
 import "bootstrap/dist/css/bootstrap.css";
 
 const FinancePage = () => {
@@ -56,10 +58,29 @@ const FinancePage = () => {
   const [formErrors, setFormErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Load courses for mapping
+  const [courses, setCourses] = useState([]);
+  const [courseMap, setCourseMap] = useState({});
+
+  // Load course fee
+  const [courseFee, setCourseFee] = useState(null);
+
   // Load initial data
   useEffect(() => {
     loadData();
+    loadCourses();
   }, [searchTerm, selectedStatus, selectedDateRange, page]);
+
+  // When a record is selected, fetch the course fee
+  useEffect(() => {
+    if (selectedRecord && selectedRecord.course) {
+      fetchCourseById(selectedRecord.course).then(course => {
+        setCourseFee(course?.price ?? null);
+      });
+    } else {
+      setCourseFee(null);
+    }
+  }, [selectedRecord]);
 
   const loadData = async () => {
     try {
@@ -67,8 +88,8 @@ const FinancePage = () => {
       setError(null);
 
       // Load summary data
-      const summaryData = await getFinancialSummary();
-      setSummary(summaryData);
+      // const summaryData = await getFinancialSummary();
+      // setSummary(summaryData);
 
       // Load financial records
       const recordsData = await getFinancialRecords({
@@ -87,6 +108,21 @@ const FinancePage = () => {
       console.error("Error loading data:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadCourses = async () => {
+    try {
+      const courseList = await fetchCourses();
+      setCourses(courseList);
+      // Build a map: id -> name
+      const map = {};
+      courseList.forEach(course => {
+        map[course._id] = course.coursename;
+      });
+      setCourseMap(map);
+    } catch (err) {
+      // ignore for now
     }
   };
 
@@ -209,12 +245,49 @@ const FinancePage = () => {
     }
   };
 
+  // Helper to format date as dd-mm-yyyy
+  function formatDateDMY(dateString) {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
+    if (isNaN(date)) return dateString;
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  }
+
+  // Handler for completing cash payment
+  const handleCompleteCashPayment = async (paymentId) => {
+    if (!window.confirm(t("confirmCompleteCashPayment") || "Are you sure you want to complete this payment by cash?")) return;
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await completeCashPayment(paymentId);
+      if (data.studentAccount || data.parentAccount) {
+        alert(
+          `${data.studentAccount ? `Student Account:\nUsername: ${data.studentAccount.username}\nPassword: ${data.studentAccount.password}\n` : ""}` +
+          `${data.parentAccount ? `Parent Account:\nUsername: ${data.parentAccount.username}\nPassword: ${data.parentAccount.password}` : ""}`
+        );
+      } else {
+        alert(data.message || t("paymentCompletedSuccessfully") || "Payment completed successfully!");
+      }
+      loadData();
+    } catch (err) {
+      setError(err.message || t("errorCompletingPayment"));
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="container-fluid">
       {/* Header Section */}
       <div className="row mb-4">
         <div className="col">
           <h2>{t("financeManagement")}</h2>
+          <div className="text-muted">
+            {t('totalInvoices')}: <b>{financialRecords.length}</b>
+          </div>
         </div>
       </div>
 
@@ -320,6 +393,7 @@ const FinancePage = () => {
                   <th>{t("invoiceNumber")}</th>
                   <th>{t("studentName")}</th>
                   <th>{t("course")}</th>
+                  <th>{t("courseFee")}</th>
                   <th>{t("amount")}</th>
                   <th>{t("paymentDate")}</th>
                   <th>{t("status")}</th>
@@ -330,11 +404,20 @@ const FinancePage = () => {
               <tbody>
                 {financialRecords.map((record) => (
                   <tr key={record.id}>
-                    <td>{record.invoiceNumber}</td>
+                    <td>{record._id}</td>
                     <td>{record.studentName}</td>
-                    <td>{record.course}</td>
-                    <td>{record.amount.toLocaleString('vi-VN')} VND</td>
-                    <td>{record.paymentDate}</td>
+                    <td>{courseMap[record.course] || record.course || '-' }</td>
+                    <td>
+                      {record.coursePrice != null && !isNaN(record.coursePrice)
+                        ? Number(record.coursePrice).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })
+                        : '-'}
+                    </td>
+                    <td>
+                      {record.status === 'paid' && record.amount != null && !isNaN(record.amount)
+                        ? Number(record.amount).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })
+                        : record.status === 'paid' ? '-' : ''}
+                    </td>
+                    <td>{formatDateDMY(record.paymentDate)}</td>
                     <td>
                       <span className={`badge ${
                         record.status === 'paid' ? 'bg-success' :
@@ -344,7 +427,9 @@ const FinancePage = () => {
                         {t(record.status)}
                       </span>
                     </td>
-                    <td>{record.paymentMethod}</td>
+                    <td>
+                      {record.status === 'paid' ? record.paymentMethod : ''}
+                    </td>
                     <td>
                       <Button
                         className="btn btn-outline-primary btn-sm me-2"
@@ -352,12 +437,22 @@ const FinancePage = () => {
                       >
                         {t("view")}
                       </Button>
-                      <Button
-                        className="btn btn-outline-secondary btn-sm"
-                        onClick={() => handleDownloadInvoice(record.id)}
-                      >
-                        <Download size={16} />
-                      </Button>
+                      {record.status === 'paid' && (
+                        <Button
+                          className="btn btn-outline-secondary btn-sm"
+                          onClick={() => handleDownloadInvoice(record.id)}
+                        >
+                          <Download size={16} />
+                        </Button>
+                      )}
+                      {record.status === 'pending' && (
+                        <Button
+                          className="btn btn-outline-success btn-sm ms-2"
+                          onClick={() => handleCompleteCashPayment(record.id || record._id)}
+                        >
+                          {t("completeCashPayment") || "Complete Cash Payment"}
+                        </Button>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -592,15 +687,27 @@ const FinancePage = () => {
                   </div>
                   <div className="col-md-6 mb-3">
                     <label className="form-label">{t("course")}</label>
-                    <p className="form-control-plaintext">{selectedRecord.course}</p>
+                    <p className="form-control-plaintext">{courseMap[selectedRecord.course] || selectedRecord.course || '-' }</p>
                   </div>
+                  {selectedRecord.coursePrice !== undefined && selectedRecord.coursePrice !== null && (
+                    <div className="col-md-6 mb-3">
+                      <label className="form-label">{t("courseFee")}</label>
+                      <p className="form-control-plaintext">
+                        {Number(selectedRecord.coursePrice).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                      </p>
+                    </div>
+                  )}
                   <div className="col-md-6 mb-3">
                     <label className="form-label">{t("amount")}</label>
-                    <p className="form-control-plaintext">{selectedRecord.amount.toLocaleString('vi-VN')} VND</p>
+                    <p className="form-control-plaintext">
+                      {selectedRecord.amount != null && !isNaN(selectedRecord.amount)
+                        ? Number(selectedRecord.amount).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })
+                        : '-'}
+                    </p>
                   </div>
                   <div className="col-md-6 mb-3">
                     <label className="form-label">{t("paymentDate")}</label>
-                    <p className="form-control-plaintext">{selectedRecord.paymentDate}</p>
+                    <p className="form-control-plaintext">{formatDateDMY(selectedRecord.paymentDate)}</p>
                   </div>
                   <div className="col-md-6 mb-3">
                     <label className="form-label">{t("status")}</label>
@@ -614,10 +721,12 @@ const FinancePage = () => {
                       </span>
                     </p>
                   </div>
-                  <div className="col-md-6 mb-3">
-                    <label className="form-label">{t("paymentMethod")}</label>
-                    <p className="form-control-plaintext">{t(selectedRecord.paymentMethod)}</p>
-                  </div>
+                  {selectedRecord.status === 'paid' && (
+                    <div className="col-md-6 mb-3">
+                      <label className="form-label">{t("paymentMethod")}</label>
+                      <p className="form-control-plaintext">{t(selectedRecord.paymentMethod)}</p>
+                    </div>
+                  )}
                   <div className="col-12 mb-3">
                     <label className="form-label">{t("notes")}</label>
                     <p className="form-control-plaintext">{selectedRecord.notes || "-"}</p>
@@ -638,13 +747,15 @@ const FinancePage = () => {
               >
                 {t("close")}
               </Button>
-              <Button
-                className="btn btn-outline-primary"
-                onClick={() => handleDownloadInvoice(selectedRecord?.id)}
-              >
-                <Download size={16} className="me-2" />
-                {t("downloadInvoice")}
-              </Button>
+              {selectedRecord && selectedRecord.status === 'paid' && (
+                <Button
+                  className="btn btn-outline-primary"
+                  onClick={() => handleDownloadInvoice(selectedRecord?.id)}
+                >
+                  <Download size={16} className="me-2" />
+                  {t("downloadInvoice")}
+                </Button>
+              )}
             </div>
           </div>
         </div>

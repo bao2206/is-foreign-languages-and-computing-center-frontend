@@ -34,7 +34,7 @@ export const fetchClasses = async ({
     };
     console.log("Fetching classes with payload:", payload);
 
-    const url = `${BASE_URL}classManager`;
+    const url = `${BASE_URL}classManager/`;
     const response = await axios.post(url, payload, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });
@@ -121,4 +121,61 @@ export const updateClass = async (updatedData) => {
 
 export const getStudentRegister = async (courseId) => {
   return {};
+};
+
+// Add students to class
+export const addStudentsToClass = async (students) => {
+  try {
+    const response = await axios.post(`${BASE_URL}addStudent`, 
+      { students },
+      {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Failed to add students to class:", error.response?.data || error.message);
+    throw new Error("Failed to add students to class");
+  }
+};
+
+// Get open classes by course ID
+export const getOpenClassesByCourseId = async (courseId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}open/${courseId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching open classes by course ID:', error);
+    throw new Error('Failed to fetch open classes');
+  }
+};
+
+export const addNewStudentToClass = async ({ classId, studentId, contactId }) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}addStudent`,
+      { classId, studentId, contactId },
+      { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Failed to add new student to class:", error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || "Failed to add new student to class");
+  }
+};
+
+export const completeCashPayment = async (paymentId) => {
+  try {
+    const response = await fetch(`/api/payments/${paymentId}/complete-cash`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Failed to complete payment");
+    return data;
+  } catch (err) {
+    throw err;
+  }
 };

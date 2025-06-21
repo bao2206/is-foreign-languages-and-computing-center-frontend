@@ -6,20 +6,65 @@ import {
   fetchClasses,
   createClass,
   fetchTeachers,
-  addStudentsToClass,
-  addNewStudentToClass,
 } from "../../services/ClassManagementService";
 import "bootstrap/dist/css/bootstrap.css";
 import { Search } from "lucide-react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ClassItem from "../../components/Dialogs/ClassItem";
-import { fetchCourses, fetchCourseById } from "../../services/ManagementCourse";
-import ProcessedConsultationsList from "../../components/ProcessedConsultationsList";
-import OpenClassesList from "../../components/OpenClassesList";
+import { fetchCourses } from "../../services/ManagementCourse";
 
 // Regex cho tên lớp
 const classNameRegex = /^[\w\s&-]+$/;
+
+// Custom styles for better card appearance
+const cardStyles = `
+  .class-card {
+    transition: all 0.3s ease;
+    border-radius: 12px;
+  }
+  
+  .class-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+  }
+  
+  .class-card .card-body {
+    padding: 1.25rem;
+  }
+  
+  .class-card .badge {
+    font-size: 0.75rem;
+    padding: 0.375rem 0.75rem;
+  }
+  
+  .class-card .btn-sm {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+  }
+  
+  .class-card .text-truncate {
+    max-width: 100%;
+  }
+  
+  .filter-section {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .empty-state {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    padding: 3rem 1rem;
+  }
+  
+  .empty-state i {
+    color: #6c757d;
+    opacity: 0.6;
+  }
+`;
 
 const ClassManagement = () => {
   const [classes, setClasses] = useState([]);
@@ -43,13 +88,8 @@ const ClassManagement = () => {
     courseId: "",
     quantity: 0,
     status: "Incomplete",
-    daystart: null,
-    dayend: null,
   });
   const [errors, setErrors] = useState({});
-  const [isViewStudentDialogOpen, setIsViewStudentDialogOpen] = useState(false);
-  const [selectedStudent, setSelectedStudent] = useState(null);
-  const [courseNames, setCourseNames] = useState({});
 
   // Load courses và teachers
   useEffect(() => {
@@ -152,12 +192,7 @@ const ClassManagement = () => {
     }
 
     try {
-      const classDataToSend = {
-        ...newClass,
-        dayend: newClass.dayend ? newClass.dayend.toISOString() : undefined,
-        date: newClass.date ? newClass.date.toISOString() : undefined,
-      };
-      const createdClass = await createClass(classDataToSend);
+      const createdClass = await createClass(newClass);
       setClasses((prev) => [...prev, createdClass]);
       setIsAddDialogOpen(false);
       setNewClass({
@@ -165,8 +200,6 @@ const ClassManagement = () => {
         courseId: "",
         quantity: 0,
         status: "Incomplete",
-        daystart: null,
-    dayend: null,
       });
       setErrors({});
     } catch (error) {
@@ -203,172 +236,146 @@ const ClassManagement = () => {
     }));
   };
 
-  const handleViewStudentDetails = (student) => {
-    setSelectedStudent(student);
-    setIsViewStudentDialogOpen(true);
-  };
-
-  // Function to fetch course name by ID
-  const fetchCourseName = async (courseId) => {
-    if (!courseId || courseNames[courseId]) return;
-    
-    try {
-      const course = await fetchCourseById(courseId);
-      if (course && course.coursename) {
-        setCourseNames(prev => ({
-          ...prev,
-          [courseId]: course.coursename
-        }));
-      }
-    } catch (error) {
-      console.error(`Error fetching course ${courseId}:`, error);
-    }
-  };
-
-  // Function to handle adding student to class
-  const handleAddToClass = async (classItem) => {
-    if (!selectedStudent) return;
-    try {
-      await addNewStudentToClass({
-        classId: classItem._id,
-        studentId: selectedStudent._id,
-        contactId: selectedStudent._id, // adjust if you have a separate contactId
-      });
-      alert(`${t('studentAddedToClass')}: ${classItem.classname}`);
-      setIsViewStudentDialogOpen(false);
-    } catch (error) {
-      console.error('Error adding student to class:', error);
-      alert(error.message || t('failedToAddStudentToClass'));
-    }
-  };
-
   return (
     <div className="container-fluid mt-4 px-3">
-      {/* Search Bar - Full Width */}
-      <div className="d-flex flex-wrap gap-2 align-items-center mb-4">
-        {/* Tìm kiếm */}
-        <div style={{ minWidth: 220, flex: 1 }}>
-          <div className="position-relative">
-            <Search
-              className="position-absolute"
-              style={{
-                left: "10px",
-                top: "50%",
-                transform: "translateY(-50%)",
-                color: "#6c757d",
-              }}
-              size={18}
-            />
-            <input
-              type="text"
-              placeholder={t("searchClass")}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="form-control ps-5"
+      {/* Inject custom styles */}
+      <style>{cardStyles}</style>
+      
+      {/* Thanh tìm kiếm và lọc */}
+      <div className="filter-section">
+        <div className="d-flex flex-wrap gap-2 align-items-center">
+          {/* Tìm kiếm */}
+          <div style={{ minWidth: 220, flex: 1 }}>
+            <div className="position-relative">
+              <Search
+                className="position-absolute"
+                style={{
+                  left: "10px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  color: "#6c757d",
+                }}
+                size={18}
+              />
+              <input
+                type="text"
+                placeholder={t("searchClass")}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="form-control ps-5"
+                style={{ height: "38px" }}
+              />
+            </div>
+          </div>
+          {/* Khóa học */}
+          <div style={{ minWidth: 160 }}>
+            <select
+              value={courseFilter}
+              onChange={(e) => setCourseFilter(e.target.value)}
+              className="form-select"
               style={{ height: "38px" }}
+            >
+              <option value="all">{t("allCourses")}</option>
+              {courses && courses.map((course) => (
+                <option key={course._id} value={course._id}>
+                  {course.coursename}
+                </option>
+              ))}
+            </select>
+          </div>
+          {/* Giáo viên */}
+          <div style={{ minWidth: 160 }}>
+            <select
+              value={teacherFilter}
+              onChange={(e) => setTeacherFilter(e.target.value)}
+              className="form-select"
+              style={{ height: "38px" }}
+            >
+              <option value="all">{t("allTeachers")}</option>
+              {teachers && teachers.map((teacher) => (
+                <option key={teacher._id} value={teacher._id}>
+                  {teacher.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          {/* Trạng thái */}
+          <div style={{ minWidth: 140 }}>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="form-select"
+              style={{ height: "38px" }}
+            >
+              <option value="all">{t("allStatuses")}</option>
+              <option value="Incomplete">{t("Incomplete")}</option>
+              <option value="Active">{t("Active")}</option>
+              <option value="Completed">{t("Completed")}</option>
+            </select>
+          </div>
+          {/* Khoảng ngày */}
+          <div style={{ minWidth: 180 }}>
+            <DatePicker
+              selectsRange
+              startDate={startDate}
+              endDate={endDate}
+              onChange={(update) => setDateRange(update)}
+              placeholderText={t("selectDateRange")}
+              className="form-control"
+              style={{ height: "38px" }}
+              isClearable
             />
           </div>
-        </div>
-        {/* Khóa học */}
-        <div style={{ minWidth: 160 }}>
-          <select
-            value={courseFilter}
-            onChange={(e) => setCourseFilter(e.target.value)}
-            className="form-select"
-            style={{ height: "38px" }}
-          >
-            <option value="all">{t("allCourses")}</option>
-            {courses && courses.map((course) => (
-              <option key={course._id} value={course._id}>
-                {course.coursename}
-              </option>
-            ))}
-          </select>
-        </div>
-        {/* Giáo viên */}
-        <div style={{ minWidth: 160 }}>
-          <select
-            value={teacherFilter}
-            onChange={(e) => setTeacherFilter(e.target.value)}
-            className="form-select"
-            style={{ height: "38px" }}
-          >
-            <option value="all">{t("allTeachers")}</option>
-            {teachers && teachers.map((teacher) => (
-              <option key={teacher._id} value={teacher._id}>
-                {teacher.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        {/* Trạng thái */}
-        <div style={{ minWidth: 140 }}>
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="form-select"
-            style={{ height: "38px" }}
-          >
-            <option value="all">{t("allStatuses")}</option>
-            <option value="Incomplete">{t("Incomplete")}</option>
-            <option value="Active">{t("Active")}</option>
-            <option value="Completed">{t("Completed")}</option>
-          </select>
-        </div>
-        {/* Khoảng ngày */}
-        <div style={{ minWidth: 180 }}>
-          <DatePicker
-            selectsRange
-            startDate={startDate}
-            endDate={endDate}
-            onChange={(update) => setDateRange(update)}
-            placeholderText={t("selectDateRange")}
-            className="form-control"
-            style={{ height: "38px" }}
-            isClearable
-          />
-        </div>
-        {/* Phân trang nhanh */}
-        <div style={{ minWidth: 90 }}>
-          <input
-            type="number"
-            value={page}
-            onChange={handlePageInputChange}
-            min="1"
-            max={totalPages}
-            className="form-control"
-            style={{ height: "38px", width: "70px" }}
-          />
-        </div>
-        {/* Nút thêm lớp */}
-        <div className="ms-auto">
-          <Button
-            className="btn btn-primary"
-            onClick={() => setIsAddDialogOpen(true)}
-            style={{
-              height: "38px",
-              padding: "0 16px",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {t("addClass")}
-          </Button>
+          {/* Phân trang nhanh */}
+          <div style={{ minWidth: 90 }}>
+            <input
+              type="number"
+              value={page}
+              onChange={handlePageInputChange}
+              min="1"
+              max={totalPages}
+              className="form-control"
+              style={{ height: "38px", width: "70px" }}
+            />
+          </div>
+          {/* Nút thêm lớp */}
+          <div className="ms-auto">
+            <Button
+              className="btn btn-primary"
+              onClick={() => setIsAddDialogOpen(true)}
+              style={{
+                height: "38px",
+                padding: "0 16px",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {t("addClass")}
+            </Button>
+          </div>
         </div>
       </div>
 
-      {/* Sidebar - Processed Consultations - Full Width */}
-      <div className="mb-4">
-        <ProcessedConsultationsList onViewDetails={handleViewStudentDetails} />
-      </div>
-
-      {/* Courses Section - Full Width */}
-      <div className="row">
+      {/* Danh sách lớp học */}
+      <div className="row g-3">
         {filteredClasses.map((classItem) => (
           <div key={classItem._id} className="col-lg-3 col-md-6 col-sm-12">
-            <ClassItem classItem={classItem} />
+            <div className="class-card">
+              <ClassItem classItem={classItem} />
+            </div>
           </div>
         ))}
       </div>
+
+      {/* Empty state when no classes */}
+      {filteredClasses.length === 0 && (
+        <div className="empty-state text-center">
+          <div className="text-muted">
+            <i className="fas fa-graduation-cap fa-3x mb-3"></i>
+            <h5>{t("noClassesFound")}</h5>
+            <p>{t("noClassesMessage")}</p>
+          </div>
+        </div>
+      )}
 
       {/* Phân trang */}
       {totalPages > 1 && (
@@ -530,18 +537,6 @@ const ClassManagement = () => {
                   <option value="Completed">{t("Completed")}</option>
                 </select>
               </div>
-              <div className="mb-3">
-                <label className="form-label">{t("dayend")}</label>
-                <DatePicker
-                  selected={newClass.dayend ? new Date(newClass.dayend) : null}
-                  onChange={date => setNewClass(prev => ({ ...prev, dayend: date }))}
-                  placeholderText={t("selectDate")}
-                  className="form-control"
-                  style={{ height: "38px" }}
-                  isClearable
-                  dateFormat="yyyy-MM-dd"
-                />
-              </div>
             </div>
             <div className="modal-footer">
               <Button className="btn btn-primary" onClick={handleAddClass}>
@@ -567,111 +562,6 @@ const ClassManagement = () => {
           </div>
         </Dialog.Panel>
       </Dialog>
-
-      {/* Student Details Dialog */}
-      {isViewStudentDialogOpen && selectedStudent && (
-        <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <div className="modal-dialog modal-lg">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">{t('studentDetails')}</h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={() => setIsViewStudentDialogOpen(false)}
-                ></button>
-              </div>
-              <div className="modal-body">
-                <div className="row">
-                  <div className="col-md-6 mb-3">
-                    <label className="form-label">{t('name')}</label>
-                    <div className="form-control bg-light">{selectedStudent.name}</div>
-                  </div>
-                  <div className="col-md-6 mb-3">
-                    <label className="form-label">{t('email')}</label>
-                    <div className="form-control bg-light">{selectedStudent.email}</div>
-                  </div>
-                  <div className="col-md-6 mb-3">
-                    <label className="form-label">{t('phone')}</label>
-                    <div className="form-control bg-light">{selectedStudent.phone}</div>
-                  </div>
-                  <div className="col-md-6 mb-3">
-                    <label className="form-label">{t('assignedCourse')}</label>
-                    <div className="form-control bg-light">
-                      {(() => {
-                        console.log('Selected student course data:', selectedStudent.assignedCourse);
-                        // Handle case where assignedCourse is just an ID object
-                        if (selectedStudent.assignedCourse && selectedStudent.assignedCourse._id) {
-                          const courseId = selectedStudent.assignedCourse._id;
-                          const courseName = courseNames[courseId];
-                          
-                          if (courseName) {
-                            return courseName;
-                          } else {
-                            // Fetch course name if not already fetched
-                            fetchCourseName(courseId);
-                            return <span className="text-muted">Loading...</span>;
-                          }
-                        }
-                        // Try different possible property names for full course object
-                        const courseName = 
-                          selectedStudent.assignedCourse?.coursename ||
-                          selectedStudent.assignedCourse?.name ||
-                          selectedStudent.course?.coursename ||
-                          selectedStudent.course?.name ||
-                          selectedStudent.courseName ||
-                          selectedStudent.course;
-                        return courseName || t('N/A');
-                      })()}
-                    </div>
-                  </div>
-                  <div className="col-12 mb-3">
-                    <label className="form-label">{t('consultationContent')}</label>
-                    <div className="form-control bg-light">{selectedStudent.consultationContent}</div>
-                  </div>
-                  {selectedStudent.parentName && (
-                    <div className="col-md-6 mb-3">
-                      <label className="form-label">{t('parentName')}</label>
-                      <div className="form-control bg-light">{selectedStudent.parentName}</div>
-                    </div>
-                  )}
-                  {selectedStudent.parentPhone && (
-                    <div className="col-md-6 mb-3">
-                      <label className="form-label">{t('parentPhone')}</label>
-                      <div className="form-control bg-light">{selectedStudent.parentPhone}</div>
-                    </div>
-                  )}
-                  {selectedStudent.parentEmail && (
-                    <div className="col-md-6 mb-3">
-                      <label className="form-label">{t('parentEmail')}</label>
-                      <div className="form-control bg-light">{selectedStudent.parentEmail}</div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Open Classes Section */}
-                {selectedStudent.assignedCourse && selectedStudent.assignedCourse._id && (
-                  <div className="mt-4">
-                    <h6 className="mb-3">{t('availableClasses')}</h6>
-                    <OpenClassesList 
-                      courseId={selectedStudent.assignedCourse._id}
-                      onAddToClass={handleAddToClass}
-                    />
-                  </div>
-                )}
-              </div>
-              <div className="modal-footer">
-                <button
-                  className="btn btn-secondary"
-                  onClick={() => setIsViewStudentDialogOpen(false)}
-                >
-                  {t('close')}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

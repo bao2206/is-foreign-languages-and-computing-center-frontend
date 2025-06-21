@@ -10,6 +10,7 @@ import {
   deleteConsultation,
   getConsultation,
 } from "../../services/ContactService";
+import { fetchCourses } from "../../services/ManagementCourse";
 import "bootstrap/dist/css/bootstrap.css";
 
 const ContactPage = () => {
@@ -22,14 +23,18 @@ const ContactPage = () => {
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [courses, setCourses] = useState([]);
   const [newContact, setNewContact] = useState({
     name: "",
     email: "",
     phone: "",
-    courseInterest: "",
     consultationContent: "",
     status: "pending",
     notes: "",
+    parentName: "",
+    parentPhone: "",
+    parentEmail: "",
+    assignedCourse: ""
   });
   const [errors, setErrors] = useState({});
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
@@ -42,6 +47,10 @@ const ContactPage = () => {
     consultationContent: "",
     status: "",
     notes: "",
+    parentName: "",
+    parentPhone: "",
+    parentEmail: "",
+    assignedCourse: ""
   });
 
   const { t } = useTranslation();
@@ -49,6 +58,21 @@ const ContactPage = () => {
   // Email and phone validation regex
   const emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
   const phoneRegex = /^(?:\+84|0)(?:3|5|7|8|9)\d{8}$/;
+
+  // Load courses
+  useEffect(() => {
+    const loadCourses = async () => {
+      try {
+        const coursesData = await fetchCourses();
+        if (coursesData && Array.isArray(coursesData)) {
+          setCourses(coursesData);
+        }
+      } catch (error) {
+        console.error('Error loading courses:', error);
+      }
+    };
+    loadCourses();
+  }, []);
 
   useEffect(() => {
     const loadData = async () => {
@@ -96,6 +120,10 @@ const ContactPage = () => {
     if (!newContact.consultationContent.trim())
       newErrors.consultationContent = t("messageRequired");
     if (!newContact.status) newErrors.status = t("statusRequired");
+    if (newContact.parentEmail && !emailRegex.test(newContact.parentEmail))
+      newErrors.parentEmail = t("invalidEmail");
+    if (newContact.parentPhone && !phoneRegex.test(newContact.parentPhone))
+      newErrors.parentPhone = t("invalidPhone");
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -114,10 +142,13 @@ const ContactPage = () => {
         name: "",
         email: "",
         phone: "",
-        courseInterest: "",
         consultationContent: "",
         status: "pending",
         notes: "",
+        parentName: "",
+        parentPhone: "",
+        parentEmail: "",
+        assignedCourse: ""
       });
       setErrors({});
     } catch (error) {
@@ -157,6 +188,10 @@ const ContactPage = () => {
         consultationContent: response.data.consultationContent,
         status: response.data.status,
         notes: response.data.notes || "",
+        parentName: response.data.parentName || "",
+        parentPhone: response.data.parentPhone || "",
+        parentEmail: response.data.parentEmail || "",
+        assignedCourse: response.data.assignedCourse || ""
       });
       setIsViewDialogOpen(true);
     } catch (error) {
@@ -212,6 +247,12 @@ const ContactPage = () => {
         alert(error.message || t("failedToDeleteContact"));
       }
     }
+  };
+
+  // Add this function after the useEffect hooks
+  const getCourseName = (courseId) => {
+    const course = courses.find(c => c._id === courseId);
+    return course ? course.coursename : t("selectCourse");
   };
 
   return (
@@ -358,11 +399,26 @@ const ContactPage = () => {
       {/* Add Contact Dialog */}
       <Dialog
         open={isAddDialogOpen}
-        onClose={() => setIsAddDialogOpen(false)}
-        className="modal fade show"
-        style={{ display: isAddDialogOpen ? "block" : "none" }}
+        onClose={() => {
+          setIsAddDialogOpen(false);
+          setNewContact({
+            name: "",
+            email: "",
+            phone: "",
+            consultationContent: "",
+            status: "pending",
+            notes: "",
+            parentName: "",
+            parentPhone: "",
+            parentEmail: "",
+            assignedCourse: ""
+          });
+          setErrors({});
+        }}
+        className="modal show d-block"
+        style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
       >
-        <div className="modal-dialog">
+        <Dialog.Panel className="modal-dialog modal-lg">
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title">{t("addNewContact")}</h5>
@@ -373,113 +429,163 @@ const ContactPage = () => {
               ></button>
             </div>
             <div className="modal-body">
-              <form>
-                <div className="mb-3">
+              <div className="row">
+                {/* Student Information */}
+                <div className="col-md-6 mb-3">
                   <label className="form-label">{t("name")}</label>
                   <input
                     type="text"
-                    className={`form-control ${
-                      errors.name ? "is-invalid" : ""
-                    }`}
                     name="name"
                     value={newContact.name}
                     onChange={handleNewContactChange}
+                    className={`form-control ${errors.name ? "is-invalid" : ""}`}
+                    required
                   />
                   {errors.name && (
                     <div className="invalid-feedback">{errors.name}</div>
                   )}
                 </div>
-                <div className="mb-3">
+                <div className="col-md-6 mb-3">
                   <label className="form-label">{t("email")}</label>
                   <input
                     type="email"
-                    className={`form-control ${
-                      errors.email ? "is-invalid" : ""
-                    }`}
                     name="email"
                     value={newContact.email}
                     onChange={handleNewContactChange}
+                    className={`form-control ${errors.email ? "is-invalid" : ""}`}
+                    required
                   />
                   {errors.email && (
                     <div className="invalid-feedback">{errors.email}</div>
                   )}
                 </div>
-                <div className="mb-3">
+                <div className="col-md-6 mb-3">
                   <label className="form-label">{t("phone")}</label>
                   <input
                     type="tel"
-                    className={`form-control ${
-                      errors.phone ? "is-invalid" : ""
-                    }`}
                     name="phone"
                     value={newContact.phone}
                     onChange={handleNewContactChange}
+                    className={`form-control ${errors.phone ? "is-invalid" : ""}`}
+                    required
                   />
                   {errors.phone && (
                     <div className="invalid-feedback">{errors.phone}</div>
                   )}
                 </div>
-                <div className="mb-3">
-                  <label className="form-label">{t("message")}</label>
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">{t("assignedCourse")}</label>
+                  <select
+                    name="assignedCourse"
+                    value={newContact.assignedCourse}
+                    onChange={handleNewContactChange}
+                    className="form-select"
+                  >
+                    <option value="">{t("selectCourse")}</option>
+                    {courses.map((course) => (
+                      <option key={course._id} value={course._id}>
+                        {course.coursename}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Parent Information */}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">{t("parentName")}</label>
+                  <input
+                    type="text"
+                    name="parentName"
+                    value={newContact.parentName}
+                    onChange={handleNewContactChange}
+                    className="form-control"
+                  />
+                </div>
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">{t("parentPhone")}</label>
+                  <input
+                    type="tel"
+                    name="parentPhone"
+                    value={newContact.parentPhone}
+                    onChange={handleNewContactChange}
+                    className={`form-control ${errors.parentPhone ? "is-invalid" : ""}`}
+                  />
+                  {errors.parentPhone && (
+                    <div className="invalid-feedback">{errors.parentPhone}</div>
+                  )}
+                </div>
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">{t("parentEmail")}</label>
+                  <input
+                    type="email"
+                    name="parentEmail"
+                    value={newContact.parentEmail}
+                    onChange={handleNewContactChange}
+                    className={`form-control ${errors.parentEmail ? "is-invalid" : ""}`}
+                  />
+                  {errors.parentEmail && (
+                    <div className="invalid-feedback">{errors.parentEmail}</div>
+                  )}
+                </div>
+
+                {/* Consultation Details */}
+                <div className="col-12 mb-3">
+                  <label className="form-label">{t("contactForm.consultationContent")}</label>
                   <textarea
-                    className={`form-control ${
-                      errors.consultationContent ? "is-invalid" : ""
-                    }`}
                     name="consultationContent"
                     value={newContact.consultationContent}
                     onChange={handleNewContactChange}
+                    className={`form-control ${errors.consultationContent ? "is-invalid" : ""}`}
                     rows="4"
-                  ></textarea>
+                    required
+                  />
                   {errors.consultationContent && (
-                    <div className="invalid-feedback">
-                      {errors.consultationContent}
-                    </div>
+                    <div className="invalid-feedback">{errors.consultationContent}</div>
                   )}
                 </div>
-                <div className="mb-3">
+                <div className="col-md-6 mb-3">
                   <label className="form-label">{t("status")}</label>
                   <select
-                    className="form-select"
                     name="status"
                     value={newContact.status}
                     onChange={handleNewContactChange}
+                    className={`form-select ${errors.status ? "is-invalid" : ""}`}
+                    required
                   >
                     <option value="pending">{t("pending")}</option>
                     <option value="processed">{t("processed")}</option>
                     <option value="cancelled">{t("cancelled")}</option>
-                    <option value="class_assigned">
-                      {t("class_assigned")}
-                    </option>
+                    <option value="class_assigned">{t("class_assigned")}</option>
                   </select>
+                  {errors.status && (
+                    <div className="invalid-feedback">{errors.status}</div>
+                  )}
                 </div>
-                <div className="mb-3">
+                <div className="col-12 mb-3">
                   <label className="form-label">{t("notes")}</label>
                   <textarea
-                    className="form-control"
                     name="notes"
                     value={newContact.notes}
                     onChange={handleNewContactChange}
-                    rows="2"
-                  ></textarea>
+                    className="form-control"
+                    rows="3"
+                  />
                 </div>
-              </form>
+              </div>
             </div>
             <div className="modal-footer">
+              <Button className="btn btn-primary" onClick={handleAddContact}>
+                {t("add")}
+              </Button>
               <Button
-                className="btn btn-outline-secondary"
+                className="btn btn-secondary"
                 onClick={() => setIsAddDialogOpen(false)}
               >
                 {t("cancel")}
               </Button>
-              <Button
-                className="btn btn-outline-primary"
-                onClick={handleAddContact}
-              >
-                {t("save")}
-              </Button>
             </div>
           </div>
-        </div>
+        </Dialog.Panel>
       </Dialog>
 
       {/* View/Edit Contact Dialog */}
@@ -489,10 +595,10 @@ const ContactPage = () => {
           setIsViewDialogOpen(false);
           setIsEditing(false);
         }}
-        className="modal fade show"
-        style={{ display: isViewDialogOpen ? "block" : "none" }}
+        className="modal show d-block"
+        style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
       >
-        <div className="modal-dialog modal-lg">
+        <Dialog.Panel className="modal-dialog modal-lg">
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title">
@@ -508,159 +614,178 @@ const ContactPage = () => {
               ></button>
             </div>
             <div className="modal-body">
-              {selectedContact && (
-                <div className="row">
-                  <div className="col-md-6 mb-3">
-                    <label className="form-label">{t("name")}</label>
-                    {isEditing ? (
-                      <input
-                        type="text"
-                        className="form-control"
-                        name="name"
-                        value={editForm.name}
-                        onChange={handleEditFormChange}
-                      />
-                    ) : (
-                      <p className="form-control-plaintext">
-                        {selectedContact.name}
-                      </p>
-                    )}
-                  </div>
-                  <div className="col-md-6 mb-3">
-                    <label className="form-label">{t("email")}</label>
-                    {isEditing ? (
-                      <input
-                        type="email"
-                        className="form-control"
-                        name="email"
-                        value={editForm.email}
-                        onChange={handleEditFormChange}
-                      />
-                    ) : (
-                      <p className="form-control-plaintext">
-                        {selectedContact.email}
-                      </p>
-                    )}
-                  </div>
-                  <div className="col-md-6 mb-3">
-                    <label className="form-label">{t("phone")}</label>
-                    {isEditing ? (
-                      <input
-                        type="tel"
-                        className="form-control"
-                        name="phone"
-                        value={editForm.phone}
-                        onChange={handleEditFormChange}
-                      />
-                    ) : (
-                      <p className="form-control-plaintext">
-                        {selectedContact.phone}
-                      </p>
-                    )}
-                  </div>
-                  <div className="col-md-6 mb-3">
-                    <label className="form-label">{t("status")}</label>
-                    {isEditing ? (
-                      <select
-                        className="form-select"
-                        name="status"
-                        value={editForm.status}
-                        onChange={handleEditFormChange}
-                      >
-                        <option value="pending">{t("pending")}</option>
-                        <option value="processed">{t("processed")}</option>
-                        <option value="cancelled">{t("cancelled")}</option>
-                        <option value="class_assigned">
-                          {t("class_assigned")}
-                        </option>
-                      </select>
-                    ) : (
-                      <p className="form-control-plaintext">
-                        <span
-                          className={`badge ${
-                            selectedContact.status === "processed"
-                              ? "bg-success"
-                              : selectedContact.status === "cancelled"
-                              ? "bg-danger"
-                              : selectedContact.status === "class_assigned"
-                              ? "bg-info"
-                              : "bg-secondary"
-                          }`}
-                        >
-                          {t(selectedContact.status)}
-                        </span>
-                      </p>
-                    )}
-                  </div>
-                  <div className="col-12 mb-3">
-                    <label className="form-label">{t("message")}</label>
-                    {isEditing ? (
-                      <textarea
-                        className="form-control"
-                        name="consultationContent"
-                        value={editForm.consultationContent}
-                        onChange={handleEditFormChange}
-                        rows="4"
-                      ></textarea>
-                    ) : (
-                      <p className="form-control-plaintext">
-                        {selectedContact.consultationContent}
-                      </p>
-                    )}
-                  </div>
-                  <div className="col-12 mb-3">
-                    <label className="form-label">{t("notes")}</label>
-                    {isEditing ? (
-                      <textarea
-                        className="form-control"
-                        name="notes"
-                        value={editForm.notes}
-                        onChange={handleEditFormChange}
-                        rows="2"
-                      ></textarea>
-                    ) : (
-                      <p className="form-control-plaintext">
-                        {selectedContact.notes || "-"}
-                      </p>
-                    )}
+              <div className="row">
+                {/* Student Information */}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">{t("name")}</label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={editForm.name}
+                    onChange={handleEditFormChange}
+                    className="form-control"
+                    disabled={!isEditing}
+                  />
+                </div>
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">{t("email")}</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={editForm.email}
+                    onChange={handleEditFormChange}
+                    className="form-control"
+                    disabled={!isEditing}
+                  />
+                </div>
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">{t("phone")}</label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={editForm.phone}
+                    onChange={handleEditFormChange}
+                    className="form-control"
+                    disabled={!isEditing}
+                  />
+                </div>
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">{t("assignedCourse")}</label>
+                  <select
+                    name="assignedCourse"
+                    value={editForm.assignedCourse}
+                    onChange={handleEditFormChange}
+                    className="form-select"
+                    disabled={!isEditing}
+                  >
+                    <option value="">{t("selectCourse")}</option>
+                    {courses.map((course) => (
+                      <option key={course._id} value={course._id}>
+                        {course.coursename}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Parent Information */}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">{t("parentName")}</label>
+                  <input
+                    type="text"
+                    name="parentName"
+                    value={editForm.parentName}
+                    onChange={handleEditFormChange}
+                    className="form-control"
+                    disabled={!isEditing}
+                  />
+                </div>
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">{t("parentPhone")}</label>
+                  <input
+                    type="tel"
+                    name="parentPhone"
+                    value={editForm.parentPhone}
+                    onChange={handleEditFormChange}
+                    className="form-control"
+                    disabled={!isEditing}
+                  />
+                </div>
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">{t("parentEmail")}</label>
+                  <input
+                    type="email"
+                    name="parentEmail"
+                    value={editForm.parentEmail}
+                    onChange={handleEditFormChange}
+                    className="form-control"
+                    disabled={!isEditing}
+                  />
+                </div>
+
+                {/* Consultation Details */}
+                <div className="col-12 mb-3">
+                  <label className="form-label">{t("contactForm.consultationContent")}</label>
+                  <textarea
+                    name="consultationContent"
+                    value={editForm.consultationContent}
+                    onChange={handleEditFormChange}
+                    className="form-control"
+                    rows="4"
+                    disabled={!isEditing}
+                  />
+                </div>
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">{t("assignedCourse")}</label>
+                  <div className="form-control bg-light">
+                    {getCourseName(editForm.assignedCourse)}
                   </div>
                 </div>
-              )}
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">{t("status")}</label>
+                  <select
+                    name="status"
+                    value={editForm.status}
+                    onChange={handleEditFormChange}
+                    className="form-select"
+                    disabled={!isEditing}
+                  >
+                    <option value="pending">{t("pending")}</option>
+                    <option value="processed">{t("processed")}</option>
+                    <option value="cancelled">{t("cancelled")}</option>
+                    <option value="class_assigned">{t("class_assigned")}</option>
+                  </select>
+                </div>
+                <div className="col-12 mb-3">
+                  <label className="form-label">{t("notes")}</label>
+                  <textarea
+                    name="notes"
+                    value={editForm.notes}
+                    onChange={handleEditFormChange}
+                    className="form-control"
+                    rows="3"
+                    disabled={!isEditing}
+                  />
+                </div>
+              </div>
             </div>
             <div className="modal-footer">
-              <Button
-                className="btn btn-outline-danger me-auto"
-                onClick={handleDeleteContact}
-              >
-                {t("delete")}
-              </Button>
-              <Button
-                className="btn btn-outline-secondary"
-                onClick={() => {
-                  setIsViewDialogOpen(false);
-                  setIsEditing(false);
-                }}
-              >
-                {t("close")}
-              </Button>
-              {!isEditing ? (
-                <Button
-                  className="btn btn-outline-primary"
-                  onClick={() => setIsEditing(true)}
-                >
-                  {t("edit")}
-                </Button>
+              {isEditing ? (
+                <>
+                  <Button className="btn btn-primary" onClick={handleEditSubmit}>
+                    {t("save")}
+                  </Button>
+                  <Button
+                    className="btn btn-secondary"
+                    onClick={() => setIsEditing(false)}
+                  >
+                    {t("cancel")}
+                  </Button>
+                </>
               ) : (
-                <Button
-                  className="btn btn-outline-success"
-                  onClick={handleEditSubmit}
-                >
-                  {t("save")}
-                </Button>
+                <>
+                  <Button
+                    className="btn btn-primary"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    {t("edit")}
+                  </Button>
+                  <Button
+                    className="btn btn-danger"
+                    onClick={handleDeleteContact}
+                  >
+                    {t("delete")}
+                  </Button>
+                  <Button
+                    className="btn btn-secondary"
+                    onClick={() => setIsViewDialogOpen(false)}
+                  >
+                    {t("close")}
+                  </Button>
+                </>
               )}
             </div>
           </div>
-        </div>
+        </Dialog.Panel>
       </Dialog>
     </div>
   );

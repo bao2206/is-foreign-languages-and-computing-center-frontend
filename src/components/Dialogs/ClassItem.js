@@ -90,7 +90,12 @@ const ClassItem = (props) => {
     const { name, value } = e.target;
     setEditedClass((prev) => ({
       ...prev,
-      [name]: name === "quantity" ? Number(value) : value,
+      [name]:
+        name === "quantity"
+          ? Number(value)
+          : name === "date" || name === "dayend"
+          ? value // keep as "YYYY-MM-DD" for now, convert to ISO string before sending to backend
+          : value,
     }));
     setErrors((prev) => ({ ...prev, [name]: "" }));
   };
@@ -307,48 +312,35 @@ const ClassItem = (props) => {
   };
 
   return (
-    <div key={classItem._id} className="col-12 col-md-6 col-lg-3 mb-4">
-      <div className="border border-gray-300 rounded-xl p-4 shadow">
-        <h2 className="text-lg font-semibold text-center">
-          {classItem.classname}
-        </h2>
-        <p>
-          {t("course")}: {classItem.courseId?.coursename || t("N/A")}
-        </p>
-        <p>
-          {t("teachers")}:{" "}
-          {classItem.teachers?.map((t) => t.name).join(", ") || t("N/A")}
-        </p>
-        <p>
-          {t("students")}:{" "}
-          {studentCount > 0
-            ? `${studentCount} ${t("students")}`
-            : t("noAvailableStudents")}
-        </p>
-        <p>
-          {t("quantity")}: {classItem.quantity}
-        </p>
-        <p>
-          {t("status")}: {t(classItem.status)}
-        </p>
-        <p>
-          {t("createdAt")}: {new Date(classItem.createdAt).toLocaleDateString()}
-        </p>
-        <div className="d-flex justify-content-end mt-2 gap-2">
+    <div className="card h-100">
+      <div className="card-body">
+        <h5 className="card-title">{classItem.classname}</h5>
+        <div className="card-text">
+          <p><strong>{t('course')}:</strong> {classItem.courseId?.coursename || t('N/A')}</p>
+          <p><strong>{t('quantity')}:</strong> {classItem.quantity}</p>
+          <p><strong>{t('status')}:</strong> {t(classItem.status)}</p>
+          {classItem.teachers?.length > 0 && (
+            <p><strong>{t('teacher')}:</strong> {classItem.teachers.map(t => t.name).join(', ')}</p>
+          )}
+          <p>
+            {t("dayend")}: {classItem.dayend ? new Date(classItem.dayend).toLocaleDateString() : t("N/A")}
+          </p>
+        </div>
+        <div className="d-flex gap-2 mt-3">
           <Button
-            className="btn btn-outline-primary"
-            onClick={() => setIsViewDialogOpen(true)}
-          >
-            {t("seeMore")}
-          </Button>
-          <Button
-            className="btn btn-outline-secondary"
+            className="btn btn-primary"
             onClick={() => {
               setEditedClass({ ...classItem });
               setIsEditDialogOpen(true);
             }}
           >
-            {t("edit")}
+            {t('edit')}
+          </Button>
+          <Button
+            className="btn btn-outline-primary"
+            onClick={() => setIsViewDialogOpen(true)}
+          >
+            {t('view')}
           </Button>
         </div>
       </div>
@@ -394,6 +386,9 @@ const ClassItem = (props) => {
               <p>
                 {t("createdAt")}:{" "}
                 {new Date(classItem.createdAt).toLocaleDateString()}
+              </p>
+              <p>
+                {t("dayend")}: {classItem.dayend ? new Date(classItem.dayend).toLocaleDateString() : t("N/A")}
               </p>
             </div>
             <div className="modal-footer">
@@ -574,6 +569,34 @@ const ClassItem = (props) => {
                       <option value="Active">{t("Active")}</option>
                       <option value="Completed">{t("Completed")}</option>
                     </select>
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">{t("daybegin")}</label>
+                    <input
+                      type="date"
+                      name="daybegin"
+                      value={editedClass.daybegin ? new Date(editedClass.daybegin).toISOString().slice(0, 10) : ""}
+                      onChange={handleEditClassChange}
+                      className={`form-control ${errors.daybegin ? "is-invalid" : ""}`}
+                      style={{ height: "38px" }}
+                    />
+                    {errors.daybegin && (
+                      <div className="invalid-feedback">{errors.daybegin}</div>
+                    )}
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">{t("dayend")}</label>
+                    <input
+                      type="date"
+                      name="dayend"
+                      value={editedClass.dayend ? new Date(editedClass.dayend).toISOString().slice(0, 10) : ""}
+                      onChange={handleEditClassChange}
+                      className={`form-control ${errors.dayend ? "is-invalid" : ""}`}
+                      style={{ height: "38px" }}
+                    />
+                    {errors.dayend && (
+                      <div className="invalid-feedback">{errors.dayend}</div>
+                    )}
                   </div>
                   {/* Add Student and Add Teacher buttons moved here */}
                   <div className="d-flex gap-2 mb-3"></div>

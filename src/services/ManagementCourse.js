@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = `${process.env.REACT_APP_API_BASE_URL}/courses/` || "http://localhost:8080/api/courses/";
+const BASE_URL = `${process.env.REACT_APP_API_BASE_URL}courses/` || "http://localhost:8080/api/courses/";
 
 export const fetchCourses = async () => {
   try {
@@ -11,7 +11,7 @@ export const fetchCourses = async () => {
     });
     console.log("Fetch courses response:", response.data);
 
-    return response.data; // vì response có dạng { data: [...] }
+    return response.data.data; // vì response có dạng { data: [...] }
   } catch (error) {
     console.error("Failed to fetch course data:", error);
     return [];
