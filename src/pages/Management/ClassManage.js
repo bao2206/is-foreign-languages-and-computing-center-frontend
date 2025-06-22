@@ -208,16 +208,15 @@ const ClassManagement = () => {
     setIsViewStudentDialogOpen(true);
   };
 
-  // Function to fetch course name by ID
+  // Function to fetch course name by ID (use fetchCourseById)
   const fetchCourseName = async (courseId) => {
     if (!courseId || courseNames[courseId]) return;
-    
     try {
       const course = await fetchCourseById(courseId);
       if (course && course.coursename) {
-        setCourseNames(prev => ({
+        setCourseNames((prev) => ({
           ...prev,
-          [courseId]: course.coursename
+          [courseId]: course.coursename,
         }));
       }
     } catch (error) {
@@ -599,22 +598,18 @@ const ClassManagement = () => {
                     <label className="form-label">{t('assignedCourse')}</label>
                     <div className="form-control bg-light">
                       {(() => {
-                        console.log('Selected student course data:', selectedStudent.assignedCourse);
-                        // Handle case where assignedCourse is just an ID object
+                        let courseName;
                         if (selectedStudent.assignedCourse && selectedStudent.assignedCourse._id) {
                           const courseId = selectedStudent.assignedCourse._id;
-                          const courseName = courseNames[courseId];
-                          
+                          courseName = courseNames[courseId];
                           if (courseName) {
                             return courseName;
                           } else {
-                            // Fetch course name if not already fetched
                             fetchCourseName(courseId);
                             return <span className="text-muted">Loading...</span>;
                           }
                         }
-                        // Try different possible property names for full course object
-                        const courseName = 
+                        courseName =
                           selectedStudent.assignedCourse?.coursename ||
                           selectedStudent.assignedCourse?.name ||
                           selectedStudent.course?.coursename ||
@@ -649,11 +644,11 @@ const ClassManagement = () => {
                   )}
                 </div>
 
-                {/* Open Classes Section */}
+                {/* Open Classes Section: displays all available classes for the student's course */}
                 {selectedStudent.assignedCourse && selectedStudent.assignedCourse._id && (
                   <div className="mt-4">
                     <h6 className="mb-3">{t('availableClasses')}</h6>
-                    <OpenClassesList 
+                    <OpenClassesList
                       courseId={selectedStudent.assignedCourse._id}
                       onAddToClass={handleAddToClass}
                     />

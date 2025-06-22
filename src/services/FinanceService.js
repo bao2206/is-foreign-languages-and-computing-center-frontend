@@ -78,7 +78,20 @@ export const getFinancialRecord = async (id) => {
     throw error;
   }
 };
-
+export const completeCashPayment = async (paymentId) => {
+  try {
+    const response = await axios.post(`${BASE_URL}completeCashPayment/${paymentId}`, {}, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+    });
+    return response.data;
+  } catch (error) {
+    // If the error response is HTML, this will help you debug
+    if (error.response && error.response.data && typeof error.response.data === 'string') {
+      console.error('Server returned HTML:', error.response.data);
+    }
+    throw error;
+  }
+};
 // Create new payment record
 export const createPayment = async (paymentData) => {
   try {

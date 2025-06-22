@@ -13,6 +13,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ClassItem from "../../components/Dialogs/ClassItem";
 import { fetchCourses } from "../../services/ManagementCourse";
+import OpenClassesList from "../../components/OpenClassesList";
 
 // Regex cho tên lớp
 const classNameRegex = /^[\w\s&-]+$/;
@@ -90,6 +91,8 @@ const ClassManagement = () => {
     status: "Incomplete",
   });
   const [errors, setErrors] = useState({});
+  const [isViewStudentDialogOpen, setIsViewStudentDialogOpen] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState(null);
 
   // Load courses và teachers
   useEffect(() => {
@@ -234,6 +237,11 @@ const ClassManagement = () => {
       ...prev,
       date: date,
     }));
+  };
+
+  const handleViewStudentDetails = (student) => {
+    setSelectedStudent(student);
+    setIsViewStudentDialogOpen(true);
   };
 
   return (
