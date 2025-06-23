@@ -81,6 +81,18 @@ export default function StaffInformation(props) {
         ...prev,
         address: { ...prev.address, [addressField]: value },
       }));
+    } else if (name.startsWith("role")) {
+      setEditedStaff((prev) => ({
+        ...prev,
+        authId: {
+          ...prev.authId,
+          role: {
+            ...prev.role,
+            _id: value,
+          },
+        },
+        roleName: roles.find((role) => role._id === value).name,
+      }));
     } else {
       setEditedStaff((prev) => ({
         ...prev,
@@ -179,17 +191,47 @@ export default function StaffInformation(props) {
       // Cập nhật thông tin người dùng (name, email, phone, citizenID, address)
       const updatedStaff = await updateUser(selectedStaff._id, editedStaff);
 
-      // Không cho phép cập nhật role ở đây
-      // if (editedStaff.role && editedStaff.role !== selectedStaff.role) {
-      //   await updateRole(selectedStaff._id, editedStaff.role);
-      // }
+      // Cho phép cập nhật role ở đây
+      if (
+        editedStaff.authId.role._id &&
+        editedStaff.authId.role._id !== selectedStaff.authId.role._id
+      ) {
+        const status = await updateRole({
+          role_id: editedStaff.authId.role._id,
+          id: selectedStaff.authId._id,
+        });
+        console.log("status: ", editedStaff);
 
-      setSelectedStaff(updatedStaff);
+        if (!status) {
+          alert(t("failToUpdateRole"));
+          setSelectedStaff({
+            ...editedStaff,
+            authId: {
+              ...editedStaff.authId,
+              role: selectedStaff.authId.role,
+            },
+          });
+          if (props.onUpdate) {
+            props.onUpdate({
+              ...editedStaff,
+              authId: {
+                ...editedStaff.authId,
+                role: selectedStaff.authId.role,
+              },
+            }); // Truyền dữ liệu nhân viên đã cập nhật
+          }
+        } else {
+          setSelectedStaff(editedStaff);
+        }
+      } else {
+        setSelectedStaff(editedStaff);
+      }
+
       setEditStaffMode(false);
 
       // Gọi callback để thông báo cập nhật thành công
       if (props.onUpdate) {
-        props.onUpdate(updatedStaff); // Truyền dữ liệu nhân viên đã cập nhật
+        props.onUpdate(editedStaff); // Truyền dữ liệu nhân viên đã cập nhật
       }
     } catch (error) {
       alert(t("failedToUpdateUser"));
@@ -240,7 +282,8 @@ export default function StaffInformation(props) {
                 <h2 className="text-xl font-bold mb-2">{t("staffInfo")}</h2>
                 <img
                   src={
-                    selectedStaff.avatar || "https://res.cloudinary.com/dgbwqfajn/image/upload/s--SomnqZh4--/v1747513244/Uploads/avatar.png"
+                    selectedStaff.avatar ||
+                    "https://res.cloudinary.com/dgbwqfajn/image/upload/s--SomnqZh4--/v1747513244/Uploads/avatar.png"
                   }
                   className="w-24 h-24 rounded-full mb-2"
                   alt="avatar"
@@ -296,16 +339,16 @@ export default function StaffInformation(props) {
                       className="w-full border px-3 py-2 rounded"
                       placeholder={t("country")}
                     />
-                    {/* Không cho phép chỉnh sửa role */}
+                    {/* Cho phép chỉnh sửa role */}
                     <select
                       name="role"
-                      value={editedStaff.role || ""}
+                      value={editedStaff.authId.role._id}
                       className="w-full border px-3 py-2 rounded"
-                      disabled
+                      onChange={handleStaffFieldChange}
                     >
                       <option value="">{t("selectRole")}</option>
                       {roles.map((role) => (
-                        <option key={role._id} value={role.name}>
+                        <option key={role._id} value={role._id}>
                           {t(role.name)}
                         </option>
                       ))}
@@ -335,7 +378,7 @@ export default function StaffInformation(props) {
                     </p>
                     <p>
                       <strong>{t("role")}:</strong>{" "}
-                      {t(selectedStaff.role) || t("N/A")}
+                      {t(selectedStaff.roleName) || t("N/A")}
                     </p>
                   </>
                 )}

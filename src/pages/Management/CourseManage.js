@@ -4,7 +4,7 @@ import { Button } from "../../components/Button";
 import { Dialog, DialogContent } from "../../components/ui/dialog";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import {
-  fetchCourses,
+  fetchCoursesWithFilter,
   updateCourse,
   createCourse,
 } from "../../services/ManagementCourse";
@@ -126,7 +126,9 @@ const CourseCard = ({ course, onUpdate }) => {
         />
       )}
       <CardContent className="p-4">
-        <h2 className="text-lg font-semibold">{course.coursename}</h2>
+        <h2 className="text-lg font-semibold text-black">
+          {course.coursename}
+        </h2>
         <p className="text-gray-600 text-sm">{course.description}</p>
         <div className="flex justify-between items-center mt-2">
           <p className="text-red-500 text-sm font-semibold">
@@ -228,7 +230,9 @@ const CourseCard = ({ course, onUpdate }) => {
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium">Course Name</label>
+                <label className="block text-sm font-medium">
+                  {t("Course Name")}
+                </label>
                 <input
                   type="text"
                   name="coursename"
@@ -238,7 +242,9 @@ const CourseCard = ({ course, onUpdate }) => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium">Description</label>
+                <label className="block text-sm font-medium">
+                  {t("description")}
+                </label>
                 <textarea
                   name="description"
                   value={editedCourse.description}
@@ -247,7 +253,9 @@ const CourseCard = ({ course, onUpdate }) => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium">Price</label>
+                <label className="block text-sm font-medium">
+                  {t("price")}
+                </label>
                 <input
                   type="number"
                   name="price"
@@ -258,7 +266,7 @@ const CourseCard = ({ course, onUpdate }) => {
               </div>
               <div>
                 <label className="block text-sm font-medium">
-                  Allocated Periods
+                  {t("number_of_allocated_periods")}
                 </label>
                 <input
                   type="number"
@@ -269,7 +277,9 @@ const CourseCard = ({ course, onUpdate }) => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium">Ordering</label>
+                <label className="block text-sm font-medium">
+                  {t("ordering")}
+                </label>
                 <input
                   type="number"
                   name="ordering"
@@ -288,6 +298,26 @@ const CourseCard = ({ course, onUpdate }) => {
                 >
                   <option value="active">{t("Active")}</option>
                   <option value="inactive">{t("Inactive")}</option>
+                </select>
+              </div>
+              {/* Catalog editing */}
+              <div>
+                <label className="block text-sm font-medium">
+                  {t("Catalog")}
+                </label>
+                <select
+                  name="catalog"
+                  value={editedCourse.catalog || ""}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">{t("Select Catalog")}</option>
+                  <option value="Languages">{t("Language")}</option>
+                  <option value="Computing">{t("Computing")}</option>
+                  <option value="None">{t("None")}</option>
+                  <option value="Languages and Computing">
+                    {t("Languages and Computing")}
+                  </option>
                 </select>
               </div>
               <div>
@@ -333,9 +363,12 @@ const CourseCard = ({ course, onUpdate }) => {
               <p>
                 <strong>{t("ordering")}:</strong> {course.ordering}
               </p>
+              <p>
+                <strong>{t("Catalog")}:</strong> {course.catalog}
+              </p>
               <div className="flex justify-between items-center">
                 <p>
-                  <strong>{t("status")}:</strong> {course.status}
+                  <strong>{t("status")}:</strong> {t(`${course.status}`)}
                 </p>
                 <Button
                   className="bg-yellow-500 hover:bg-yellow-600 text-white"
@@ -361,55 +394,47 @@ const CourseList = () => {
   const [filteredCourses, setFilteredCourses] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
+  const [catalog, setCatalog] = useState("");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [newCourse, setNewCourse] = useState({
-    coursename: "",
-    description: "",
-    price: 0,
-    numAllocatedPeriod: 0,
-    ordering: 0,
-    status: "active",
-    is_special: false,
-    image: [],
-  });
-  const [errors, setErrors] = useState({});
+  const [page, setPage] = useState(1);
+  const [limit] = useState(12); // Giới hạn 6 khóa học mỗi trang
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const courses = await fetchCourses();
-        setCourses(Array.isArray(courses) ? courses : []);
-        setFilteredCourses(Array.isArray(courses) ? courses : []);
+        const response = await fetchCoursesWithFilter({
+          page,
+          limit,
+          name: searchTerm,
+          status:
+            filter === "active" || filter === "inactive" ? filter : undefined,
+          is_special:
+            filter === "special"
+              ? true
+              : filter === "non-special"
+              ? false
+              : undefined,
+          catalog: catalog || undefined,
+        });
+
+        setCourses(response.data || []);
+        setFilteredCourses(response.data || []);
+        setTotalPages(response.totalPages || 1);
       } catch (error) {
         console.error("Error fetching courses:", error);
-        setCourses([]);
-        setFilteredCourses([]);
       }
     };
     loadData();
-  }, []);
-
-  useEffect(() => {
-    let result = courses;
-    if (searchTerm) {
-      result = result.filter((course) =>
-        course.coursename.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-    if (filter !== "all") {
-      if (filter === "active" || filter === "inactive") {
-        result = result.filter((course) => course.status === filter);
-      } else if (filter === "special") {
-        result = result.filter((course) => course.is_special);
-      } else if (filter === "non-special") {
-        result = result.filter((course) => !course.is_special);
-      }
-    }
-    setFilteredCourses(result);
-  }, [searchTerm, filter, courses]);
+  }, [page, limit, searchTerm, filter, catalog]);
 
   const handleUpdateCourse = (updatedCourse) => {
     setCourses((prevCourses) =>
+      prevCourses.map((course) =>
+        course._id === updatedCourse._id ? updatedCourse : course
+      )
+    );
+    setFilteredCourses((prevCourses) =>
       prevCourses.map((course) =>
         course._id === updatedCourse._id ? updatedCourse : course
       )
@@ -431,8 +456,6 @@ const CourseList = () => {
         return;
       }
 
-      console.log("Course data before upload:", newCourse);
-
       let imageUrls = [];
       if (newCourse.image.length > 0) {
         const uploadResult = await uploadImages(newCourse.image, true);
@@ -445,7 +468,6 @@ const CourseList = () => {
       };
 
       const result = await createCourse(courseData);
-      console.log("Course created:", courseData);
 
       setCourses((prev) => [...prev, courseData]);
       setNewCourse({
@@ -457,6 +479,7 @@ const CourseList = () => {
         status: "active",
         is_special: false,
         image: [],
+        catalog: "",
       });
       setIsAddDialogOpen(false);
       setErrors({});
@@ -475,37 +498,70 @@ const CourseList = () => {
     setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
+  const handlePreviousPage = () => {
+    if (page > 1) setPage(page - 1);
+  };
+
+  const handleNextPage = () => {
+    if (page < totalPages) setPage(page + 1);
+  };
+
+  const [newCourse, setNewCourse] = useState({
+    coursename: "",
+    description: "",
+    price: 0,
+    numAllocatedPeriod: 0,
+    ordering: 0,
+    status: "active",
+    is_special: false,
+    image: [],
+    catalog: "",
+  });
+  const [errors, setErrors] = useState({});
+
   return (
     <div className="container-fluid mt-4 px-3">
       <div className="flex items-center gap-4 flex-wrap mb-4 flex-md-nowrap align-items-center">
         <div className="flex-1 max-w-md">
           <input
             type="text"
-            placeholder="Search courses..."
+            placeholder={t("searchCourses")}
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setPage(1); // Reset về trang 1 khi tìm kiếm
+            }}
             className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 dark:text-black"
           />
         </div>
         <select
           value={filter}
-          onChange={(e) => setFilter(e.target.value)}
+          onChange={(e) => {
+            setFilter(e.target.value);
+            setPage(1); // Reset về trang 1 khi thay đổi filter
+          }}
           className="p-2 border rounded focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-black dark:text-white"
         >
-          <option className="dark:text-black" value="all">
-            {t("allCourses")}
-          </option>
-          <option className="dark:text-black" value="active">
-            {t("Active")}
-          </option>
-          <option className="dark:text-black" value="inactive">
-            {t("Inactive")}
-          </option>
-          <option className="dark:text-black" value="special">
-            {t("Special")}
-          </option>
-          <option className="dark:text-black" value="non-special">
-            {t("Non-Special")}
+          <option value="all">{t("allCourses")}</option>
+          <option value="active">{t("Active")}</option>
+          <option value="inactive">{t("Inactive")}</option>
+          <option value="special">{t("Special")}</option>
+          <option value="non-special">{t("Non-Special")}</option>
+        </select>
+        <select
+          value={catalog}
+          onChange={(e) => {
+            setCatalog(e.target.value);
+            setPage(1); // Reset về trang 1 khi thay đổi catalog
+          }}
+          className="p-2 border rounded focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-black dark:text-white"
+        >
+          <option value="">{t("allCatalogs")}</option>
+          <option value="Languages">{t("Languages")}</option>
+          <option value="Computing">{t("Computing")}</option>
+          <option value="None">{t("None")}</option>
+          <option value="Languages and Computing">
+            {t("Languages and Computing")}
           </option>
         </select>
         <Button
@@ -517,12 +573,33 @@ const CourseList = () => {
       </div>
 
       {/* Grid with 4 columns for CourseCard */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
-        {(filteredCourses || []).map((course) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {filteredCourses.map((course) => (
           <div key={course._id}>
             <CourseCard course={course} onUpdate={handleUpdateCourse} />
           </div>
         ))}
+      </div>
+
+      {/* Pagination */}
+      <div className="flex justify-center items-center mt-4 gap-4">
+        <Button
+          className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded"
+          onClick={handlePreviousPage}
+          disabled={page === 1}
+        >
+          {t("previous")}
+        </Button>
+        <span className="text-black dark:text-white">
+          {t("page")} {page} {t("of")} {totalPages}
+        </span>
+        <Button
+          className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded"
+          onClick={handleNextPage}
+          disabled={page === totalPages}
+        >
+          {t("next")}
+        </Button>
       </div>
 
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
@@ -597,7 +674,7 @@ const CourseList = () => {
             </div>
             <div>
               <label className="block text-sm font-medium">
-                {t("Description")}
+                {t("description")}
               </label>
               <textarea
                 name="description"
@@ -610,7 +687,7 @@ const CourseList = () => {
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium">{t("Price")}</label>
+              <label className="block text-sm font-medium">{t("price")}</label>
               <input
                 type="number"
                 name="price"
@@ -624,7 +701,7 @@ const CourseList = () => {
             </div>
             <div>
               <label className="block text-sm font-medium">
-                {t("Number of Allocated Periods")}
+                {t("number_of_allocated_periods")}
               </label>
               <input
                 type="number"
@@ -659,6 +736,25 @@ const CourseList = () => {
               </select>
             </div>
             <div>
+              <label className="block text-sm font-medium">
+                {t("Catalog")}
+              </label>
+              <select
+                name="catalog"
+                value={newCourse.catalog}
+                onChange={handleNewCourseChange}
+                className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">{t("Select Catalog")}</option>
+                <option value="Language">{t("Languages")}</option>
+                <option value="Computing">{t("Computing")}</option>
+                <option value="None">{t("None")}</option>
+                <option value="Language and Computing">
+                  {t("Language and Computing")}
+                </option>
+              </select>
+            </div>
+            <div>
               <label className="flex items-center">
                 <input
                   type="checkbox"
@@ -687,6 +783,7 @@ const CourseList = () => {
                     status: "active",
                     is_special: false,
                     image: [],
+                    catalog: "",
                   });
                   setErrors({});
                 }}

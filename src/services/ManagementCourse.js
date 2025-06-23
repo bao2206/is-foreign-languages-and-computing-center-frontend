@@ -1,6 +1,8 @@
 import axios from "axios";
 
-const BASE_URL = `${process.env.REACT_APP_API_BASE_URL}courses/` || "http://localhost:8080/api/courses/";
+const BASE_URL =
+  `${process.env.REACT_APP_API_BASE_URL}courses/` ||
+  "http://localhost:8080/api/courses/";
 
 export const fetchCourses = async () => {
   try {
@@ -9,7 +11,38 @@ export const fetchCourses = async () => {
         action: "getAll",
       },
     });
+    console.log("Fetch courses response:", response.data);
+
+    return response.data; // vì response có dạng { data: [...] }
+  } catch (error) {
+    console.error("Failed to fetch course data:", error);
+    return [];
+  }
+};
+
+export const fetchCoursesWithFilter = async (filters = {}) => {
+  try {
+    const payload = {
+      action: "getAll",
+      ...filters,
+    };
+    console.log("Fetch courses with filter payload:", payload);
+
+    const response = await axios
+      .post(
+        `${BASE_URL}getWithFilter`,
+        payload
+        // {
+        //   headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        // }
+      )
+      .catch((error) => {
+        console.error("Error fetching courses with filter:", error);
+      });
+    console.log(response.data);
+
     // console.log("Fetch courses response:", response.data.data);
+    console.log("Fetch courses response:", response.data);
 
     return response.data; // vì response có dạng { data: [...] }
   } catch (error) {
