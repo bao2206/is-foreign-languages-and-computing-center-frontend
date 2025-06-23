@@ -9,9 +9,9 @@ export const fetchCourses = async () => {
         action: "getAll",
       },
     });
-    console.log("Fetch courses response:", response.data);
+    // console.log("Fetch courses response:", response.data.data);
 
-    return response.data.data; // vì response có dạng { data: [...] }
+    return response.data; // vì response có dạng { data: [...] }
   } catch (error) {
     console.error("Failed to fetch course data:", error);
     return [];

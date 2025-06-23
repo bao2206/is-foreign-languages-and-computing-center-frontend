@@ -378,10 +378,12 @@ const CourseList = () => {
     const loadData = async () => {
       try {
         const courses = await fetchCourses();
-        setCourses(courses);
-        setFilteredCourses(courses);
+        setCourses(Array.isArray(courses) ? courses : []);
+        setFilteredCourses(Array.isArray(courses) ? courses : []);
       } catch (error) {
         console.error("Error fetching courses:", error);
+        setCourses([]);
+        setFilteredCourses([]);
       }
     };
     loadData();
@@ -516,7 +518,7 @@ const CourseList = () => {
 
       {/* Grid with 4 columns for CourseCard */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
-        {filteredCourses.map((course) => (
+        {(filteredCourses || []).map((course) => (
           <div key={course._id}>
             <CourseCard course={course} onUpdate={handleUpdateCourse} />
           </div>
