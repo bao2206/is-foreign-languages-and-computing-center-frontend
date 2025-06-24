@@ -80,7 +80,7 @@ export const getFinancialRecord = async (id) => {
 };
 export const completeCashPayment = async (paymentId) => {
   try {
-    const response = await axios.post(`${BASE_URL}completeCashPayment/${paymentId}`, {}, {
+    const response = await axios.post(`${BASE_URL}${paymentId}/complete-cash`, {}, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
     });
     return response.data;
