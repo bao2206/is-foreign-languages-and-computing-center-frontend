@@ -13,7 +13,7 @@ import {
   downloadInvoice
 } from "../../services/FinanceService";
 import { fetchCourses, fetchCourseById } from '../../services/ManagementCourse';
-import { completeCashPayment } from '../../services/ClassManagementService';
+import { completeCashPayment } from '../../services/FinanceService';
 import "bootstrap/dist/css/bootstrap.css";
 
 const FinancePage = () => {
