@@ -19,6 +19,8 @@ const ManagementHeader = () => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("username");
+    localStorage.removeItem("userRole");
+    localStorage.removeItem("userId");
     setUsername("");
     window.location.href = "/login";
     window.location.reload();
@@ -163,7 +165,7 @@ const ManagementHeader = () => {
                 to="/management/staff"
                 className="flex items-center p-2 text-gray-900 dark:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 group transition-colors no-underline"
               >
-                <span className="ms-3">{t("userManagemetn")}</span>
+                <span className="ms-3">{t("userManagement")}</span>
               </Link>
             </li>
             <li>
