@@ -362,6 +362,8 @@
   "studentAddedToClass": "Student added to class",
   "failedToAddStudentToClass": "Failed to add student to class",
   "dayend": "End Date",
+  "daybegin" : "Day Start",
+  "completeCashPayment" : "Cash payment",
   "daybegin": "Day Start",
   "searchCourses": "Search Courses",
   "none": "None",
