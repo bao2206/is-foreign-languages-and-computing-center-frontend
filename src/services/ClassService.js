@@ -5,6 +5,7 @@ const BASE_URL = `${process.env.REACT_APP_API_BASE_URL}classes/`;
 // Lấy danh sách lớp theo giáo viên
 async function getClassForTeacher(query = {}) {
   const id = localStorage.getItem("userId");
+
   if (!id) {
     throw new Error("Teacher ID is required");
   }
@@ -34,7 +35,7 @@ async function getClassForStudent(query = {}) {
     query: query,
   };
 
-  const response = await axios.post(`${BASE_URL}getClassForTeacher/`, payload, {
+  const response = await axios.post(`${BASE_URL}getClassForStudent/`, payload, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 

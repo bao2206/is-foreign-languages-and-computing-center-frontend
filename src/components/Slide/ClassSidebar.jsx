@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate} from 'react-router-dom';
 import { 
   Home, 
   Calendar, 
   User, 
   BookOpen, 
   FileText, 
+  UserCheck,
   Users,
   LogOut
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { getUserProfile } from '../../services/auth';
+import { getUserProfile, logoutUser} from '../../services/auth';
 
 const Sidebar = () => {
   const { t } = useTranslation();
   const location = useLocation();
+  const navigate = useNavigate(); // Thêm dòng này
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -44,7 +46,8 @@ const Sidebar = () => {
     { path: '/class/schedule', icon: Calendar, label: t('schedule') },
     { path: '/class/classes', icon: BookOpen, label: t('classes') },
     { path: '/class/assignments', icon: FileText, label: t('assignments') },
-    { path: '/class/profile', icon: User, label: t('profile') },
+    { path: '/class/attendance', icon: Users, label: t('attendance') },
+    { path: '/class/profile', icon: UserCheck, label: t('profile') },
   ];
 
   const navItems = user?.role === 'lecturer' ? lecturerNavItems : studentNavItems;
@@ -53,7 +56,11 @@ const Sidebar = () => {
 
   const handleLogout = () => {
     // Thêm logic logout tại đây (ví dụ: xóa token, chuyển hướng, v.v.)
-    console.log('Logout clicked');
+    logoutUser()
+      .then(() => {
+        console.log('User logged out successfully');
+        navigate("/class/login", { replace: true }); // Chuyển hướng về trang đăng nhập
+      })
   };
 
   return (
