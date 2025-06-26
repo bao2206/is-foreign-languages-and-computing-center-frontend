@@ -395,5 +395,6 @@
   "studentAddedToClass": "Student added to class",
   "failedToAddStudentToClass": "Failed to add student to class",
   "dayend": "End Date",
-  "daybegin" : "Day Start"
+  "daybegin" : "Day Start",
+  "completeCashPayment" : "Cash payment"
 }

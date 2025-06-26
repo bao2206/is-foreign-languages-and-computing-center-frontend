@@ -53,7 +53,7 @@ export const fetchCoursesWithFilter = async (filters = {}) => {
 
 export const fetchCourseById = async (courseId) => {
   try {
-    const response = await axios.get(`${BASE_URL}/${courseId}`);
+    const response = await axios.get(`${BASE_URL}${courseId}`);
     return response.data.data;
   } catch (error) {
     console.error(`Failed to fetch course ${courseId}:`, error);

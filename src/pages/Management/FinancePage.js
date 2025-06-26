@@ -403,7 +403,7 @@ const FinancePage = () => {
               </thead>
               <tbody>
                 {financialRecords.map((record) => (
-                  <tr key={record.id}>
+                  <tr key={record._id}>
                     <td>{record._id}</td>
                     <td>{record.studentName}</td>
                     <td>{courseMap[record.course] || record.course || '-' }</td>
@@ -413,14 +413,14 @@ const FinancePage = () => {
                         : '-'}
                     </td>
                     <td>
-                      {record.status === 'paid' && record.amount != null && !isNaN(record.amount)
+                      {record.status === 'completed' && record.amount != null && !isNaN(record.amount)
                         ? Number(record.amount).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })
-                        : record.status === 'paid' ? '-' : ''}
+                        : record.status === 'completed' ? '-' : ''}
                     </td>
                     <td>{formatDateDMY(record.paymentDate)}</td>
                     <td>
                       <span className={`badge ${
-                        record.status === 'paid' ? 'bg-success' :
+                        record.status === 'completed' ? 'bg-success' :
                         record.status === 'pending' ? 'bg-warning' :
                         'bg-danger'
                       }`}>
@@ -428,19 +428,19 @@ const FinancePage = () => {
                       </span>
                     </td>
                     <td>
-                      {record.status === 'paid' ? record.paymentMethod : ''}
+                      {record.status === 'completed' ? record.paymentMethod : ''}
                     </td>
                     <td>
                       <Button
                         className="btn btn-outline-primary btn-sm me-2"
-                        onClick={() => handleViewRecord(record.id)}
+                        onClick={() => handleViewRecord(record._id)}
                       >
                         {t("view")}
                       </Button>
-                      {record.status === 'paid' && (
+                      {record.status === 'completed' && (
                         <Button
                           className="btn btn-outline-secondary btn-sm"
-                          onClick={() => handleDownloadInvoice(record.id)}
+                          onClick={() => handleDownloadInvoice(record._id)}
                         >
                           <Download size={16} />
                         </Button>
@@ -448,7 +448,7 @@ const FinancePage = () => {
                       {record.status === 'pending' && (
                         <Button
                           className="btn btn-outline-success btn-sm ms-2"
-                          onClick={() => handleCompleteCashPayment(record.id || record._id)}
+                          onClick={() => handleCompleteCashPayment(record._id)}
                         >
                           {t("completeCashPayment") || "Complete Cash Payment"}
                         </Button>
@@ -593,8 +593,9 @@ const FinancePage = () => {
                     required
                   >
                     <option value="pending">{t("pending")}</option>
-                    <option value="paid">{t("paid")}</option>
-                    <option value="overdue">{t("overdue")}</option>
+                    <option value="completed">{t("completed")}</option>
+                    <option value="failed">{t("failed")}</option>
+                    <option value="cancelled">{t("cancelled")}</option>
                   </select>
                 </div>
                 <div className="mb-3">
@@ -713,7 +714,7 @@ const FinancePage = () => {
                     <label className="form-label">{t("status")}</label>
                     <p className="form-control-plaintext">
                       <span className={`badge ${
-                        selectedRecord.status === 'paid' ? 'bg-success' :
+                        selectedRecord.status === 'completed' ? 'bg-success' :
                         selectedRecord.status === 'pending' ? 'bg-warning' :
                         'bg-danger'
                       }`}>
@@ -721,7 +722,7 @@ const FinancePage = () => {
                       </span>
                     </p>
                   </div>
-                  {selectedRecord.status === 'paid' && (
+                  {selectedRecord.status === 'completed' && (
                     <div className="col-md-6 mb-3">
                       <label className="form-label">{t("paymentMethod")}</label>
                       <p className="form-control-plaintext">{t(selectedRecord.paymentMethod)}</p>
@@ -747,7 +748,7 @@ const FinancePage = () => {
               >
                 {t("close")}
               </Button>
-              {selectedRecord && selectedRecord.status === 'paid' && (
+              {selectedRecord && selectedRecord.status === 'completed' && (
                 <Button
                   className="btn btn-outline-primary"
                   onClick={() => handleDownloadInvoice(selectedRecord?.id)}
@@ -814,9 +815,10 @@ const FinancePage = () => {
                   onChange={(e) => setSelectedStatus(e.target.value)}
                 >
                   <option value="all">{t("allStatus")}</option>
-                  <option value="paid">{t("paid")}</option>
+                  <option value="completed">{t("completed")}</option>
                   <option value="pending">{t("pending")}</option>
-                  <option value="overdue">{t("overdue")}</option>
+                  <option value="failed">{t("failed")}</option>
+                  <option value="cancelled">{t("cancelled")}</option>
                 </select>
               </div>
             </div>

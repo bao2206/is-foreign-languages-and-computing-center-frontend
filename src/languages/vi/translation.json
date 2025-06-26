@@ -373,5 +373,6 @@
   "studentAddedToClass": "Đã thêm học viên vào lớp",
   "failedToAddStudentToClass": "Không thể thêm học viên vào lớp",
   "dayend": "Ngày Kết Thúc",
-  "daybegin" : "Ngày Bắt Đầu"
+  "daybegin" : "Ngày Bắt Đầu",
+  "completeCashPayment" : "Thanh toán tiền mặt"
 }

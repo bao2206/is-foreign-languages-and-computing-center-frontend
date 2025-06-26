@@ -83,6 +83,7 @@ export const completeCashPayment = async (paymentId) => {
     const response = await axios.post(`${BASE_URL}${paymentId}/complete-cash`, {}, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
     });
+    
     return response.data;
   } catch (error) {
     // If the error response is HTML, this will help you debug

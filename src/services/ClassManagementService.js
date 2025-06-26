@@ -150,11 +150,11 @@ export const getOpenClassesByCourseId = async (courseId) => {
   }
 };
 
-export const addNewStudentToClass = async ({ classId, studentId, contactId }) => {
+export const addNewStudentToClass = async ({ classId, contactId }) => {
   try {
     const response = await axios.post(
       `${BASE_URL}addStudent`,
-      { classId, studentId, contactId },
+      { classId, contactId },
       { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
     );
     return response.data;
