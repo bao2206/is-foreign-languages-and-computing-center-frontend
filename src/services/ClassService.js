@@ -45,4 +45,26 @@ async function getClassForStudent(query = {}) {
   return response.data.data;
 }
 
-export { getClassForTeacher, getClassForStudent };
+const fetchClassById = async (classId) => {
+  try {
+    const payload = {
+      action: "getByClassesId",
+      classId,
+      populates: ["students", "teachers", "course"],
+    };
+    const url = `${BASE_URL}classManager/`;
+    const response = await axios.post(
+      url,
+      { query: payload },
+      {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      }
+    );
+    // Nếu backend trả về object, trả về luôn, nếu trả về mảng thì lấy phần tử đầu
+    return Array.isArray(response.data) ? response.data[0] : response.data;
+  } catch (error) {
+    throw new Error("Failed to fetch class by id");
+  }
+};
+
+export { getClassForTeacher, getClassForStudent, fetchClassById };

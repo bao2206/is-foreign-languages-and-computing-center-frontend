@@ -54,6 +54,8 @@ export const getScheduleByStudentId = async () => {
       action: "getByStudentId",
       authId: localStorage.getItem("userId"),
     };
+    console.log("payload", payload);
+
     const response = await axios.post(`${API_URL}/get`, payload, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });

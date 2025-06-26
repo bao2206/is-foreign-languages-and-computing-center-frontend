@@ -28,10 +28,7 @@ const Header = () => {
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-3">
             <img
-              src={
-                user?.avatar ||
-                "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2"
-              }
+              src={user?.avatar || require("../Images/user_Img.png")}
               alt={user?.name}
               className="w-8 h-8 rounded-full"
             />

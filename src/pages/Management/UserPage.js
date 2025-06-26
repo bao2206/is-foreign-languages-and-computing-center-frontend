@@ -24,7 +24,7 @@ const UserPage = () => {
   const [roleFilter, setRoleFilter] = useState(""); // Lọc theo role
   const [filter, setFilter] = useState("");
   const [page, setPage] = useState(1);
-  const [limit] = useState(10); // Đặt limit mặc định
+  const [limit] = useState(12); // Đặt limit mặc định
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -108,7 +108,9 @@ const UserPage = () => {
       let avatarUrl = "";
       if (avatarFile) {
         const images = await uploadImages(avatarFile, false);
-        avatarUrl = images.imageUrls[0] || "https://res.cloudinary.com/dgbwqfajn/image/upload/s--SomnqZh4--/v1747513244/Uploads/avatar.png";
+        avatarUrl =
+          images.imageUrls[0] ||
+          "https://res.cloudinary.com/dgbwqfajn/image/upload/s--SomnqZh4--/v1747513244/Uploads/avatar.png";
       }
 
       const staffData = {

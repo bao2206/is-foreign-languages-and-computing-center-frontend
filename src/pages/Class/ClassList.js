@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Users, Calendar, MapPin, Clock } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import {
   getClassForTeacher,
   getClassForStudent,
@@ -16,11 +17,14 @@ const ClassList = () => {
   const [user, setUser] = useState(null);
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate(); // Thêm dòng này
 
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
         const profile = await getUserProfile();
+        console.log("User profile:", profile);
+
         await fetchClasses(profile);
         setUser(profile);
       } catch (error) {
@@ -42,7 +46,9 @@ const ClassList = () => {
         user.authId.role.name === "teacher"
           ? getClassForTeacher
           : getClassForStudent;
-      const classesData = await fetchFunction(user.id);
+      const classesData = await fetchFunction({ limit: 100 });
+      console.log("Classes data:", classesData);
+
       setClasses(classesData);
     } catch (error) {
       console.error("Error loading classes:", error);
@@ -126,11 +132,17 @@ const ClassList = () => {
               {/* Bỏ phần hiển thị weeklySchedule */}
 
               <div className="mt-6 flex space-x-3">
-                <button className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+                <button
+                  className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                  onClick={() => navigate(`/class/detail/${cls._id}`)}
+                >
                   {t("viewDetails")}
                 </button>
                 {user?.authId?.role?.name === "teacher" && (
-                  <button className="bg-gray-100 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium">
+                  <button
+                    className="bg-gray-100 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium"
+                    onClick={() => navigate(`/class/${cls._id}/assignments`)}
+                  >
                     {t("manage")}
                   </button>
                 )}
