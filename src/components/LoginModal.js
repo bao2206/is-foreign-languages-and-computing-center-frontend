@@ -1,12 +1,17 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { loginUser } from "../services/auth"; // hoặc nơi bạn để file login
+import axios from "axios";
 // import Cookies from 'js-cookie'; // nếu bạn muốn lưu token vào cookie
 
 export default function LoginModal({ isOpen, onClose, onLogin }) {
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
   const { t } = useTranslation();
+  const [showForgot, setShowForgot] = React.useState(false);
+  const [forgotUsername, setForgotUsername] = React.useState("");
+  const [forgotMessage, setForgotMessage] = React.useState("");
+  const [forgotLoading, setForgotLoading] = React.useState(false);
 
   if (!isOpen) return null;
 
@@ -35,6 +40,24 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
     }
   };
 
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    setForgotLoading(true);
+    setForgotMessage("");
+    try {
+      const res = await axios.post(`${process.env.REACT_APP_API_BASE_URL}users/forgot-password`, {
+        username: forgotUsername,
+      });
+      setForgotMessage(res.data.message || "Check your email for reset instructions.");
+    } catch (err) {
+      setForgotMessage(
+        err.response?.data?.message || "Error sending reset email."
+      );
+    } finally {
+      setForgotLoading(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 flex items-start justify-center z-50 pointer-events-none">
       <div className="mt-16 bg-white p-4 rounded-xl shadow-lg w-80 animate-slideDown pointer-events-auto">
@@ -54,6 +77,15 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          <div className="mb-3 text-end">
+            <button
+              type="button"
+              className="btn btn-link p-0"
+              onClick={() => setShowForgot(true)}
+            >
+              Forgot Password?
+            </button>
+          </div>
           <div className="flex justify-end space-x-2 pt-2">
             <button
               type="button"
@@ -71,6 +103,47 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
           </div>
         </form>
       </div>
+
+      {/* Forgot Password Modal/Dialog */}
+      {showForgot && (
+        <div className="modal show" style={{ display: "block" }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <form onSubmit={handleForgotPassword}>
+                <div className="modal-header">
+                  <h5 className="modal-title">Forgot Password</h5>
+                  <button type="button" className="btn-close" onClick={() => setShowForgot(false)}></button>
+                </div>
+                <div className="modal-body">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Enter your username"
+                    value={forgotUsername}
+                    onChange={(e) => setForgotUsername(e.target.value)}
+                    required
+                  />
+                  {forgotMessage && (
+                    <div className="alert alert-info mt-2">{forgotMessage}</div>
+                  )}
+                </div>
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-secondary" onClick={() => setShowForgot(false)}>
+                    Cancel
+                  </button>
+                  <button type="submit" className="btn btn-primary" disabled={forgotLoading}>
+                    {forgotLoading ? "Sending..." : "Send Reset Email"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
+export const forgotPassword = async (username) => {
+  return axios.post(`${process.env.REACT_APP_API_BASE_URL}users/forgot-password`, { username });
+};

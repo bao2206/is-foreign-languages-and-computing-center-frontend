@@ -8,6 +8,7 @@ import ClassManage from "../pages/Management/ClassManage";
 import ContactPage from "../pages/Management/ContactPage";
 import ProtectedRoute from "../utils/ProtectedRoute"; // Bảo vệ route
 import FinancePage from "../pages/Management/FinancePage";
+
 const ManagementRoutes = () => {
   return (
     <Routes>
@@ -79,7 +80,7 @@ const ManagementRoutes = () => {
           }
         />
      
-      
+     
     
     </Routes>
   );

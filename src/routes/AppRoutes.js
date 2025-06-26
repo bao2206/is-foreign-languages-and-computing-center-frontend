@@ -12,6 +12,7 @@ import ManagementRoutes from "./ManagementRoutes";
 import ClassRoutes from "./ClassRoutes"; // Các route liên quan đến lớp học
 import SchedulePage from "../pages/Class/SchedulePage";
 import CoursePage from "../pages/CoursesPage";
+import ResetPasswordPage from "../pages/ResetPasswordPage";
 import { RequireAuthClass } from "../utils/RequireAuth";
 
 export default function AppRoutes() {
@@ -30,6 +31,7 @@ export default function AppRoutes() {
       <Route element={<RequireAuthClass />}>
         <Route path="/class/*" element={<ClassRoutes />} />
       </Route>
+      <Route path="/reset-password" element={<ResetPasswordPage />} />
       {/* Route mặc định nếu không tìm thấy */}
     </Routes>
   );
