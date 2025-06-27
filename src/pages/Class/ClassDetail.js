@@ -69,7 +69,7 @@ const ClassDetail = () => {
       {/* Header */}
       <div className="flex items-center space-x-4 mb-6">
         <button
-          onClick={() => navigate("/class")}
+          onClick={() => navigate("/class/classes")}
           className="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-lg hover:bg-gray-100"
         >
           <ArrowLeft className="w-5 h-5" />

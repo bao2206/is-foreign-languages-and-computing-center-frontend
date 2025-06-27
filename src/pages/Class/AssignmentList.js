@@ -278,7 +278,7 @@ const AssignmentList = () => {
   const handleOpenGrading = (submission, assignment) => {
     setGradingSubmission({ ...submission, assignment });
     setGradingScore(submission.grade || "");
-    setGradingComment(submission.teacherComment || "");
+    setGradingComment(submission.teacherComments || "");
   };
   const handleCloseGrading = () => {
     setGradingSubmission(null);
@@ -293,7 +293,7 @@ const AssignmentList = () => {
       const updatedSubmissions = gradingSubmission.assignment.submissions.map(
         (s) =>
           s._id === gradingSubmission._id
-            ? { ...s, grade: gradingScore, teacherComment: gradingComment }
+            ? { ...s, grade: gradingScore, teacherComments: gradingComment }
             : s
       );
       await updateAssignment(gradingSubmission.assignment._id, {
@@ -493,6 +493,19 @@ const AssignmentList = () => {
           onClose={handleCloseDetailModal}
           isLecturer={isLecturer}
           t={t}
+          onGrade={async (submission, score, comment) => {
+            // Gọi API updateAssignment để chấm điểm
+            const updatedSubmissions = selectedAssignment.submissions.map((s) =>
+              s._id === submission._id
+                ? { ...s, grade: score, teacherComments: comment }
+                : s
+            );
+            await updateAssignment(selectedAssignment._id, {
+              ...selectedAssignment,
+              submissions: updatedSubmissions,
+            });
+            await fetchAssignments(user);
+          }}
         />
       )}
 

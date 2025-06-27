@@ -367,7 +367,7 @@ const ClassAssignmentManagement = () => {
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-4">
           <button
-            onClick={() => navigate("/class")}
+            onClick={() => navigate("/class/classes")}
             className="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-lg hover:bg-gray-100"
           >
             <ArrowLeft className="w-5 h-5" />
@@ -450,12 +450,6 @@ const ClassAssignmentManagement = () => {
                 <option value="draft">{t("draft")}</option>
               </select>
             </div>
-          </div>
-          <div className="flex space-x-2">
-            <button className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors flex items-center">
-              <Download className="w-4 h-4 mr-2" />
-              {t("export") || "Export"}
-            </button>
           </div>
         </div>
       </div>
@@ -640,6 +634,24 @@ const ClassAssignmentManagement = () => {
           onClose={handleCloseDetailModal}
           isLecturer={true}
           t={t}
+          onGrade={async (submission, score, comment) => {
+            // Gọi API updateAssignment để chấm điểm
+            const updatedSubmissions = selectedAssignment.submissions.map((s) =>
+              s._id === submission._id
+                ? { ...s, grade: score, teacherComments: comment }
+                : s
+            );
+            await updateAssignment(selectedAssignment._id, {
+              ...selectedAssignment,
+              submissions: updatedSubmissions,
+            });
+            // Refresh assignments sau khi chấm điểm
+            const res = await getAssignments({
+              action: "getByClassId",
+              classId,
+            });
+            setAssignments(res.data.data || []);
+          }}
         />
       )}
 

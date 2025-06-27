@@ -181,7 +181,7 @@ const ProfileView = () => {
                 <img
                   src={
                     user.avatar ||
-                    "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=200&h=200&dpr=2"
+                    require("../../components/Images/user_Img.png")
                   }
                   alt={user.name}
                   className="w-32 h-32 rounded-full mx-auto object-cover"

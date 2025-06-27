@@ -36,6 +36,27 @@ const AttendanceRoute = () => {
   return <div className="p-6 text-red-500">No permission</div>;
 };
 
+const Dashboard = () => {
+  const userRole = localStorage.getItem("userRole");
+  if (userRole === "6800d06932b289b2fe5b0409") {
+    // Giảng viên
+    return (
+      <ProtectedRoute allowedRoles={["6800d06932b289b2fe5b0409"]}>
+        <LecturerDashboard />
+      </ProtectedRoute>
+    );
+  }
+  if (userRole === "6800d06932b289b2fe5b0403") {
+    // Sinh viên
+    return (
+      <ProtectedRoute allowedRoles={["6800d06932b289b2fe5b0403"]}>
+        <StudentDashboard />
+      </ProtectedRoute>
+    );
+  }
+  return <div className="p-6 text-red-500">No permission</div>;
+};
+
 const ClassRoutes = () => {
   return (
     <div className="flex h-screen bg-gray-100">
@@ -91,6 +112,7 @@ const ClassRoutes = () => {
                   </ProtectedRoute>
                 }
               />
+              <Route path="dashboard" element={Dashboard()} />
               <Route path="" element={<Navigate to="dashboard" replace />} />
             </Route>
           </Routes>
