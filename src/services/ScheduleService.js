@@ -74,3 +74,12 @@ export const createSchedule = async (query) => {
   });
   return response.data;
 };
+
+export const updateSchedule = async (data) => {
+  console.log(data);
+
+  const response = await axios.put(`${API_URL}/update`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+  return response.data;
+};

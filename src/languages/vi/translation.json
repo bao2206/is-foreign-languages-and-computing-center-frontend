@@ -551,5 +551,7 @@
   "sendResetEmail": "Gửi email đặt lại",
   "sending": "Đang gửi...",
   "checkYourEmailForResetInstructions": "Vui lòng kiểm tra email để nhận hướng dẫn đặt lại mật khẩu.",
-  "errorSendingResetEmail": "Gửi email đặt lại thất bại. Vui lòng thử lại."
+  "errorSendingResetEmail": "Gửi email đặt lại thất bại. Vui lòng thử lại.",
+    "viewStudents": "Xem học viên",
+  "noStudentsInClass": "Chưa có học viên trong lớp"
 }

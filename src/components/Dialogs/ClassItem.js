@@ -11,6 +11,7 @@ import {
 import {
   fetchScheduleByClass,
   createSchedule,
+  updateSchedule,
 } from "../../services/ScheduleService";
 import AddScheduleDialog from "./AddScheduleDialog";
 
@@ -57,6 +58,75 @@ const ClassItem = (props) => {
   });
   const [scheduleErrors, setScheduleErrors] = useState({});
   const [selectedDays, setSelectedDays] = useState([]); // Các ngày được chọn (VD: ["2", "4"])
+
+  const [editingSchedule, setEditingSchedule] = useState(null);
+  const [editScheduleForm, setEditScheduleForm] = useState({});
+  const [editScheduleErrors, setEditScheduleErrors] = useState({});
+
+  // Hàm mở dialog chỉnh sửa
+  const handleOpenEditSchedule = (schedule) => {
+    setEditingSchedule(schedule);
+    setEditScheduleForm({
+      room: schedule.room || "",
+      startTime: schedule.startTime || "",
+      endTime: schedule.endTime || "",
+      status: schedule.status || "",
+    });
+  };
+
+  // Hàm đóng dialog
+  const handleCloseEditSchedule = () => {
+    setEditingSchedule(null);
+    setEditScheduleForm({});
+    setEditScheduleErrors({});
+  };
+
+  // Hàm xử lý thay đổi form
+  const handleEditScheduleFormChange = (e) => {
+    const { name, value } = e.target;
+    setEditScheduleForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    setEditScheduleErrors((prev) => ({ ...prev, [name]: "" }));
+  };
+
+  // Hàm submit cập nhật lịch học
+  const handleSubmitEditSchedule = async () => {
+    // Validate nếu cần
+    if (
+      !editScheduleForm.room ||
+      !editScheduleForm.startTime ||
+      !editScheduleForm.endTime
+    ) {
+      setEditScheduleErrors({
+        room: t("required"),
+        startTime: t("required"),
+        endTime: t("required"),
+      });
+      return;
+    }
+    try {
+      await updateSchedule({
+        action: "updateSchedule",
+        scheduleId: editingSchedule._id,
+        scheduleData: {
+          room: editScheduleForm.room,
+          teacher: editScheduleForm.teacher, // thêm dòng này để cập nhật giáo viên
+          startTime: editScheduleForm.startTime,
+          endTime: editScheduleForm.endTime,
+          status: editScheduleForm.status,
+        },
+      });
+      // Refresh lại danh sách lịch học
+      fetchScheduleByClass(classItem._id).then(setSchedules);
+      handleCloseEditSchedule();
+    } catch (e) {
+      console.log(e);
+
+      alert(t("failedToUpdateSchedule"));
+    }
+  };
 
   // Regex cho tên lớp
   const classNameRegex = /^[\w\s&-]+$/;
@@ -316,14 +386,27 @@ const ClassItem = (props) => {
       <div className="card-body">
         <h5 className="card-title">{classItem.classname}</h5>
         <div className="card-text">
-          <p><strong>{t('course')}:</strong> {classItem.courseId?.coursename || t('N/A')}</p>
-          <p><strong>{t('quantity')}:</strong> {classItem.quantity}</p>
-          <p><strong>{t('status')}:</strong> {t(classItem.status)}</p>
+          <p>
+            <strong>{t("course")}:</strong>{" "}
+            {classItem.courseId?.coursename || t("N/A")}
+          </p>
+          <p>
+            <strong>{t("quantity")}:</strong> {classItem.quantity}
+          </p>
+          <p>
+            <strong>{t("status")}:</strong> {t(classItem.status)}
+          </p>
           {classItem.teachers?.length > 0 && (
-            <p><strong>{t('teacher')}:</strong> {classItem.teachers.map(t => t.name).join(', ')}</p>
+            <p>
+              <strong>{t("teacher")}:</strong>{" "}
+              {classItem.teachers.map((t) => t.name).join(", ")}
+            </p>
           )}
           <p>
-            {t("dayend")}: {classItem.dayend ? new Date(classItem.dayend).toLocaleDateString() : t("N/A")}
+            {t("dayend")}:{" "}
+            {classItem.dayend
+              ? new Date(classItem.dayend).toLocaleDateString()
+              : t("N/A")}
           </p>
         </div>
         <div className="d-flex gap-2 mt-3">
@@ -334,13 +417,13 @@ const ClassItem = (props) => {
               setIsEditDialogOpen(true);
             }}
           >
-            {t('edit')}
+            {t("edit")}
           </Button>
           <Button
             className="btn btn-outline-primary"
             onClick={() => setIsViewDialogOpen(true)}
           >
-            {t('view')}
+            {t("view")}
           </Button>
         </div>
       </div>
@@ -388,7 +471,10 @@ const ClassItem = (props) => {
                 {new Date(classItem.createdAt).toLocaleDateString()}
               </p>
               <p>
-                {t("dayend")}: {classItem.dayend ? new Date(classItem.dayend).toLocaleDateString() : t("N/A")}
+                {t("dayend")}:{" "}
+                {classItem.dayend
+                  ? new Date(classItem.dayend).toLocaleDateString()
+                  : t("N/A")}
               </p>
             </div>
             <div className="modal-footer">
@@ -456,6 +542,14 @@ const ClassItem = (props) => {
                         <td>{sch.teacher?.name || ""}</td>
                         <td>{sch.room || ""}</td>
                         <td>{t(sch.status) || sch.status}</td>
+                        <td>
+                          <Button
+                            className="btn btn-sm btn-warning"
+                            onClick={() => handleOpenEditSchedule(sch)}
+                          >
+                            {t("edit")}
+                          </Button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -496,6 +590,111 @@ const ClassItem = (props) => {
         selectedDays={selectedDays}
         handleDayCheckbox={handleDayCheckbox}
       />
+      {/* Dialog chỉnh sửa lịch học */}
+      <Dialog
+        open={!!editingSchedule}
+        onClose={handleCloseEditSchedule}
+        className="modal show d-block"
+        style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+      >
+        <Dialog.Panel className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title">{t("editSchedule")}</h5>
+              <button
+                type="button"
+                className="btn-close"
+                onClick={handleCloseEditSchedule}
+              ></button>
+            </div>
+            <div className="modal-body">
+              <div className="mb-3">
+                <label className="form-label">{t("room")}</label>
+                <input
+                  type="text"
+                  name="room"
+                  value={editScheduleForm.room}
+                  onChange={handleEditScheduleFormChange}
+                  className={`form-control ${
+                    editScheduleErrors.room ? "is-invalid" : ""
+                  }`}
+                />
+              </div>
+              <div className="mb-3">
+                <label className="form-label">{t("teacher")}</label>
+                <select
+                  name="teacher"
+                  value={
+                    editScheduleForm.teacher ||
+                    editingSchedule?.teacher?._id ||
+                    ""
+                  }
+                  onChange={handleEditScheduleFormChange}
+                  className="form-select"
+                >
+                  <option value="">{t("chooseTeacher")}</option>
+                  {classItem.teachers.map((teacher) => (
+                    <option key={teacher._id} value={teacher._id}>
+                      {teacher.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="mb-3">
+                <label className="form-label">{t("startTime")}</label>
+                <input
+                  type="time"
+                  name="startTime"
+                  value={editScheduleForm.startTime}
+                  onChange={handleEditScheduleFormChange}
+                  className={`form-control ${
+                    editScheduleErrors.startTime ? "is-invalid" : ""
+                  }`}
+                />
+              </div>
+              <div className="mb-3">
+                <label className="form-label">{t("endTime")}</label>
+                <input
+                  type="time"
+                  name="endTime"
+                  value={editScheduleForm.endTime}
+                  onChange={handleEditScheduleFormChange}
+                  className={`form-control ${
+                    editScheduleErrors.endTime ? "is-invalid" : ""
+                  }`}
+                />
+              </div>
+              <div className="mb-3">
+                <label className="form-label">{t("status")}</label>
+                <select
+                  name="status"
+                  value={editScheduleForm.status}
+                  onChange={handleEditScheduleFormChange}
+                  className="form-select"
+                >
+                  <option value="Scheduled">{t("Scheduled")}</option>
+                  <option value="Completed">{t("Completed")}</option>
+                  <option value="Cancelled">{t("Cancelled")}</option>
+                </select>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <Button
+                className="btn btn-primary"
+                onClick={handleSubmitEditSchedule}
+              >
+                {t("save")}
+              </Button>
+              <Button
+                className="btn btn-secondary"
+                onClick={handleCloseEditSchedule}
+              >
+                {t("cancel")}
+              </Button>
+            </div>
+          </div>
+        </Dialog.Panel>
+      </Dialog>
 
       {/* Dialog Chỉnh sửa */}
       <Dialog
@@ -575,9 +774,17 @@ const ClassItem = (props) => {
                     <input
                       type="date"
                       name="daybegin"
-                      value={editedClass.daybegin ? new Date(editedClass.daybegin).toISOString().slice(0, 10) : ""}
+                      value={
+                        editedClass.daybegin
+                          ? new Date(editedClass.daybegin)
+                              .toISOString()
+                              .slice(0, 10)
+                          : ""
+                      }
                       onChange={handleEditClassChange}
-                      className={`form-control ${errors.daybegin ? "is-invalid" : ""}`}
+                      className={`form-control ${
+                        errors.daybegin ? "is-invalid" : ""
+                      }`}
                       style={{ height: "38px" }}
                     />
                     {errors.daybegin && (
@@ -589,9 +796,17 @@ const ClassItem = (props) => {
                     <input
                       type="date"
                       name="dayend"
-                      value={editedClass.dayend ? new Date(editedClass.dayend).toISOString().slice(0, 10) : ""}
+                      value={
+                        editedClass.dayend
+                          ? new Date(editedClass.dayend)
+                              .toISOString()
+                              .slice(0, 10)
+                          : ""
+                      }
                       onChange={handleEditClassChange}
-                      className={`form-control ${errors.dayend ? "is-invalid" : ""}`}
+                      className={`form-control ${
+                        errors.dayend ? "is-invalid" : ""
+                      }`}
                       style={{ height: "38px" }}
                     />
                     {errors.dayend && (
