@@ -12,7 +12,7 @@ const ClassLogin = () => {
 
   const handleClose = () => {
     // Đóng modal và quay về trang chủ
-    <navigate to="/class/" replace />;
+    navigate("/");
   };
 
   return <ClassLoginModal onLogin={handleLogin} onClose={handleClose} />;

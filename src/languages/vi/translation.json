@@ -545,5 +545,11 @@
   "view_all_assignments": "Xem tất cả bài tập",
   "view_assignments": "Xem bài tập",
   "view_and_submit_assignments": "Xem và nộp bài tập của bạn",
-  "Assignment completed": "Bài tập đã hoàn thành"
+  "Assignment completed": "Bài tập đã hoàn thành",
+  "forgotPassword": "Quên mật khẩu?",
+  "backToLogin": "Quay lại đăng nhập",
+  "sendResetEmail": "Gửi email đặt lại",
+  "sending": "Đang gửi...",
+  "checkYourEmailForResetInstructions": "Vui lòng kiểm tra email để nhận hướng dẫn đặt lại mật khẩu.",
+  "errorSendingResetEmail": "Gửi email đặt lại thất bại. Vui lòng thử lại."
 }

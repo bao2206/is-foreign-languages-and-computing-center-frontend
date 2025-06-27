@@ -548,5 +548,11 @@
   "view_all_assignments": "View all assignments",
   "view_assignments": "View assignments",
   "view_and_submit_assignments": "View and submit your assignments",
-  "Assignment completed": "Assignment completed"
+  "Assignment completed": "Assignment completed",
+  "forgotPassword": "Forgot Password?",
+  "backToLogin": "Back to Login",
+  "sendResetEmail": "Send Reset Email",
+  "sending": "Sending...",
+  "checkYourEmailForResetInstructions": "Please check your email for reset instructions.",
+  "errorSendingResetEmail": "Failed to send reset email. Please try again."
 }
