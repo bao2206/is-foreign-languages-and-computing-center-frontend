@@ -556,5 +556,8 @@
   "checkYourEmailForResetInstructions": "Please check your email for reset instructions.",
   "errorSendingResetEmail": "Failed to send reset email. Please try again.",
   "viewStudents": "View Students",
-  "noStudentsInClass": "No students in this class"
+  "noStudentsInClass": "No students in this class",
+  "editClass": "Edit class",
+  "userManagement": "User management",
+  "enterUsername": "Enter Username"
 }

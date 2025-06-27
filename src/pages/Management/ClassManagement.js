@@ -99,9 +99,6 @@ const ClassManagement = () => {
     const loadStaticData = async () => {
       try {
         const coursesData = await fetchCourses();
-
-        console.log("Courses data loaded:", coursesData);
-
         // Ensure courses is always an array
         if (coursesData && coursesData.data) {
           setCourses(coursesData.data);
@@ -153,10 +150,11 @@ const ClassManagement = () => {
           page,
           limit,
         };
-        console.log("Fetch classes params:", params);
         const { classes, total, currentPage, totalPages } = await fetchClasses(
           params
         );
+        console.log("============", classes);
+
         setClasses(classes);
         setFilteredClasses(classes);
         setTotal(total);
@@ -248,7 +246,7 @@ const ClassManagement = () => {
     <div className="container-fluid mt-4 px-3">
       {/* Inject custom styles */}
       <style>{cardStyles}</style>
-      
+
       {/* Thanh tìm kiếm và lọc */}
       <div className="filter-section">
         <div className="d-flex flex-wrap gap-2 align-items-center">
@@ -284,11 +282,12 @@ const ClassManagement = () => {
               style={{ height: "38px" }}
             >
               <option value="all">{t("allCourses")}</option>
-              {courses && courses.map((course) => (
-                <option key={course._id} value={course._id}>
-                  {course.coursename}
-                </option>
-              ))}
+              {courses &&
+                courses.map((course) => (
+                  <option key={course._id} value={course._id}>
+                    {course.coursename}
+                  </option>
+                ))}
             </select>
           </div>
           {/* Giáo viên */}
@@ -300,11 +299,12 @@ const ClassManagement = () => {
               style={{ height: "38px" }}
             >
               <option value="all">{t("allTeachers")}</option>
-              {teachers && teachers.map((teacher) => (
-                <option key={teacher._id} value={teacher._id}>
-                  {teacher.name}
-                </option>
-              ))}
+              {teachers &&
+                teachers.map((teacher) => (
+                  <option key={teacher._id} value={teacher._id}>
+                    {teacher.name}
+                  </option>
+                ))}
             </select>
           </div>
           {/* Trạng thái */}
@@ -489,11 +489,12 @@ const ClassManagement = () => {
                   style={{ height: "38px" }}
                 >
                   <option value="">{t("selectCourse")}</option>
-                  {courses && courses.map((course) => (
-                    <option key={course._id} value={course._id}>
-                      {course.coursename}
-                    </option>
-                  ))}
+                  {courses &&
+                    courses.map((course) => (
+                      <option key={course._id} value={course._id}>
+                        {course.coursename}
+                      </option>
+                    ))}
                 </select>
                 {errors.courseId && (
                   <div className="invalid-feedback">{errors.courseId}</div>

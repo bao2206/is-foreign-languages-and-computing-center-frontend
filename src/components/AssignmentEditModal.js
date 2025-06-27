@@ -14,6 +14,7 @@ const AssignmentEditModal = ({
     description: "",
     dueDate: "",
     classId: "",
+    status: "draft", // Thêm trạng thái mặc định
   });
 
   useEffect(() => {
@@ -26,6 +27,7 @@ const AssignmentEditModal = ({
           ? new Date(assignment.dueDate).toISOString().slice(0, 16)
           : "",
         classId: assignment.classId?._id || assignment.classId || "",
+        status: assignment.status || "draft",
       });
     }
   }, [assignment]);
@@ -108,6 +110,21 @@ const AssignmentEditModal = ({
                   {cls.classname}
                 </option>
               ))}
+            </select>
+          </div>
+          {/* Thêm chọn trạng thái */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">
+              {t("status")}
+            </label>
+            <select
+              name="status"
+              value={form.status}
+              onChange={handleChange}
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+            >
+              <option value="draft">{t("draft")}</option>
+              <option value="published">{t("published")}</option>
             </select>
           </div>
           <div className="flex justify-end space-x-2">

@@ -179,6 +179,25 @@ const ClassItem = (props) => {
       newErrors.classname = t("invalidClassName");
     if (editedClass.quantity < 0 || isNaN(editedClass.quantity))
       newErrors.quantity = t("invalidQuantity");
+
+    // Validate daybegin và dayend
+    if (!editedClass.daybegin) {
+      newErrors.daybegin = t("required");
+    }
+    if (!editedClass.dayend) {
+      newErrors.dayend = t("required");
+    }
+    if (
+      editedClass.daybegin &&
+      editedClass.dayend &&
+      new Date(editedClass.dayend) < new Date(editedClass.daybegin)
+    ) {
+      newErrors.dayend = t(
+        "dayendMustBeAfterDaybegin",
+        "End date must be after start date"
+      );
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -189,11 +208,23 @@ const ClassItem = (props) => {
     }
 
     try {
-      const updatedClass = await updateClass(editedClass);
+      console.log(editedClass);
+      const data = {
+        _id: classItem._id,
+        classname: editedClass.classname,
+        quantity: editedClass.quantity,
+        daybegin: editedClass.daybegin,
+        dayend: editedClass.dayend,
+        status: editedClass.status,
+      };
+
+      const updatedClass = await updateClass(data);
       setClassItem(updatedClass);
       setIsEditDialogOpen(false);
       setErrors({});
     } catch (error) {
+      console.log("error");
+
       alert(t("failedToUpdateClass"));
     }
   };
@@ -478,6 +509,15 @@ const ClassItem = (props) => {
               </p>
             </div>
             <div className="modal-footer">
+              <Button
+                className="btn btn-outline-success"
+                onClick={() => {
+                  setAddType("student");
+                  setIsAddDialogOpen(true);
+                }}
+              >
+                {t("viewStudents")}
+              </Button>
               <Button
                 className="btn btn-outline-info"
                 onClick={handleOpenScheduleDialog}
@@ -819,7 +859,7 @@ const ClassItem = (props) => {
               )}
             </div>
             <div className="modal-footer">
-              <Button
+              {/* <Button
                 className="btn btn-outline-success"
                 onClick={() => {
                   setAddType("student");
@@ -827,7 +867,7 @@ const ClassItem = (props) => {
                 }}
               >
                 {t("addStudent")}
-              </Button>
+              </Button> */}
               <Button
                 className="btn btn-outline-info"
                 onClick={() => {
@@ -863,7 +903,6 @@ const ClassItem = (props) => {
         open={isAddDialogOpen}
         onClose={() => {
           setIsAddDialogOpen(false);
-          setSelectedStudents([]);
           setSelectedTeachers([]);
           setAddType("");
         }}
@@ -875,7 +914,7 @@ const ClassItem = (props) => {
             <div className="modal-header">
               <h5 className="modal-title">
                 {addType === "student"
-                  ? t("addStudent")
+                  ? t("viewStudents")
                   : addType === "teacher"
                   ? t("addTeacher")
                   : ""}
@@ -885,7 +924,6 @@ const ClassItem = (props) => {
                 className="btn-close"
                 onClick={() => {
                   setIsAddDialogOpen(false);
-                  setSelectedStudents([]);
                   setSelectedTeachers([]);
                   setAddType("");
                 }}
@@ -896,44 +934,27 @@ const ClassItem = (props) => {
                 <>
                   <div
                     style={{
-                      maxHeight: "180px",
+                      maxHeight: "240px",
                       overflowY: "auto",
                       border: "1px solid #eee",
                       borderRadius: "4px",
                       padding: "8px",
                     }}
                   >
-                    {availableStudents.length === 0 ? (
-                      <div className="text-muted">
-                        {t("noAvailableStudents")}
-                      </div>
+                    {classItem.students.length === 0 ? (
+                      <div className="text-muted">{t("noStudentsInClass")}</div>
                     ) : (
-                      availableStudents.map((student) => (
-                        <div key={student._id} className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            id={`student-${student._id}`}
-                            checked={selectedStudents.includes(student._id)}
-                            onChange={() => handleStudentCheckbox(student._id)}
-                          />
-                          <label
-                            className="form-check-label"
-                            htmlFor={`student-${student._id}`}
-                          >
-                            {student.name}
-                          </label>
+                      classItem.students.map((student) => (
+                        <div key={student._id} className="mb-2">
+                          <span>
+                            {" "}
+                            {student.student?.name ||
+                              `${student._id} - No account`}
+                          </span>
                         </div>
                       ))
                     )}
                   </div>
-                  <Button
-                    className="btn btn-success mt-2"
-                    onClick={handleAddStudents}
-                    disabled={selectedStudents.length === 0}
-                  >
-                    {t("addStudent")}
-                  </Button>
                 </>
               )}
               {addType === "teacher" && (
@@ -999,7 +1020,6 @@ const ClassItem = (props) => {
                 className="btn btn-secondary"
                 onClick={() => {
                   setIsAddDialogOpen(false);
-                  setSelectedStudents([]);
                   setSelectedTeachers([]);
                   setAddType("");
                 }}

@@ -1,8 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { loginUser } from "../services/auth"; // hoặc nơi bạn để file login
+import { loginUser } from "../services/auth";
 import axios from "axios";
-// import Cookies from 'js-cookie'; // nếu bạn muốn lưu token vào cookie
 
 export default function LoginModal({ isOpen, onClose, onLogin }) {
   const [username, setUsername] = React.useState("");
@@ -12,6 +11,7 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
   const [forgotUsername, setForgotUsername] = React.useState("");
   const [forgotMessage, setForgotMessage] = React.useState("");
   const [forgotLoading, setForgotLoading] = React.useState(false);
+  const [role, setRole] = React.useState("employee"); // "employee" hoặc "manager"
 
   if (!isOpen) return null;
 
@@ -21,9 +21,8 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
       return alert("Please enter username and password");
 
     try {
-      const result = await loginUser(username, password);
+      const result = await loginUser(username, password, role); // Thêm role vào login
 
-      // Store token, username, and role ObjectId in localStorage
       localStorage.setItem("token", result.token);
       localStorage.setItem("username", result.user.username);
       localStorage.setItem("userRole", result.user.role);
@@ -45,10 +44,15 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
     setForgotLoading(true);
     setForgotMessage("");
     try {
-      const res = await axios.post(`${process.env.REACT_APP_API_BASE_URL}users/forgot-password`, {
-        username: forgotUsername,
-      });
-      setForgotMessage(res.data.message || "Check your email for reset instructions.");
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}users/forgot-password`,
+        {
+          username: forgotUsername,
+        }
+      );
+      setForgotMessage(
+        res.data.message || "Check your email for reset instructions."
+      );
     } catch (err) {
       setForgotMessage(
         err.response?.data?.message || "Error sending reset email."
@@ -59,46 +63,68 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
   };
 
   return (
-    <div className="fixed inset-0 flex items-start justify-center z-50 pointer-events-none">
-      <div className="mt-16 bg-white p-4 rounded-xl shadow-lg w-80 animate-slideDown pointer-events-auto">
-        <h2 className="text-lg font-semibold mb-3">Đăng nhập</h2>
-        <form onSubmit={handleSubmit} className="space-y-2">
-          <input
-            type="text"
-            placeholder="Tên đăng nhập"
-            className="w-full border px-3 py-2 rounded text-sm"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <input
-            type="password"
-            placeholder="Mật khẩu"
-            className="w-full border px-3 py-2 rounded text-sm"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <div className="mb-3 text-end">
+    <div
+      className="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50"
+      style={{ backdropFilter: "blur(5px)" }}
+    >
+      <div
+        className="bg-white p-6 rounded-xl shadow-2xl w-full max-w-md animate-fadeIn"
+        style={{
+          background: "linear-gradient(135deg, #f7f9fc, #e0e7ff)",
+        }}
+      >
+        <h2 className="text-xl font-bold mb-4 text-center text-gray-800">
+          {t("login")}
+        </h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t("username")}
+            </label>
+            <input
+              type="text"
+              placeholder={t("username")}
+              className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t("password")}
+            </label>
+            <input
+              type="password"
+              placeholder={t("password")}
+              className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          <div className="text-right">
             <button
               type="button"
-              className="btn btn-link p-0"
+              className="text-sm text-blue-600 hover:text-blue-800 underline"
               onClick={() => setShowForgot(true)}
             >
-              Forgot Password?
+              {t("forgotPassword")}
             </button>
           </div>
-          <div className="flex justify-end space-x-2 pt-2">
+          <div className="flex justify-end space-x-3 pt-2">
             <button
               type="button"
               onClick={onClose}
-              className="px-3 py-1 rounded bg-gray-100 text-sm"
+              className="px-4 py-2 rounded-lg bg-gray-200 text-sm hover:bg-gray-300 transition-colors"
             >
-              Hủy
+              {t("cancel")}
             </button>
             <button
               type="submit"
-              className="px-3 py-1 rounded bg-blue-500 text-white text-sm"
+              className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm hover:bg-blue-700 transition-colors"
             >
-              Đăng nhập
+              {t("login")}
             </button>
           </div>
         </form>
@@ -106,37 +132,76 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
 
       {/* Forgot Password Modal/Dialog */}
       {showForgot && (
-        <div className="modal show" style={{ display: "block" }}>
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <form onSubmit={handleForgotPassword}>
-                <div className="modal-header">
-                  <h5 className="modal-title">Forgot Password</h5>
-                  <button type="button" className="btn-close" onClick={() => setShowForgot(false)}></button>
-                </div>
-                <div className="modal-body">
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Enter your username"
-                    value={forgotUsername}
-                    onChange={(e) => setForgotUsername(e.target.value)}
-                    required
-                  />
-                  {forgotMessage && (
-                    <div className="alert alert-info mt-2">{forgotMessage}</div>
-                  )}
-                </div>
-                <div className="modal-footer">
-                  <button type="button" className="btn btn-secondary" onClick={() => setShowForgot(false)}>
-                    Cancel
-                  </button>
-                  <button type="submit" className="btn btn-primary" disabled={forgotLoading}>
-                    {forgotLoading ? "Sending..." : "Send Reset Email"}
-                  </button>
-                </div>
-              </form>
+        <div
+          className="fixed inset-0 flex items-center justify-center z-60 bg-gray-900 bg-opacity-50"
+          style={{ backdropFilter: "blur(5px)" }}
+        >
+          <div
+            className="bg-white p-5 rounded-xl shadow-2xl w-full max-w-sm animate-fadeIn"
+            style={{
+              background: "linear-gradient(135deg, #f7f9fc, #e0e7ff)",
+            }}
+          >
+            <div className="modal-header">
+              <h5 className="text-lg font-semibold text-gray-800 mb-3">
+                {t("forgotPassword")}
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                onClick={() => setShowForgot(false)}
+              ></button>
             </div>
+            <form onSubmit={handleForgotPassword} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t("username")}
+                </label>
+                <input
+                  type="text"
+                  className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder={t("enterUsername")}
+                  value={forgotUsername}
+                  onChange={(e) => setForgotUsername(e.target.value)}
+                  required
+                />
+              </div>
+              {forgotMessage && (
+                <div
+                  className={`alert ${
+                    forgotMessage.includes("instructions")
+                      ? "alert-success"
+                      : "alert-danger"
+                  } text-sm mt-2`}
+                >
+                  {forgotMessage}
+                </div>
+              )}
+              <div className="flex justify-end space-x-3">
+                <button
+                  type="button"
+                  className="px-4 py-2 rounded-lg bg-gray-200 text-sm hover:bg-gray-300 transition-colors"
+                  onClick={() => setShowForgot(false)}
+                >
+                  {t("cancel")}
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm hover:bg-blue-700 transition-colors"
+                  disabled={forgotLoading}
+                >
+                  {forgotLoading ? (
+                    <span
+                      className="spinner-border spinner-border-sm"
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
+                  ) : (
+                    t("sendResetEmail")
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
@@ -145,5 +210,8 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
 }
 
 export const forgotPassword = async (username) => {
-  return axios.post(`${process.env.REACT_APP_API_BASE_URL}users/forgot-password`, { username });
+  return axios.post(
+    `${process.env.REACT_APP_API_BASE_URL}users/forgot-password`,
+    { username }
+  );
 };

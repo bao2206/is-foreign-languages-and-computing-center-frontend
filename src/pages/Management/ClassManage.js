@@ -57,8 +57,6 @@ const ClassManagement = () => {
       try {
         const coursesData = await fetchCourses();
 
-        console.log("Courses data loaded:", coursesData);
-
         // Ensure courses is always an array
         if (coursesData && coursesData.data) {
           setCourses(coursesData.data);
@@ -110,10 +108,10 @@ const ClassManagement = () => {
           page,
           limit,
         };
-        console.log("Fetch classes params:", params);
         const { classes, total, currentPage, totalPages } = await fetchClasses(
           params
         );
+        console.log("============", classes);
         setClasses(classes);
         setFilteredClasses(classes);
         setTotal(total);
@@ -166,7 +164,7 @@ const ClassManagement = () => {
         quantity: 0,
         status: "Incomplete",
         daystart: null,
-    dayend: null,
+        dayend: null,
       });
       setErrors({});
     } catch (error) {
@@ -233,11 +231,11 @@ const ClassManagement = () => {
         studentId: selectedStudent._id,
         contactId: selectedStudent._id, // adjust if you have a separate contactId
       });
-      alert(`${t('studentAddedToClass')}: ${classItem.classname}`);
+      alert(`${t("studentAddedToClass")}: ${classItem.classname}`);
       setIsViewStudentDialogOpen(false);
     } catch (error) {
-      console.error('Error adding student to class:', error);
-      alert(error.message || t('failedToAddStudentToClass'));
+      console.error("Error adding student to class:", error);
+      alert(error.message || t("failedToAddStudentToClass"));
     }
   };
 
@@ -277,11 +275,12 @@ const ClassManagement = () => {
             style={{ height: "38px" }}
           >
             <option value="all">{t("allCourses")}</option>
-            {courses && courses.map((course) => (
-              <option key={course._id} value={course._id}>
-                {course.coursename}
-              </option>
-            ))}
+            {courses &&
+              courses.map((course) => (
+                <option key={course._id} value={course._id}>
+                  {course.coursename}
+                </option>
+              ))}
           </select>
         </div>
         {/* Giáo viên */}
@@ -293,11 +292,12 @@ const ClassManagement = () => {
             style={{ height: "38px" }}
           >
             <option value="all">{t("allTeachers")}</option>
-            {teachers && teachers.map((teacher) => (
-              <option key={teacher._id} value={teacher._id}>
-                {teacher.name}
-              </option>
-            ))}
+            {teachers &&
+              teachers.map((teacher) => (
+                <option key={teacher._id} value={teacher._id}>
+                  {teacher.name}
+                </option>
+              ))}
           </select>
         </div>
         {/* Trạng thái */}
@@ -473,11 +473,12 @@ const ClassManagement = () => {
                   style={{ height: "38px" }}
                 >
                   <option value="">{t("selectCourse")}</option>
-                  {courses && courses.map((course) => (
-                    <option key={course._id} value={course._id}>
-                      {course.coursename}
-                    </option>
-                  ))}
+                  {courses &&
+                    courses.map((course) => (
+                      <option key={course._id} value={course._id}>
+                        {course.coursename}
+                      </option>
+                    ))}
                 </select>
                 {errors.courseId && (
                   <div className="invalid-feedback">{errors.courseId}</div>
@@ -533,7 +534,9 @@ const ClassManagement = () => {
                 <label className="form-label">{t("dayend")}</label>
                 <DatePicker
                   selected={newClass.dayend ? new Date(newClass.dayend) : null}
-                  onChange={date => setNewClass(prev => ({ ...prev, dayend: date }))}
+                  onChange={(date) =>
+                    setNewClass((prev) => ({ ...prev, dayend: date }))
+                  }
                   placeholderText={t("selectDate")}
                   className="form-control"
                   style={{ height: "38px" }}
@@ -569,11 +572,14 @@ const ClassManagement = () => {
 
       {/* Student Details Dialog */}
       {isViewStudentDialogOpen && selectedStudent && (
-        <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+        <div
+          className="modal show d-block"
+          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+        >
           <div className="modal-dialog modal-lg">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">{t('studentDetails')}</h5>
+                <h5 className="modal-title">{t("studentDetails")}</h5>
                 <button
                   type="button"
                   className="btn-close"
@@ -583,30 +589,41 @@ const ClassManagement = () => {
               <div className="modal-body">
                 <div className="row">
                   <div className="col-md-6 mb-3">
-                    <label className="form-label">{t('name')}</label>
-                    <div className="form-control bg-light">{selectedStudent.name}</div>
+                    <label className="form-label">{t("name")}</label>
+                    <div className="form-control bg-light">
+                      {selectedStudent.name}
+                    </div>
                   </div>
                   <div className="col-md-6 mb-3">
-                    <label className="form-label">{t('email')}</label>
-                    <div className="form-control bg-light">{selectedStudent.email}</div>
+                    <label className="form-label">{t("email")}</label>
+                    <div className="form-control bg-light">
+                      {selectedStudent.email}
+                    </div>
                   </div>
                   <div className="col-md-6 mb-3">
-                    <label className="form-label">{t('phone')}</label>
-                    <div className="form-control bg-light">{selectedStudent.phone}</div>
+                    <label className="form-label">{t("phone")}</label>
+                    <div className="form-control bg-light">
+                      {selectedStudent.phone}
+                    </div>
                   </div>
                   <div className="col-md-6 mb-3">
-                    <label className="form-label">{t('assignedCourse')}</label>
+                    <label className="form-label">{t("assignedCourse")}</label>
                     <div className="form-control bg-light">
                       {(() => {
                         let courseName;
-                        if (selectedStudent.assignedCourse && selectedStudent.assignedCourse._id) {
+                        if (
+                          selectedStudent.assignedCourse &&
+                          selectedStudent.assignedCourse._id
+                        ) {
                           const courseId = selectedStudent.assignedCourse._id;
                           courseName = courseNames[courseId];
                           if (courseName) {
                             return courseName;
                           } else {
                             fetchCourseName(courseId);
-                            return <span className="text-muted">Loading...</span>;
+                            return (
+                              <span className="text-muted">Loading...</span>
+                            );
                           }
                         }
                         courseName =
@@ -616,51 +633,62 @@ const ClassManagement = () => {
                           selectedStudent.course?.name ||
                           selectedStudent.courseName ||
                           selectedStudent.course;
-                        return courseName || t('N/A');
+                        return courseName || t("N/A");
                       })()}
                     </div>
                   </div>
                   <div className="col-12 mb-3">
-                    <label className="form-label">{t('consultationContent')}</label>
-                    <div className="form-control bg-light">{selectedStudent.consultationContent}</div>
+                    <label className="form-label">
+                      {t("consultationContent")}
+                    </label>
+                    <div className="form-control bg-light">
+                      {selectedStudent.consultationContent}
+                    </div>
                   </div>
                   {selectedStudent.parentName && (
                     <div className="col-md-6 mb-3">
-                      <label className="form-label">{t('parentName')}</label>
-                      <div className="form-control bg-light">{selectedStudent.parentName}</div>
+                      <label className="form-label">{t("parentName")}</label>
+                      <div className="form-control bg-light">
+                        {selectedStudent.parentName}
+                      </div>
                     </div>
                   )}
                   {selectedStudent.parentPhone && (
                     <div className="col-md-6 mb-3">
-                      <label className="form-label">{t('parentPhone')}</label>
-                      <div className="form-control bg-light">{selectedStudent.parentPhone}</div>
+                      <label className="form-label">{t("parentPhone")}</label>
+                      <div className="form-control bg-light">
+                        {selectedStudent.parentPhone}
+                      </div>
                     </div>
                   )}
                   {selectedStudent.parentEmail && (
                     <div className="col-md-6 mb-3">
-                      <label className="form-label">{t('parentEmail')}</label>
-                      <div className="form-control bg-light">{selectedStudent.parentEmail}</div>
+                      <label className="form-label">{t("parentEmail")}</label>
+                      <div className="form-control bg-light">
+                        {selectedStudent.parentEmail}
+                      </div>
                     </div>
                   )}
                 </div>
 
                 {/* Open Classes Section: displays all available classes for the student's course */}
-                {selectedStudent.assignedCourse && selectedStudent.assignedCourse._id && (
-                  <div className="mt-4">
-                    <h6 className="mb-3">{t('availableClasses')}</h6>
-                    <OpenClassesList
-                      courseId={selectedStudent.assignedCourse._id}
-                      onAddToClass={handleAddToClass}
-                    />
-                  </div>
-                )}
+                {selectedStudent.assignedCourse &&
+                  selectedStudent.assignedCourse._id && (
+                    <div className="mt-4">
+                      <h6 className="mb-3">{t("availableClasses")}</h6>
+                      <OpenClassesList
+                        courseId={selectedStudent.assignedCourse._id}
+                        onAddToClass={handleAddToClass}
+                      />
+                    </div>
+                  )}
               </div>
               <div className="modal-footer">
                 <button
                   className="btn btn-secondary"
                   onClick={() => setIsViewStudentDialogOpen(false)}
                 >
-                  {t('close')}
+                  {t("close")}
                 </button>
               </div>
             </div>

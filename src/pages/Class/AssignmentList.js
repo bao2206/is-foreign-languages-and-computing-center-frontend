@@ -43,6 +43,7 @@ const AssignmentList = () => {
     description: "",
     dueDate: "",
     classId: "",
+    status: "draft", // Thêm trạng thái mặc định
   });
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -229,6 +230,7 @@ const AssignmentList = () => {
         description: "",
         dueDate: "",
         classId: "",
+        status: "draft", // Reset về draft
       });
       setIsAddModalOpen(false);
       await fetchAssignments(user);
@@ -447,6 +449,24 @@ const AssignmentList = () => {
                       {cls.classname}
                     </option>
                   ))}
+                </select>
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">
+                  {t("status")}
+                </label>
+                <select
+                  value={newAssignment.status}
+                  onChange={(e) =>
+                    setNewAssignment({
+                      ...newAssignment,
+                      status: e.target.value,
+                    })
+                  }
+                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                >
+                  <option value="draft">{t("draft")}</option>
+                  <option value="published">{t("published")}</option>
                 </select>
               </div>
               <div className="flex justify-end space-x-2">
