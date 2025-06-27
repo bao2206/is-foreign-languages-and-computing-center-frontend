@@ -1,8 +1,7 @@
 import axios from "axios";
 
 const BASE_URL =
-  `${process.env.REACT_APP_API_BASE_URL}classes/` ||
-  "http://localhost:8080/api/";
+  `${process.env.REACT_APP_API_BASE_URL}classes/` 
 
 export const fetchClasses = async ({
   name,

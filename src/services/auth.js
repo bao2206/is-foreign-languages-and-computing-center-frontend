@@ -1,6 +1,6 @@
 import axios from "axios";
 // require("dotenv").config();
-const API = process.env.REACT_APP_API_BASE_URL || "http://localhost:8080/api";
+const API = process.env.REACT_APP_API_BASE_URL ;
 
 // export const registerUser = async (username, email, password, confirmPassword) => {
 //   try {
