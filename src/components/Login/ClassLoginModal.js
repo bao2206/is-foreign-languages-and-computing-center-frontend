@@ -46,9 +46,6 @@ const ClassLoginModal = ({ onLogin, onClose }) => {
       if (onLogin) {
         onLogin(result.user);
       }
-      if (onClose) {
-        onClose();
-      }
     } catch (err) {
       setError(
         err.response?.data?.message ||
