@@ -142,7 +142,7 @@ export const downloadInvoice = async (id) => {
 // Create VNPay payment
 export const createVnpayPayment = async (paymentId) => {
   try {
-    const returnUrl = `${window.location.origin}/vnpay-return`; // Use current origin
+    const returnUrl = process.env.VNPAY_RETURN_URL;
     const response = await axiosInstance.post('vnpay', { paymentId, returnUrl });
     console.log('VNPay response:', response.data); // Debug log
     return response.data;
