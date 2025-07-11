@@ -65,6 +65,10 @@ const FinancePage = () => {
   // Load course fee
   const [courseFee, setCourseFee] = useState(null);
 
+  // State for selected payment method and payment status
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
+  const [isPaying, setIsPaying] = useState(false);
+
   // Load initial data
   useEffect(() => {
     loadData();
@@ -279,6 +283,29 @@ const FinancePage = () => {
     }
   };
 
+  const handleVnpayPayment = async (paymentId) => {
+    try {
+      setLoading(true);
+      setError(null);
+      // Call your backend endpoint to create VNPay payment
+      const response = await fetch('/api/vnpay/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paymentId }),
+      });
+      const data = await response.json();
+      if (data && data.paymentUrl) {
+        window.location.href = data.paymentUrl; // Redirect to VNPay
+      } else {
+        setError("Failed to initiate VNPay payment.");
+      }
+    } catch (err) {
+      setError(err.message || "Failed to initiate VNPay payment.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="container-fluid">
       {/* Header Section */}
@@ -445,14 +472,6 @@ const FinancePage = () => {
                           <Download size={16} />
                         </Button>
                       )}
-                      {record.status === 'pending' && (
-                        <Button
-                          className="btn btn-outline-success btn-sm ms-2"
-                          onClick={() => handleCompleteCashPayment(record._id)}
-                        >
-                          {t("completeCashPayment") || "Complete Cash Payment"}
-                        </Button>
-                      )}
                     </td>
                   </tr>
                 ))}
@@ -611,6 +630,7 @@ const FinancePage = () => {
                     <option value="cash">{t("cash")}</option>
                     <option value="bank_transfer">{t("bankTransfer")}</option>
                     <option value="credit_card">{t("creditCard")}</option>
+                    <option value="vnpay">VNPay</option>
                   </select>
                   {formErrors.paymentMethod && (
                     <div className="invalid-feedback">{formErrors.paymentMethod}</div>
@@ -661,7 +681,11 @@ const FinancePage = () => {
       {/* Update View Record Dialog */}
       <Dialog
         open={isViewDialogOpen}
-        onClose={() => setIsViewDialogOpen(false)}
+        onClose={() => {
+          setIsViewDialogOpen(false);
+          setSelectedPaymentMethod("");
+          setIsPaying(false);
+        }}
         className="modal fade show"
         style={{ display: isViewDialogOpen ? 'block' : 'none' }}
       >
@@ -726,6 +750,38 @@ const FinancePage = () => {
                     <div className="col-md-6 mb-3">
                       <label className="form-label">{t("paymentMethod")}</label>
                       <p className="form-control-plaintext">{t(selectedRecord.paymentMethod)}</p>
+                    </div>
+                  )}
+                  {selectedRecord && selectedRecord.status === 'pending' && (
+                    <div className="mb-3">
+                      <label className="form-label">{t("choosePaymentMethod")}</label>
+                      <select
+                        className="form-select"
+                        value={selectedPaymentMethod}
+                        onChange={e => setSelectedPaymentMethod(e.target.value)}
+                      >
+                        <option value="">{t("selectPaymentMethod")}</option>
+                        <option value="cash">{t("cash")}</option>
+                        <option value="vnpay">VNPay</option>
+                        {/* Add more methods as needed */}
+                      </select>
+                      <div className="mt-3">
+                        <Button
+                          className="btn btn-outline-success me-2"
+                          disabled={!selectedPaymentMethod || isPaying}
+                          onClick={async () => {
+                            setIsPaying(true);
+                            if (selectedPaymentMethod === "cash") {
+                              await handleCompleteCashPayment(selectedRecord._id);
+                            } else if (selectedPaymentMethod === "vnpay") {
+                              await handleVnpayPayment(selectedRecord._id);
+                            }
+                            setIsPaying(false);
+                          }}
+                        >
+                          {isPaying ? t("processing") : t("payNow")}
+                        </Button>
+                      </div>
                     </div>
                   )}
                   <div className="col-12 mb-3">
