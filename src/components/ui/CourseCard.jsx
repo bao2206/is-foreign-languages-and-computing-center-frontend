@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Star, Clock, Award, Tag } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import CourseRegistrationForm from '../CourseRegistrationForm';
 
 export const CourseCard = ({ course }) => {
   const { t } = useTranslation();
+  const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
 
   return (
     <div className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-gray-200 flex flex-col">
@@ -50,11 +52,19 @@ export const CourseCard = ({ course }) => {
           <button
             className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95"
             disabled={course.status !== "active"}
+            onClick={() => course.status === "active" && setIsRegistrationOpen(true)}
           >
             {course.status === "active" ? t("register_now") : t("enrollment_closed")}
           </button>
         </div>
       </div>
+      
+      {/* Registration Form Modal */}
+      <CourseRegistrationForm
+        course={course}
+        isOpen={isRegistrationOpen}
+        onClose={() => setIsRegistrationOpen(false)}
+      />
     </div>
   );
 };

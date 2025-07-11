@@ -559,5 +559,39 @@
   "noStudentsInClass": "No students in this class",
   "editClass": "Edit class",
   "userManagement": "User management",
-  "enterUsername": "Enter Username"
+  "enterUsername": "Enter Username",
+  "registrationForm": {
+    "title": "Course Registration",
+    "selectedCourse": "Selected Course:",
+    "studentInfo": "Student Information",
+    "studentName": "Student Name",
+    "studentPhone": "Student Phone",
+    "studentEmail": "Student Email",
+    "parentInfo": "Parent Information",
+    "parentName": "Parent Name",
+    "parentPhone": "Parent Phone",
+    "parentEmail": "Parent Email",
+    "message": "Registration Message",
+    "optional": "Optional",
+    "cancel": "Cancel",
+    "submit": "Submit Registration",
+    "submitting": "Submitting...",
+    "successMessage": "Registration submitted successfully! We will contact you soon.",
+    "errorMessage": "Failed to submit registration. Please try again.",
+
+    "errors": {
+      "nameRequired": "Student name is required",
+      "nameLength": "Name must be between 2 and 50 characters",
+      "phoneRequired": "Student phone number is required",
+      "phoneInvalid": "Please enter a valid Vietnamese phone number",
+      "emailRequired": "Student email is required",
+      "emailInvalid": "Please enter a valid email address",
+      "parentNameLength": "Parent name must be between 2 and 50 characters",
+      "parentPhoneInvalid": "Please enter a valid Vietnamese phone number",
+      "parentEmailInvalid": "Please enter a valid email address",
+      "contentRequired": "Registration message is required",
+      "contentLength": "Message must be at least 10 characters"
+    }
+  },
+  "free": "Free"
 }

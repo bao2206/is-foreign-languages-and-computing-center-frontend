@@ -137,4 +137,28 @@ export const downloadInvoice = async (id) => {
     console.error("Error downloading invoice:", error);
     throw error;
   }
+};
+
+// Create VNPay payment
+export const createVnpayPayment = async (paymentId) => {
+  try {
+    const returnUrl = `${window.location.origin}/vnpay-return`; // Use current origin
+    const response = await axiosInstance.post('vnpay', { paymentId, returnUrl });
+    console.log('VNPay response:', response.data); // Debug log
+    return response.data;
+  } catch (error) {
+    console.error("Error creating VNPay payment:", error);
+    throw error;
+  }
+};
+
+// Find payment by VNPay TxnRef
+export const findPaymentByTxnRef = async (vnpTxnRef) => {
+  try {
+    const response = await axiosInstance.get(`find-by-txnref?vnpTxnRef=${vnpTxnRef}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error finding payment by TxnRef:", error);
+    throw error;
+  }
 }; 

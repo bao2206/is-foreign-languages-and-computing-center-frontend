@@ -556,5 +556,39 @@
   "noStudentsInClass": "Chưa có học viên trong lớp",
   "editClass": "Chỉnh sửa thông tin lớp",
   "userManagement": "Quản lý người dùng",
-  "enterUsername": "Nhập tên đăng nhập"
+  "enterUsername": "Nhập tên đăng nhập",
+  "registrationForm": {
+    "title": "Đăng ký khóa học",
+    "selectedCourse": "Khóa học đã chọn:",
+    "studentInfo": "Thông tin học viên",
+    "studentName": "Tên học viên",
+    "studentPhone": "Số điện thoại học viên",
+    "studentEmail": "Email học viên",
+    "parentInfo": "Thông tin phụ huynh",
+    "parentName": "Tên phụ huynh",
+    "parentPhone": "Số điện thoại phụ huynh",
+    "parentEmail": "Email phụ huynh",
+    "message": "Nội dung đăng ký",
+    "optional": "Không bắt buộc",
+    "cancel": "Hủy",
+    "submit": "Gửi đăng ký",
+    "submitting": "Đang gửi...",
+    "successMessage": "Gửi đăng ký thành công! Chúng tôi sẽ liên hệ với bạn sớm.",
+    "errorMessage": "Gửi đăng ký thất bại. Vui lòng thử lại.",
+
+    "errors": {
+      "nameRequired": "Vui lòng nhập tên học viên",
+      "nameLength": "Tên phải có từ 2 đến 50 ký tự",
+      "phoneRequired": "Vui lòng nhập số điện thoại học viên",
+      "phoneInvalid": "Vui lòng nhập số điện thoại hợp lệ tại Việt Nam",
+      "emailRequired": "Vui lòng nhập email học viên",
+      "emailInvalid": "Vui lòng nhập địa chỉ email hợp lệ",
+      "parentNameLength": "Tên phụ huynh phải có từ 2 đến 50 ký tự",
+      "parentPhoneInvalid": "Vui lòng nhập số điện thoại hợp lệ",
+      "parentEmailInvalid": "Vui lòng nhập địa chỉ email hợp lệ",
+      "contentRequired": "Vui lòng nhập nội dung đăng ký",
+      "contentLength": "Nội dung đăng ký phải có ít nhất 10 ký tự"
+    }
+  },
+  "free": "Miễn phí"
 }

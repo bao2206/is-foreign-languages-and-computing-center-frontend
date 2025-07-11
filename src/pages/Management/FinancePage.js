@@ -3,6 +3,7 @@ import { Dialog } from "@headlessui/react";
 import { Button } from "../../components/Button";
 import { useTranslation } from "react-i18next";
 import { Search, Download, Filter, Plus } from "lucide-react";
+import { useLocation } from "react-router-dom";
 import {
   // getFinancialSummary,
   getFinancialRecords,
@@ -10,7 +11,8 @@ import {
   createPayment,
   updatePayment,
   deletePayment,
-  downloadInvoice
+  downloadInvoice,
+  createVnpayPayment
 } from "../../services/FinanceService";
 import { fetchCourses, fetchCourseById } from '../../services/ManagementCourse';
 import { completeCashPayment } from '../../services/FinanceService';
@@ -18,6 +20,7 @@ import "bootstrap/dist/css/bootstrap.css";
 
 const FinancePage = () => {
   const { t } = useTranslation();
+  const location = useLocation();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
@@ -75,6 +78,25 @@ const FinancePage = () => {
     loadCourses();
   }, [searchTerm, selectedStatus, selectedDateRange, page]);
 
+  // Handle URL parameters for viewing specific invoice (e.g., from VNPay return)
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const viewInvoiceId = urlParams.get('viewInvoice');
+    
+    if (viewInvoiceId && financialRecords.length > 0) {
+      // Find the invoice in the loaded records
+      const invoice = financialRecords.find(record => record._id === viewInvoiceId);
+      if (invoice) {
+        setSelectedRecord(invoice);
+        setIsViewDialogOpen(true);
+        // Clear the URL parameter
+        const newUrl = new URL(window.location);
+        newUrl.searchParams.delete('viewInvoice');
+        window.history.replaceState({}, '', newUrl);
+      }
+    }
+  }, [location.search, financialRecords]);
+
   // When a record is selected, fetch the course fee
   useEffect(() => {
     if (selectedRecord && selectedRecord.course) {
@@ -130,11 +152,16 @@ const FinancePage = () => {
     }
   };
 
-  const handleViewRecord = async (id) => {
+  const handleViewRecord = (id) => {
     try {
-      const record = await getFinancialRecord(id);
-      setSelectedRecord(record);
-      setIsViewDialogOpen(true);
+      // Find the record from the existing financialRecords state
+      const record = financialRecords.find(record => record._id === id);
+      if (record) {
+        setSelectedRecord(record);
+        setIsViewDialogOpen(true);
+      } else {
+        setError(t("errorLoadingRecord") || "Record not found");
+      }
     } catch (err) {
       setError(err.message || t("errorLoadingRecord"));
     }
@@ -287,19 +314,34 @@ const FinancePage = () => {
     try {
       setLoading(true);
       setError(null);
-      // Call your backend endpoint to create VNPay payment
-      const response = await fetch('/api/vnpay/create', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ paymentId }),
-      });
-      const data = await response.json();
+      
+      // Use the service function to create VNPay payment
+      const data = await createVnpayPayment(paymentId);
+      console.log('VNPay data received:', data); // Debug log
+      
+      // Check for different possible response structures
+      let paymentUrl = null;
       if (data && data.paymentUrl) {
-        window.location.href = data.paymentUrl; // Redirect to VNPay
+        paymentUrl = data.paymentUrl;
+      } else if (data && data.vnpayUrl) {
+        paymentUrl = data.vnpayUrl;
+      } else if (data && data.url) {
+        paymentUrl = data.url;
+      } else if (typeof data === 'string' && data.startsWith('http')) {
+        paymentUrl = data;
+      } else if (data && data.data && data.data.paymentUrl) {
+        paymentUrl = data.data.paymentUrl;
+      }
+      
+      if (paymentUrl) {
+        console.log('Opening VNPay URL in new tab:', paymentUrl); // Debug log
+        window.open(paymentUrl, '_blank'); // Open VNPay in new tab
       } else {
-        setError("Failed to initiate VNPay payment.");
+        console.error('No valid payment URL found in response:', data);
+        setError("Failed to get VNPay payment URL from server.");
       }
     } catch (err) {
+      console.error("VNPay payment error:", err);
       setError(err.message || "Failed to initiate VNPay payment.");
     } finally {
       setLoading(false);
@@ -704,7 +746,7 @@ const FinancePage = () => {
                 <div className="row">
                   <div className="col-md-6 mb-3">
                     <label className="form-label">{t("invoiceNumber")}</label>
-                    <p className="form-control-plaintext">{selectedRecord.invoiceNumber}</p>
+                    <p className="form-control-plaintext">{selectedRecord._id}</p>
                   </div>
                   <div className="col-md-6 mb-3">
                     <label className="form-label">{t("studentName")}</label>
@@ -794,7 +836,7 @@ const FinancePage = () => {
             <div className="modal-footer">
               <Button
                 className="btn btn-outline-danger me-auto"
-                onClick={() => handleDeletePayment(selectedRecord?.id)}
+                onClick={() => handleDeletePayment(selectedRecord?._id)}
               >
                 {t("delete")}
               </Button>
@@ -807,7 +849,7 @@ const FinancePage = () => {
               {selectedRecord && selectedRecord.status === 'completed' && (
                 <Button
                   className="btn btn-outline-primary"
-                  onClick={() => handleDownloadInvoice(selectedRecord?.id)}
+                  onClick={() => handleDownloadInvoice(selectedRecord?._id)}
                 >
                   <Download size={16} className="me-2" />
                   {t("downloadInvoice")}

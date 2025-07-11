@@ -13,6 +13,7 @@ import ClassRoutes from "./ClassRoutes"; // Các route liên quan đến lớp h
 import SchedulePage from "../pages/Class/SchedulePage";
 import CoursePage from "../pages/CoursesPage";
 import ResetPasswordPage from "../pages/ResetPasswordPage";
+import VnpayReturnPage from "../pages/VnpayReturnPage";
 import { RequireAuthClass } from "../utils/RequireAuth";
 
 export default function AppRoutes() {
@@ -24,6 +25,7 @@ export default function AppRoutes() {
       <Route path="/class/login" element={<ClassLogin />} />
       <Route path="/schedule" element={<SchedulePage />} />
       <Route path="/courses" element={<CoursePage />} />
+      <Route path="/vnpay-return" element={<VnpayReturnPage />} />
       {/* Bọc các route cần bảo vệ */}
       <Route element={<RequireAuth />}>
         <Route path="/management/*" element={<ManagementRoutes />} />
